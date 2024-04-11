@@ -1,0 +1,6 @@
+<launch>
+    <arg name="control_loop_rate" default="50" /> <!-- Default value is set to 50 -->
+    <node pkg="unitree_legged_real" type="gesture_control_cmd" name="node_gesture_control" output="screen">
+        <param name="control_loop_rate" value="$(arg control_loop_rate)"/> <!-- Setting the parameter with the value of the argument -->
+    </node>
+</launch>

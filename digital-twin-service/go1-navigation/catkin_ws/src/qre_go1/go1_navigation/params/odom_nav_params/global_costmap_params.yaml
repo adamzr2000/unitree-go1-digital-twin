@@ -1,0 +1,11 @@
+global_costmap:
+  global_frame: odom
+  robot_base_frame: base
+  update_frequency: 1.0
+  publish_frequency: 0.5
+  width: 40.0
+  height: 40.0
+  resolution: 0.1
+  origin_x: -20.0
+  origin_y: -20.0
+  rolling_window: false

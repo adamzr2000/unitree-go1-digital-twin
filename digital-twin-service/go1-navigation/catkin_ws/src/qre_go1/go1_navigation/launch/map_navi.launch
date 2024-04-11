@@ -1,0 +1,28 @@
+<launch>
+	<param name="use_sim_time" value="false" />
+
+	<arg name="map_file" default="maps/empty_map.yaml" />
+
+	<!-- Run the ekf for map to odom config -->
+	<!-- <include file="$(find go1_control)/launch/ekf_localization.launch" /> -->
+	
+	<!-- velocity_smoother -->
+	<include file="$(find go1_navigation)/launch/include/velocity_smoother.launch.xml" />
+	
+	<!-- Lidar -->
+	<!-- <include file="$(find go1_navigation)/launch/include/ouster.launch.xml" /> -->
+	
+	<!-- Run Pointcloud to laser scan if needed -->
+	<!-- <include file="$(find go1_navigation)/launch/include/point_cloud_to_laser_scan.launch.xml" />  -->
+	
+	<!-- Run the map server -->
+	<include file="$(find go1_navigation)/launch/include/custom_map_server.launch.xml">
+    	<arg name="map_file" value="$(arg map_file)" />
+	</include>
+	
+	<!-- Run AMCL -->
+	<include file="$(find go1_navigation)/launch/include/amcl.launch.xml" />
+	
+	<!-- Run Move Base -->
+	<include file="$(find go1_navigation)/launch/include/map_move_base_teb.launch.xml" />
+</launch>

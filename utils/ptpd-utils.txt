@@ -1,0 +1,12 @@
+Edge
+====
+sudo ptpd --masteronly --interface <wired-interface> -V
+-------------------------------------------------------
+sudo ptpd --masteronly --interface enp8s0 -V
+
+
+Robot UE
+========
+sudo ptpd --slaveonly --interface <wireless-interface> -C <edge-ip> -V
+----------------------------------------------------------------------
+sudo ptpd --slaveonly --interface wlan0 -C 10.5.98.101 -V

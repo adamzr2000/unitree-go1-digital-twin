@@ -1,0 +1,1 @@
+docker swarm init --advertise-addr 10.5.98.101

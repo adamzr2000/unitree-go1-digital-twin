@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+
+  <include file="$(find go1_description)/launch/description.launch"/>
+  <arg name="rvizconfig" default="$(find go1_viz)/rviz/model.rviz" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+
+</launch>

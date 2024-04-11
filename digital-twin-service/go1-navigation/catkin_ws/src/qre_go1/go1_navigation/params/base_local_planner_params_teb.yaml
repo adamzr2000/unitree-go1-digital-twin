@@ -1,0 +1,138 @@
+TebLocalPlannerROS:
+ 
+ # https://mowito-navstack.readthedocs.io/en/latest/step_5c.html
+ odom_topic: /odometry/filtered
+ map_frame: /map
+    
+ # Trajectory
+  
+ teb_autosize: True
+ dt_ref: 0.3 # 0.3 default
+ dt_hysteresis: 0.03
+ max_samples: 3 # default 3
+ global_plan_overwrite_orientation: False
+ allow_init_with_backwards_motion: False
+ max_global_plan_lookahead_dist: 2.0
+ global_plan_viapoint_sep: -1
+ global_plan_prune_distance: 1
+ exact_arc_length: False
+ feasibility_check_no_poses: 5
+ publish_feedback: False
+    
+ # Robot
+         
+ max_vel_x: 0.75
+ max_vel_x_backwards: 0.5
+ max_vel_theta: 0.5
+ acc_lim_x: 0.5
+ acc_lim_y: 0.5
+ acc_lim_theta: 0.5
+ min_turning_radius: 0.0
+ footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
+   type: "polygon"
+  #  radius: 0.2 # for type "circular"
+  #  line_start: [-0.3, 0.0] # for type "line"
+  #  line_end: [0.3, 0.0] # for type "line"
+  #  front_offset: 0.2 # for type "two_circles"
+  #  front_radius: 0.2 # for type "two_circles"
+  #  rear_offset: 0.2 # for type "two_circles"
+  #  rear_radius: 0.2 # for type "two_circles"
+   vertices: [[-0.30, -0.08], [-0.30, 0.08], [0.30, 0.08], [0.30, -0.08]] # for type "polygon"
+
+ # GoalTolerance
+    
+ xy_goal_tolerance: 0.2
+ yaw_goal_tolerance: 1.2
+ free_goal_vel: False
+ complete_global_plan: False
+    
+ # Obstacles
+    
+ min_obstacle_dist: 0.5
+ include_costmap_obstacles: True
+ inflation_dist: 0.4
+ dynamic_obstacle_inflation_dist: 0.2
+ costmap_obstacles_behind_robot_dist: 0.5
+ obstacle_poses_affected: 20
+
+ # Optimization
+    
+ no_inner_iterations: 5
+ no_outer_iterations: 3
+ optimization_activate: True
+ optimization_verbose: False
+ penalty_epsilon: 0.1
+ obstacle_cost_exponent: 4
+ weight_max_vel_x: 2
+ weight_max_vel_theta: 1
+ weight_acc_lim_x: 0
+ weight_acc_lim_theta: 0
+ weight_kinematics_nh: 1000
+ weight_kinematics_forward_drive: 50
+ weight_kinematics_turning_radius: 0
+ weight_optimaltime: 1 # must be > 0
+ weight_shortest_path: 0
+ weight_obstacle: 100
+ weight_inflation: 0.2
+ weight_dynamic_obstacle: 10
+ weight_dynamic_obstacle_inflation: 0.2
+ weight_viapoint: 1
+ weight_adapt_factor: 2
+
+ # Homotopy Class Planner
+
+ enable_homotopy_class_planning: True
+ enable_multithreading: True
+ simple_exploration: False
+ max_number_classes: 4
+ selection_cost_hysteresis: 1.0
+ selection_prefer_initial_plan: 0.9
+ selection_obst_cost_scale: 100.0
+ selection_alternative_time_cost: False
+ 
+ roadmap_graph_no_samples: 15
+ roadmap_graph_area_width: 5
+ roadmap_graph_area_length_scale: 1.0
+ h_signature_prescaler: 0.5
+ h_signature_threshold: 0.1
+ obstacle_heading_threshold: 0.55
+ switching_blocking_period: 0.0
+ viapoints_all_candidates: True
+ delete_detours_backwards: True
+ max_ratio_detours_duration_best_duration: 3.0
+ visualize_hc_graph: False
+ visualize_with_time_as_z_axis_scale: False
+
+# Recovery
+ 
+ shrink_horizon_backup: True
+ shrink_horizon_min_duration: 10
+ oscillation_recovery: True
+ oscillation_v_eps: 0.1
+ oscillation_omega_eps: 0.1
+ oscillation_recovery_min_duration: 10
+ oscillation_filter_duration: 10
+
+# Costmap converter plugin   
+
+#costmap_converter_plugin: ""
+#costmap_converter_plugin: "costmap_converter::CostmapToPolygonsDBSMCCH"
+costmap_converter_plugin: "costmap_converter::CostmapToLinesDBSRANSAC"
+#costmap_converter_plugin: "costmap_converter::CostmapToLinesDBSMCCH"
+#costmap_converter_plugin: "costmap_converter::CostmapToPolygonsDBSConcaveHull"
+costmap_converter_spin_thread: True
+costmap_converter_rate: 5
+
+
+## Configure plugins (namespace move_base/costmap_to_lines or move_base/costmap_to_polygons)
+## costmap_converter/CostmapToLinesDBSRANSAC, costmap_converter/CostmapToLinesDBSMCCH, costmap_converter/CostmapToPolygonsDBSMCCH
+costmap_converter/CostmapToLinesDBSRANSAC:
+  cluster_max_distance: 0.4
+  cluster_min_pts: 2
+  ransac_inlier_distance: 0.15
+  ransac_min_inliers: 10
+  ransac_no_iterations: 1500
+  ransac_remainig_outliers: 3
+  ransac_convert_outlier_pts: True
+  ransac_filter_remaining_outlier_pts: False
+  convex_hull_min_pt_separation: 0.1

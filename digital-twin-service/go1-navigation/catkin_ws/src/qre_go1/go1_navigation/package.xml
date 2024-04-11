@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>go1_navigation</name>
+  <version>1.5.0</version>
+  <description>The go1_navigation package</description>
+
+  <maintainer email="salman.sohail@mybotshop.de">Salman Omar Sohail</maintainer>
+  <author email="salman.sohail@mybotshop.de">Salman Omar Sohail</author>
+  <license>private</license>
+  <url type="website">https://mybotshop.de</url>
+  <url type="repository">https://mybotshop.de</url>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>map_server</build_depend>
+  <build_depend>go1_control</build_depend>
+  <build_depend>move_base</build_depend>
+  <build_export_depend>map_server</build_export_depend>
+  <build_export_depend>go1_control</build_export_depend>
+  <build_export_depend>move_base</build_export_depend>
+  <exec_depend>map_server</exec_depend>
+  <exec_depend>go1_control</exec_depend>
+  <exec_depend>move_base</exec_depend>
+
+</package>

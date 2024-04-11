@@ -1,0 +1,2 @@
+# To identify Dynamixel motors on startup
+SUBSYSTEMS=="usb-serial", MODE:="0666"

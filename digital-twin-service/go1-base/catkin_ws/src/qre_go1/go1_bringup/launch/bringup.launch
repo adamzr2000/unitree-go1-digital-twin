@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Define the target_ip argument -->
+  <arg name="target_ip" default="10.5.98.70"/> <!-- Default value, can be overridden -->
+
+    <!-- Pass the target_ip argument to base.launch -->
+  <include file="$(find go1_base)/launch/base.launch">
+    <arg name="target_ip" value="$(arg target_ip)"/>
+  </include>
+  <include file="$(find go1_description)/launch/description.launch"/>
+  <include file="$(find go1_control)/launch/teleop.launch"/>
+  <include file="$(find go1_control)/launch/ekf_localization.launch"/>
+</launch>

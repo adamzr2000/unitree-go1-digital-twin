@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+  
+  <arg name="ouster_ns" default="ouster"/>
+  <arg name="sensor_hostname" default="192.168.123.35"/>
+  <arg name="udp_dest" default="192.168.123.6"/>
+  <arg name="lidar_port" default="46481"/>
+  <arg name="imu_port" default="45352"/>
+  <arg name="udp_profile_lidar" default=""/>
+  <arg name="lidar_mode" default="512x10" />
+  <arg name="timestamp_mode" default="TIME_FROM_ROS_TIME"/>
+  <arg name="metadata" default=""/>
+  <arg name="viz" default="false"/>
+  <arg name="rviz_config" default="$(find ouster_ros)/config/viz.rviz"/>
+  <arg name="tf_prefix" default=""/>
+  <include file="$(find ouster_ros)/launch/sensor.launch" pass_all_args="true"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="lidar_to_robot" args="0 0 0.55 0 0 0 /base /os_sensor 100" />
+
+</launch>

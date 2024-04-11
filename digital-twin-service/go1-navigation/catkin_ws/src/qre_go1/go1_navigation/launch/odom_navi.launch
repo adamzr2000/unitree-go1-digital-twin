@@ -1,0 +1,9 @@
+<launch>
+	<param name="use_sim_time" value="false" />
+
+	<!-- Run Move Base -->
+	<include file="$(find go1_navigation)/launch/include/odom_move_base_teb.launch.xml" />
+	<!-- velocity_smoother -->
+	<include file="$(find go1_navigation)/launch/include/velocity_smoother.launch.xml" />	
+
+</launch>
