@@ -47,5 +47,5 @@ RUN chmod +755 *.sh
 
 USER go1
 
-# CMD "roscore"
-CMD "./start_roscore.sh"
+CMD "roscore"
+#CMD "./start_roscore.sh"

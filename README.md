@@ -14,7 +14,7 @@ simulator.
  - Docker
  - Docker compose
  - NVIDIA GPU (RTX 2070 or higher)
- - NVIDIA GPU Driver (recommended version 525.85)
+ - NVIDIA GPU Driver (recommended version 525.85 or higher)
  - NVIDIA Container Toolkit
  - NVIDIA Omniverse 
 
