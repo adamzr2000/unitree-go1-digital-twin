@@ -46,7 +46,7 @@ simulator.
  
  ### Run Digital Twin service
  - The scenarios [folder](./scenarios/) is composed of different deployment options for the Digital Twin service.
-    - end-to-end-docker scenarios (tutorial [here](./scenarios/end-to-end-docker/)) ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available   
+    - end-to-end-docker scenarios (tutorial [here](./scenarios/end-to-end-docker-swarm/)) ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available   
     - end-to-end-kubernetes scenarios (tutorial [here](./scenarios/end-to-end-kubernetes/)) ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) Not available
  
 ## DISCLAIMER
