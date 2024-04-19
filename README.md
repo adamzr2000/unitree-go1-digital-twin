@@ -1,4 +1,14 @@
 # Digital Twin Application @ DESIRE6G Project
+
+<div align="center">
+
+[![Static Badge](https://img.shields.io/badge/Latest_Release-dev-orange)](https://github.com/adamzr2000/unitree-go1-digital-twin/)
+[![Static Badge](https://img.shields.io/badge/K3s-v1.28.8%2Bk3s1-blue)](https://github.com/k3s-io/k3s/releases/tag/v1.28.8%2Bk3s1)
+[![Static Badge](https://img.shields.io/badge/Docker-v25.0.3-blue)](https://github.com/docker)
+
+</div>
+
+
 This repository comprises the code developed and integrated in [DESIRE6G](https://desire6g.eu/) project
 in order to implement the Digital Twin use case.
 
@@ -17,6 +27,7 @@ simulator.
  - NVIDIA GPU Driver (recommended version 525.85 or higher)
  - NVIDIA Container Toolkit
  - NVIDIA Omniverse 
+ - Kubernetes Distribution: K3s v1.28.8+k3s1
 
 ## Getting Started
  ### Digital Twin service description

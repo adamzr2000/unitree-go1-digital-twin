@@ -77,6 +77,9 @@ USER root
 # Make all scripts executable
 RUN chmod +755 *.sh
 
+RUN chmod +777 *.py
+RUN chmod +777 command.txt
+
 # Indicate completion of Dockerfile setup
 RUN echo "ALL Done"
 

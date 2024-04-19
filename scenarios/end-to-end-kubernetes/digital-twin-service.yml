@@ -1,0 +1,434 @@
+##################
+### ros-master ###
+##################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: roscore-edge-deployment
+  labels:
+    app: digital-twin-service
+    node: roscore-edge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: roscore-edge
+  template:
+    metadata:
+      labels:
+        node: roscore-edge
+    spec:
+      containers:
+      - name: roscore-edge
+        tty: true
+        image: go1-roscore
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://roscore-edge:11311"
+        - name: ROS_HOSTNAME
+          value: "roscore-edge"
+        ports:
+        - containerPort: 11311
+          name: roscore-port
+      nodeSelector:
+        nodetype: master
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+
+---
+
+### Headless service declaration.
+### This is required to map to app "roscore-edge" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: roscore-edge
+  labels:
+    app: digital-twin-service
+    node: roscore-edge
+spec:
+  clusterIP: None
+  selector:
+    node: roscore-edge
+
+---
+
+################
+### go1-base ###
+################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go1-base-deployment
+  labels:
+    app: digital-twin-service
+    node: go1-base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: go1-base
+  template:
+    metadata:
+      labels:
+        node: go1-base
+    spec:
+      containers:
+      - name: go1-base
+        image: go1-base
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://roscore-edge:11311"
+        - name: ROS_HOSTNAME
+          value: "go1-base"
+        - name: TARGET_IP
+          value: "192.168.123.161"
+        ports:
+        - containerPort: 8082
+          protocol: UDP
+        - containerPort: 8007
+          protocol: UDP
+        - containerPort: 8090
+          protocol: UDP
+        securityContext:
+            privileged: true
+      nodeSelector:
+        nodetype: master
+
+---
+
+### Headless service declaration.
+### This is required to map to app "go1-base" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: go1-base
+  labels:
+    app: digital-twin-service
+    node: go1-base
+spec:
+  clusterIP: None
+  selector:
+    node: go1-base
+
+---
+
+### LoadBalancer service declaration.
+### This is required to expose the ports that enable communication from outside the cluster to the internal computers of the robot.
+apiVersion: v1
+kind: Service
+metadata:
+  name: go1-base-robot-communication
+  labels:
+    app: digital-twin-service
+    node: go1-base
+spec:
+  type: LoadBalancer
+  ports:
+  - name: high-level-pc
+    protocol: UDP
+    port: 8082
+    targetPort: 8082
+  - name: low-level-pc
+    protocol: UDP
+    port: 8007
+    targetPort: 8007
+  - name: go1-base-local
+    protocol: UDP
+    port: 8090
+    targetPort: 8090
+  selector:
+    node: go1-base
+
+---
+
+###########################
+### gesture-control-app ###
+###########################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gesture-control-app-deployment
+  labels:
+    app: digital-twin-service
+    node: gesture-control-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: gesture-control-app
+  template:
+    metadata:
+      labels:
+        node: gesture-control-app
+    spec:
+      containers:
+      - name: gesture-control-app
+        image: go1-gesture-control
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://roscore-edge:11311"
+        - name: ROS_HOSTNAME
+          value: "gesture-control-app"
+        - name: CAMERA_TYPE
+          value: "webcam"
+        - name: WEB_SERVER
+          value: "yes"
+        - name: CONTROL_LOOP_RATE
+          value: "50"
+        ports:
+        - containerPort: 8888
+        volumeMounts:
+          - name: webcam
+            mountPath: /dev/video0
+        securityContext:
+          privileged: true
+      volumes:
+        - name: webcam
+          hostPath:
+            path: /dev/video0
+      nodeSelector:
+        nodetype: master
+
+---
+
+### Headless service declaration.
+### This is required to map to app "gesture-control-app" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: gesture-control-app
+  labels:
+    app: digital-twin-service
+    node: gesture-control-app
+spec:
+  clusterIP: None
+  selector:
+    node: gesture-control-app
+
+---
+
+### LoadBalancer service declaration.
+### This is required to expose the ports that enable web access to the gesture-control-app container
+apiVersion: v1
+kind: Service
+metadata:
+  name: gesture-control-app-frontend
+  labels:
+    app: digital-twin-service
+    node: gesture-control-app
+spec:
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8888
+      targetPort: 8888
+  selector:
+    node: gesture-control-app
+
+---
+
+#####################
+### lidar-drivers ###
+#####################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lidar-deployment
+  labels:
+    app: digital-twin-service
+    node: lidar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: lidar
+  template:
+    metadata:
+      labels:
+        node: lidar
+    spec:
+      containers:
+      - name: lidar
+        image: rplidar-lidar
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://roscore-edge:11311"
+        - name: ROS_HOSTNAME
+          value: "lidar"
+        volumeMounts:
+          - name: rplidar
+            mountPath: /dev/rplidar
+        securityContext:
+          privileged: true
+      volumes:
+        - name: rplidar
+          hostPath:
+            path: /dev/rplidar
+      nodeSelector:
+        nodetype: master
+
+---
+
+### Headless service declaration.
+### This is required to map to app "lidar" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: lidar
+  labels:
+    app: digital-twin-service
+    node: lidar
+spec:
+  clusterIP: None
+  selector:
+    node: lidar
+
+---
+
+######################
+### go1-navigation ###
+######################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go1-navigation-deployment
+  labels:
+    app: digital-twin-service
+    node: go1-navigation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: go1-navigation
+  template:
+    metadata:
+      labels:
+        node: go1-navigation
+    spec:
+      containers:
+      - name: go1-navigation
+        image: go1-navigation
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://roscore-edge:11311"
+        - name: ROS_HOSTNAME
+          value: "go1-navigation"
+      nodeSelector:
+        nodetype: master
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+
+---
+
+### Headless service declaration.
+### This is required to map to app "go1-navigation" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: go1-navigation
+  labels:
+    app: digital-twin-service
+    node: go1-navigation
+spec:
+  clusterIP: None
+  selector:
+    node: go1-navigation
+
+---
+
+################
+### rviz-vnc ###
+################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rviz-vnc-deployment
+  labels:
+    app: digital-twin-service
+    node: rviz-vnc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: rviz-vnc
+  template:
+    metadata:
+      labels:
+        node: rviz-vnc
+    spec:
+      containers:
+      - name: rviz-vnc
+        image: go1-rviz-vnc
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://roscore-edge:11311"
+        - name: ROS_HOSTNAME
+          value: "rviz-vnc"
+        ports:
+        - containerPort: 80
+        securityContext:
+            privileged: true
+        resources:
+            limits:
+              memory: "1Gi"
+      nodeSelector:
+        nodetype: master
+
+---
+
+### Headless service declaration.
+### This is required to map to app "rviz-vnc" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: rviz-vnc
+  labels:
+    app: digital-twin-service
+    node: rviz-vnc
+spec:
+  clusterIP: None
+  selector:
+    node: rviz-vnc
+
+---
+
+### LoadBalancer service declaration.
+### This is required to expose the ports that enable web access to the rviz-vnc container
+apiVersion: v1
+kind: Service
+metadata:
+  name: rviz-vnc-frontend
+  labels:
+    app: digital-twin-service
+    node: rviz-vnc
+spec:
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 6080
+      targetPort: 80
+  selector:
+    node: rviz-vnc

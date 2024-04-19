@@ -12,7 +12,7 @@ Also, in absence of a centralized registry, the Docker images composing the serv
 
 Execute the following command to import the docker images into your k3s registry:
 ```bash
-sudo 
+docker save <docker-image-name> | sudo k3s ctr images import -
 ```
 
 ## Hosts configuration
@@ -26,5 +26,12 @@ Here is a diagram that represents visually the architecture of the scenario:
 
 ![E2E Scenario 5TONIC](../../images/e2e-scenario-kubernetes.svg)
 
+## Cluster Installation
 
+To effortlessly set up a fully-functional, single-node Kubernetes cluster, execute the following command:
+```bash
+curl -sfL https://get.k3s.io | sh -
+```
+
+## Cluster Configuration
 
