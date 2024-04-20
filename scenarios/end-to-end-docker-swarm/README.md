@@ -18,11 +18,11 @@ This is the multi-host setup:
 
 - **Master Node (EDGE)**: 
   - IP: `10.5.98.101`
-  - Pods/Services: `roscore-edge`, `digital-twin-app`, `gesture-control-app`, `go1-navigation`, `rviz-vnc`
+  - Containers: `roscore-edge`, `digital-twin-app`, `gesture-control-app`, `go1-navigation`, `rviz-vnc`
 
 - **Worker Node (ROBOT)**: 
   - IP: `10.5.98.70`
-  - Pods/Services: `lidar`, `go1-base`
+  - Containers: `lidar`, `go1-base`
 
 Here is a diagram that represents visually the architecture of the scenario:
 
