@@ -2,9 +2,11 @@
 
 ## What is it?
 
+This repository provides the necessary files to launch [RViz](https://github.com/ros-visualization/rviz), a powerful 3D visualization tool commonly used in the ROS (Robot Operating System) framework. Its purpose is to showcase the robot's SLAM (Simultaneous Localization and Mapping) capabilities within a docker container, enabling the real-time visualization of the environment map generation process.
 
 ## What does this container do?
 
+This container provide HTML5 VNC interface to access Ubuntu LXDE + ROS.
 
 ## Run it?
 
@@ -48,6 +50,8 @@ Open the following link in your web browser to access the VNC ctonainer with GUI
 ```
 http://127.0.0.1:6080/
 ```
+
+![Image from Gyazo](https://i.gyazo.com/ab43ab3f6dc10b5186416499e49d0bbe.jpg)
 
 Open a terminal and run the following command to launch RViZ:
 ```bash

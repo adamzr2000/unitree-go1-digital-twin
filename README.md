@@ -53,12 +53,13 @@ simulator.
  - Install NVIDIA GPU Driver (tutorial [here](https://www.nvidia.com/en-us/drivers/unix/))
  - Install NVIDIA Container Toolkit (tutorial [here](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html))
  - Install NVIDIA Omniverse (tutorial [here](https://docs.omniverse.nvidia.com/digital-twins/latest/installation-guide.html))
+ - Install K3s Kubernetes distribution (tutorial [here](https://docs.k3s.io/installation))
  - Clone this git repo 
  
  ### Run Digital Twin service
  - The scenarios [folder](./scenarios/) is composed of different deployment options for the Digital Twin service.
     - end-to-end-docker scenarios (tutorial [here](./scenarios/end-to-end-docker-swarm/)) ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available   
-    - end-to-end-kubernetes scenarios (tutorial [here](./scenarios/end-to-end-kubernetes/)) ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) Not available
+    - end-to-end-kubernetes scenarios (tutorial [here](./scenarios/end-to-end-kubernetes/)) ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available   
  
 ## DISCLAIMER
 The modules provided in this repository are distributed in the hope that they

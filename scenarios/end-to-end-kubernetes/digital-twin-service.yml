@@ -33,7 +33,7 @@ spec:
         - containerPort: 11311
           name: roscore-port
       nodeSelector:
-        nodetype: master
+        nodetype: edge
       tolerations:
       - key: node-role.kubernetes.io/master
         operator: Exists
@@ -102,7 +102,7 @@ spec:
         securityContext:
             privileged: true
       nodeSelector:
-        nodetype: master
+        nodetype: robot
 
 ---
 
@@ -199,7 +199,7 @@ spec:
           hostPath:
             path: /dev/video0
       nodeSelector:
-        nodetype: master
+        nodetype: edge
 
 ---
 
@@ -279,7 +279,7 @@ spec:
           hostPath:
             path: /dev/rplidar
       nodeSelector:
-        nodetype: master
+        nodetype: robot
 
 ---
 
@@ -330,7 +330,7 @@ spec:
         - name: ROS_HOSTNAME
           value: "go1-navigation"
       nodeSelector:
-        nodetype: master
+        nodetype: edge
       tolerations:
       - key: node-role.kubernetes.io/master
         operator: Exists
@@ -395,7 +395,7 @@ spec:
             limits:
               memory: "1Gi"
       nodeSelector:
-        nodetype: master
+        nodetype: edge
 
 ---
 
@@ -432,3 +432,162 @@ spec:
       targetPort: 80
   selector:
     node: rviz-vnc
+
+---
+
+#######################
+### digital-replica ###
+#######################
+
+# # apiVersion: apps/v1
+# # kind: Deployment
+# # metadata:
+# #   name: digital-twin-app-deployment
+# #   labels:
+# #     app: digital-twin-service
+# #     node: digital-twin-app
+# # spec:
+# #   replicas: 1
+# #   selector:
+# #     matchLabels:
+# #       node: digital-twin-app
+# #   template:
+# #     metadata:
+# #       labels:
+# #         node: digital-twin-app
+# #     spec:
+# #       containers:
+# #       - name: digital-twin-app
+# #         image: nvcr.io/nvidia/isaac-sim:2023.1.1
+# #         imagePullPolicy: IfNotPresent
+# #         env:
+# #         - name: ROS_MASTER_URI
+# #           value: "http://roscore-edge:11311"
+# #         - name: ROS_HOSTNAME
+# #           value: "digital-twin-app"
+# #         - name: ACCEPT_EULA
+# #           value: "Y"
+# #         - name: PRIVACY_CONSENT
+# #           value: "Y"
+# #         volumeMounts:
+# #         - name: cache-kit
+# #           mountPath: /isaac-sim/kit/cache
+# #         - name: cache-ov
+# #           mountPath: /root/.cache/ov
+# #         - name: cache-pip
+# #           mountPath: /root/.cache/pip
+# #         - name: cache-glcache
+# #           mountPath: /root/.cache/nvidia/GLCache
+# #         - name: cache-computecache
+# #           mountPath: /root/.nv/ComputeCache
+# #         - name: logs
+# #           mountPath: /root/.nvidia-omniverse/logs
+# #         - name: data
+# #           mountPath: /root/.local/share/ov/data
+# #         - name: documents
+# #           mountPath: /root/Documents
+# #         - name: my-environments
+# #           mountPath: /isaac-sim/my-environments
+# #         ports:
+# #         - containerPort: 47995-48012
+# #         - containerPort: 49000-49007
+# #         - containerPort: 49100
+# #         - containerPort: 8211
+# #         - containerPort: 8011
+# #         - containerPort: 8111
+# #         - containerPort: 8311
+# #         command: ["bash", "-c", "./runheadless.native.sh -v"]
+# #         runtimeClassName: nvidia
+# #         securityContext:
+# #             privileged: true
+# #       volumes:
+# #       - name: cache-kit
+# #         hostPath:
+# #           path: ~/docker/isaac-sim/cache/kit
+# #       - name: cache-ov
+# #         hostPath:
+# #           path: ~/docker/isaac-sim/cache/ov
+# #       - name: cache-pip
+# #         hostPath:
+# #           path: ~/docker/isaac-sim/cache/pip
+# #       - name: cache-glcache
+# #         hostPath:
+# #           path: ~/docker/isaac-sim/cache/glcache
+# #       - name: cache-computecache
+# #         hostPath:
+# #           path: ~/docker/isaac-sim/cache/computecache
+# #       - name: logs
+# #         hostPath:
+# #           path: ~/docker/isaac-sim/logs
+# #       - name: data
+# #         hostPath:
+# #           path: ~/docker/isaac-sim/data
+# #       - name: documents
+# #         hostPath:
+# #           path: ~/docker/isaac-sim/documents
+# #       - name: my-environments
+# #         hostPath:
+# #           path: ../../digital-twin-service/digital-replica/my-environments
+# #       nodeSelector:
+# #         nodetype: edge
+
+# # ---
+
+# # ### Headless service declaration.
+# # ### This is required to map to app "digital-twin-app" so that other pods can DNS its IP address dynamically.
+# # apiVersion: v1
+# # kind: Service
+# # metadata:
+# #   name: digital-twin-app
+# #   labels:
+# #     app: digital-twin-service
+# #     node: digital-twin-app
+# # spec:
+# #   clusterIP: None
+# #   selector:
+# #     node: digital-twin-app
+
+# # ---
+
+# # ### LoadBalancer service declaration.
+# # ### This is required to expose the ports that enable web access to the digital-twin-app container
+# # apiVersion: v1
+# # kind: Service
+# # metadata:
+# #   name: digital-twin-app-frontend
+# #   labels:
+# #     app: digital-twin-service
+# #     node: digital-twin-app
+# # spec:
+# #   type: LoadBalancer
+# #   ports:
+# #     - name: port-47995-48012
+# #       protocol: TCP
+# #       port: 47995-48012
+# #       targetPort: 47995-48012
+# #     - name: port-49000-49007
+# #       protocol: TCP
+# #       port: 49000-49007
+# #       targetPort: 49000-49007
+# #     - name: port-49100
+# #       protocol: TCP
+# #       port: 49100
+# #       targetPort: 49100
+# #     - name: port-8211
+# #       protocol: TCP
+# #       port: 8211
+# #       targetPort: 8211
+# #     - name: port-8011
+# #       protocol: TCP
+# #       port: 8011
+# #       targetPort: 8011
+# #     - name: port-8111
+# #       protocol: TCP
+# #       port: 8111
+# #       targetPort: 8111
+# #     - name: port-8311
+# #       protocol: TCP
+# #       port: 8311
+# #       targetPort: 8311
+# #   selector:
+# #     node: digital-twin-app

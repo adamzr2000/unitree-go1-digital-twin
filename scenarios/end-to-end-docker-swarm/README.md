@@ -16,8 +16,13 @@ Also, in absence of a centralized registry, the Docker images composing the serv
 
 This is the multi-host setup: 
 
-* EDGE (10.5.98.101): `roscore-edge`, `digital-twin-app`, `gesture-control-app`, `go1-navigation`, `rviz-vnc`
-* ROBOT (10.5.98.70): `lidar`, `go1-base`
+- **Master Node (EDGE)**: 
+  - IP: `10.5.98.101`
+  - Pods/Services: `roscore-edge`, `digital-twin-app`, `gesture-control-app`, `go1-navigation`, `rviz-vnc`
+
+- **Worker Node (ROBOT)**: 
+  - IP: `10.5.98.70`
+  - Pods/Services: `lidar`, `go1-base`
 
 Here is a diagram that represents visually the architecture of the scenario:
 
