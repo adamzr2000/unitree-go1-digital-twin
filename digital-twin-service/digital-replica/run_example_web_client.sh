@@ -43,5 +43,5 @@ docker run --name go1-digital-twin --entrypoint bash -it --gpus all -e "ACCEPT_E
     -v ~/docker/isaac-sim/documents:/root/Documents:rw \
     -e ROS_MASTER_URI="$ros_master_uri" \
     -v ${host_dir}:/isaac-sim/my-environments \
-    nvcr.io/nvidia/isaac-sim:2023.1.1 \
+    isaac-sim:2023.1.0-ubuntu22.04 \
     ./runheadless.webrtc.sh -v 

@@ -25,11 +25,20 @@ The Unitree Go1 Digital Twin depend on:
 
 ### First you will need to build the container. 
 
+Before getting started, ensure that the system has the latest [NVIDIA Driver](https://www.nvidia.com/en-us/drivers/unix/) and the [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker) installed.
+
 To build the Isaac Sim Docker image, please follow the detailed instructions provided in the official documentation at [NVIDIA-Omniverse/IsaacSim-dockerfiles](https://docs.omniverse.nvidia.com/isaacsim/latest/installation/install_container.html).
 
-> Note: you will need to create an NGC (NVIDIA GPU Cloud) account to generate the necessary API key to download the image.
+Use your [NGC Account](https://docs.nvidia.com/ngc/ngc-overview/index.html#registering-activating-ngc-account) to get access to the [Isaac Sim Container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/isaac-sim) and generate your [NGC API Key](https://docs.nvidia.com/ngc/ngc-overview/index.html#generating-api-key).
 
-### This will build the `nvcr.io/nvidia/isaac-sim:2023.1.1` docker image. 
+Build the image running the following commands:
+```bash
+docker login nvcr.io
+
+./build.sh
+```
+
+### This will build the `isaac-sim:2023.1.0-ubuntu22.04` docker image. 
 
 Verify that the image is present by running:
 ```bash

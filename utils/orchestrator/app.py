@@ -30,7 +30,7 @@ def deploy_post():
     try:
         create_virtual_instance('go1-roscore', 'roscore-edge', 'edge')
 
-        create_digital_twin_app_instance('nvcr.io/nvidia/isaac-sim:2023.1.1','digital-twin-app','edge')
+        create_digital_twin_app_instance('isaac-sim:2023.1.0-ubuntu22.04','digital-twin-app','edge')
 
         create_gesture_control_app_instance('go1-gesture-control','gesture-control-app','edge')
 

@@ -59,7 +59,7 @@ services:
       - digital-twin-service 
 
   digital-twin-app:
-    image: nvcr.io/nvidia/isaac-sim:2023.1.1
+    image: isaac-sim:2023.1.0-ubuntu22.04
     container_name: digital-twin-app
     hostname: digital-twin-app
     entrypoint: bash
