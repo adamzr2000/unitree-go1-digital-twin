@@ -21,11 +21,11 @@ docker save <docker-image-name> | sudo k3s ctr images import -
 This is the multi-host setup: 
 
 - **Server Node (EDGE)**: 
-  - IP: `10.5.98.101`
+  - IP: `192.168.40.4`
   - Pods/Services: `roscore-edge`, `digital-twin-app`, `gesture-control-app`, `go1-navigation`, `rviz-vnc`
 
 - **Agent Node (ROBOT)**: 
-  - IP: `10.5.98.70`
+  - IP: `192.168.40.70`
   - Pods/Services: `lidar`, `go1-base`
 
 Here is a diagram that represents visually the architecture of the scenario:
@@ -55,7 +55,7 @@ echo 'export KUBECONFIG="/etc/rancher/k3s/k3s.yaml"' >> ~/.bashrc
 To add the `robot` host as an additional agent node and include it in the cluster, run the installation script with the `K3S_URL` and `K3S_TOKEN` environment variables. 
 
 ```bash
-curl -sfL https://get.k3s.io | K3S_URL=https://10.5.98.101:6443 K3S_TOKEN=mynodetoken sh -
+curl -sfL https://get.k3s.io | K3S_URL=https://192.168.40.4:6443 K3S_TOKEN=mynodetoken sh -
 ```
 
 You can find the token value required for `K3S_TOKEN` at `/var/lib/rancher/k3s/server/node-token` on your server node.
@@ -69,7 +69,7 @@ clusters:
 - cluster:
     certificate-authority-data: 
     ...
-    server: https://10.5.98.101:6443
+    server: https://192.168.40.4:6443
   name: default
 contexts:
 - context:
