@@ -11,10 +11,13 @@ cleanup() {
     exit 0
 }
 
-# Convert to lowercase to ensure compatibility
-camera_type=${CAMERA_TYPE,,}
-web_server=${WEB_SERVER,,}
-control_loop_rate=${CONTROL_LOOP_RATE}
+# Environment variables with default values using parameter expansion
+camera_type="${CAMERA_TYPE,,}" 
+web_server="${WEB_SERVER,,}"
+control_loop_rate="${CONTROL_LOOP_RATE:-50}" 
+stamped="${STAMPED:-true}"
+cmd_vel="${CMD_VEL:-go1_controller/cmd_vel}"
+
 
 # Determine the appropriate Python script based on CAMERA_TYPE and WEB_SERVER
 case "$camera_type" in
@@ -26,6 +29,11 @@ case "$camera_type" in
             python_script="gesture_capture_webcam.py"
             start_command="python3 $python_script"
         fi
+        camera_type="Webcam"
+        ;;
+    "webcam_ip")
+        python_script="gesture_capture_webcam_web_ip.py"
+        start_command="flask run --host=0.0.0.0 --port=8888"
         camera_type="Webcam"
         ;;
     "intel")
@@ -52,6 +60,7 @@ case "$camera_type" in
 esac
 
 echo "Using camera type: $camera_type with script: $python_script and control loop rate: $control_loop_rate"
+echo "cmd_vel topic: $cmd_vel, stamped: $stamped"
 
 # Trap Ctrl+C signal (SIGINT) and call the cleanup function
 trap cleanup SIGINT
@@ -60,7 +69,7 @@ source /opt/ros/$ROS_DISTRO/setup.bash
 source ~/catkin_ws/devel/setup.bash 
 
 # Launch the ROS node with the specified control loop rate
-screen -S ros-gesture-control-cmd -dm roslaunch unitree_legged_real gesture_control_cmd.launch control_loop_rate:=$control_loop_rate --wait
+screen -S ros-gesture-control-cmd -dm roslaunch unitree_legged_real gesture_control_cmd.launch control_loop_rate:=$control_loop_rate stamped:=$stamped cmd_vel:=$cmd_vel --wait
 
 # screen -S ros-gesture-control-cmd -dm roslaunch unitree_legged_real gesture_control_cmd.launch --wait
 

@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 # Initialize Docker clients for edge and robot environments
 DOCKER_CLIENTS = {
     'edge': docker.from_env(),
-    'robot': docker.DockerClient(base_url='tcp://10.5.98.70:2375')
+    'robot': docker.DockerClient(base_url='tcp://192.168.40.70:2375')
 }
 
 
@@ -28,7 +28,7 @@ def deploy_post():
     """
     logging.info("DEPLOYING SERVICE")
     try:
-        create_virtual_instance('go1-roscore', 'roscore-edge', 'edge')
+        create_virtual_instance('go1-roscore', 'roscore-edge', 'edge', None, None, 'ENABLE_STATISTICS=true')
 
         create_digital_twin_app_instance('isaac-sim:2023.1.0-ubuntu22.04','digital-twin-app','edge')
 
@@ -41,6 +41,7 @@ def deploy_post():
         create_sensor_instance('rplidar-lidar', 'lidar','robot', '/dev/rplidar:/dev/rplidar:rwm', False) 
         
         create_virtual_instance('go1-navigation', 'go1-navigation', 'edge')
+
         
         return jsonify({'success': True}), 200
     except Exception as e:
@@ -106,7 +107,7 @@ def start_post():
         logging.error(f"Start operation failed: {e}")
         return jsonify({'error': str(e)}), 500
 
-def create_virtual_instance(docker_image, instance_name, constrain, robot_target_ip=None, ports=None):
+def create_virtual_instance(docker_image, instance_name, constrain, robot_target_ip=None, ports=None, enable_statistice=None):
     """
     Helper function to create a Docker container instance.
     """
@@ -118,6 +119,9 @@ def create_virtual_instance(docker_image, instance_name, constrain, robot_target
         if robot_target_ip:
             env_vars.append(robot_target_ip)
         
+        if enable_statistice:
+            env_vars.append(enable_statistice)
+
         # Initialize additional options
         container_options = {
             "image": docker_image,
@@ -199,8 +203,10 @@ def create_gesture_control_app_instance(docker_image, instance_name, constrain):
         # Set ROS_MASTER_URI 
         ros_master_uri = "http://roscore-edge:11311" 
         web_server = "yes"
-        camera_type = "webcam"
+        camera_type = "webcam_ip"
         control_loop_rate = "50"
+        cmd_vel = "go1_controller/cmd_vel"
+        stamped = "true"
 
 
         env_vars = {
@@ -208,6 +214,8 @@ def create_gesture_control_app_instance(docker_image, instance_name, constrain):
             "CONTROL_LOOP_RATE": control_loop_rate, 
             "WEB_SERVER": web_server,
             "ROS_MASTER_URI": ros_master_uri, 
+            "CMD_VEL": cmd_vel,
+            "STAMPED": stamped
         }
 
         # Ports to expose and map for the Flask app
@@ -310,6 +318,44 @@ def create_digital_twin_app_instance(docker_image, instance_name, constrain):
         except docker.errors.DockerException as e:
             logging.error(f"Failed to create {instance_name}: {e}")
             
+
+def create_monitoring_instance(docker_image, instance_name, constrain):
+    """
+    Helper function to create a Docker container instance.
+    """
+    client = DOCKER_CLIENTS.get(constrain)
+    if client:
+        # Set ROS_MASTER_URI 
+        ros_master_uri = "http://roscore-edge:11311" 
+
+        # Environment variables
+        env_vars = {
+            "ROS_MASTER_URI": ros_master_uri
+        }
+
+        # Container entrypoint
+        command=['./start_app.sh']
+
+        ports = {
+            "5000/tcp": 5000
+        }
+
+        try:
+            client.containers.run(
+                image=docker_image,
+                hostname=instance_name,
+                name=instance_name,
+                entrypoint="bash",
+                command=command,
+                environment=env_vars,
+                network='digital-twin-service',
+                ports=ports,
+                detach=True,
+            )
+            logging.info(f"{instance_name} instance created successfully.")
+        except docker.errors.DockerException as e:
+            logging.error(f"Failed to create {instance_name}: {e}")
+
 # Main entry point of the application
 if __name__ == "__main__":
     app.run()

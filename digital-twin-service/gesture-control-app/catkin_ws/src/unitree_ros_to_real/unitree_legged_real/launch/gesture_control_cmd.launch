@@ -1,6 +1,11 @@
 <launch>
     <arg name="control_loop_rate" default="50" /> <!-- Default value is set to 50 -->
+    <arg name="stamped" default="true" /> 
+    <arg name="cmd_vel" default="go1_controller/cmd_vel" /> 
+
     <node pkg="unitree_legged_real" type="gesture_control_cmd" name="node_gesture_control" output="screen">
-        <param name="control_loop_rate" value="$(arg control_loop_rate)"/> <!-- Setting the parameter with the value of the argument -->
+        <param name="control_loop_rate" value="$(arg control_loop_rate)"/> 
+        <param name="stamped" value="$(arg stamped)"/> 
+        <param name="cmd_vel" value="$(arg cmd_vel)"/> 
     </node>
 </launch>

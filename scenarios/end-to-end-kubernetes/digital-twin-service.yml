@@ -29,6 +29,8 @@ spec:
           value: "http://roscore-edge:11311"
         - name: ROS_HOSTNAME
           value: "roscore-edge"
+        - name: ENABLE_STATISTICS
+          value: "false"
         ports:
         - containerPort: 11311
           name: roscore-port
@@ -182,11 +184,15 @@ spec:
         - name: ROS_HOSTNAME
           value: "gesture-control-app"
         - name: CAMERA_TYPE
-          value: "webcam"
+          value: "webcam_ip"
         - name: WEB_SERVER
           value: "yes"
         - name: CONTROL_LOOP_RATE
           value: "50"
+        - name: CMD_VEL
+          value: "go1_controller/cmd_vel"
+        - name: STAMPED
+          value: "true"
         ports:
         - containerPort: 8888
         volumeMounts:

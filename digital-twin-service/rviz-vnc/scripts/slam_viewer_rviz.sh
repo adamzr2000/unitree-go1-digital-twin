@@ -8,5 +8,4 @@ echo "Using ROS_IP: ${ROS_IP}"
 source /opt/ros/melodic/setup.bash
 source ~/catkin_ws/devel/setup.bash 
 
-roslaunch go1_description go1_rviz.launch --wait
-# rosrun rviz rviz
+rosrun rviz rviz -d /home/ubuntu/scripts/rviz_config/hector_slam.rviz

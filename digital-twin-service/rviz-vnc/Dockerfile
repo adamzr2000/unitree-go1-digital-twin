@@ -20,7 +20,9 @@ RUN apt-get update && apt-get install -y \
     ros-melodic-rqt-graph \
     ros-melodic-rqt-tf-tree \
     ros-melodic-xacro \
-    ros-melodic-turtlesim 
+    ros-melodic-turtlesim \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
 
 # Clone the necessary ROS packages into the catkin workspace
