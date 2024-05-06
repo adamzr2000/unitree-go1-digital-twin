@@ -80,7 +80,12 @@ USER root
 # Make all scripts executable
 RUN chmod +755 *.sh
 
-RUN chmod +rwx /home/go1/app/command.txt
+# Change ownership of command.txt to user go1
+RUN chown go1:go1 /home/go1/app/command.txt
+
+# Change permissions to allow user go1 to write to command.txt
+RUN chmod u+w /home/go1/app/command.txt
+
 
 # Indicate completion of Dockerfile setup
 RUN echo "ALL Done"
