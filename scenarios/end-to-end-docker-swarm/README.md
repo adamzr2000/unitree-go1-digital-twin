@@ -21,7 +21,7 @@ This is the multi-host setup:
   - Containers: `roscore-edge`, `digital-twin-app`, `gesture-control-app`, `go1-navigation`, `rviz-vnc`
 
 - **Worker Node (ROBOT)**: 
-  - IP: `10.5.98.70`
+  - IP: `192.168.40.70`
   - Containers: `lidar`, `go1-base`
 
 Here is a diagram that represents visually the architecture of the scenario:

@@ -52,15 +52,15 @@ Also, in absence of a centralized registry, the Docker images composing the serv
 
 This is the multi-host setup: 
 
-* EDGE (10.5.98.101): `ros-master`, `digital-replica`, `gesture-control-app`, `go1-navigation`, `rviz-vnc`
-* ROBOT (10.5.98.70): `lidar-drivers`, `go1-base`
+* EDGE (192.168.40.4): `ros-master`, `digital-replica`, `gesture-control-app`, `go1-navigation`, `rviz-vnc`
+* ROBOT (192.168.40.70): `lidar-drivers`, `go1-base`
 
 > Note: the configuration can be adjusted by modifying the `DOCKER_CLIENTS` python dictionary, where the key represents the desired name for your host and the value is the docker client endpoint.
 
 ### How to use it?
 1. Initiate docker swarm in the edge:
 ```bash
-docker swarm init --advertise-addr 10.5.98.101
+docker swarm init --advertise-addr 192.168.40.4
 ```
 
 2. Create an overlay network:
@@ -70,7 +70,7 @@ docker network create --driver=overlay --subnet=10.0.0.0/16 --ip-range 10.0.1.0/
 
 3. Join the swarm with the robot:
 ```bash
-docker swarm join --advertise-addr 10.5.98.70 --token <swarm-token> 10.5.98.101:2377
+docker swarm join --advertise-addr 192.168.40.70 --token <swarm-token> 192.168.40.4:2377
 ```
 
 3. Run the orchestrator:

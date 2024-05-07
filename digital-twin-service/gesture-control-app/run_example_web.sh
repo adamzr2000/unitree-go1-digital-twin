@@ -116,7 +116,6 @@ docker run \
     -e CAMERA_TYPE="$camera_type" \
     -e CMD_VEL="$cmd_vel" \
     -e STAMPED="$stamped" \
-    -v ${host_app_dir}:/home/go1/app \
     --rm \
     --net host \
     --privileged \
