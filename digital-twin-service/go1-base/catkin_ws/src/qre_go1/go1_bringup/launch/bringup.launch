@@ -9,6 +9,6 @@
     <arg name="target_ip" value="$(arg target_ip)"/>
   </include>
   <include file="$(find go1_description)/launch/description.launch"/>
-  <include file="$(find go1_control)/launch/teleop.launch"/>
+  <!-- <include file="$(find go1_control)/launch/teleop.launch"/> -->
   <include file="$(find go1_control)/launch/ekf_localization.launch"/>
 </launch>

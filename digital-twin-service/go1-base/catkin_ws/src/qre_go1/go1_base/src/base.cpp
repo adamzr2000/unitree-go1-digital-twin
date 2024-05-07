@@ -127,31 +127,31 @@ bool Base::setControlCallback(go1_legged_msgs::SetControl::Request &req, go1_leg
     }   
 }
 
-void Base::cmdVelCallback(geometry_msgs::Twist msg) {
+void Base::cmdVelCallback(geometry_msgs::TwistStamped msg) {
     robot_high_cmd.velocity = {0.0};
-    robot_high_cmd.yawSpeed = 0.0;     
+    robot_high_cmd.yawSpeed = 0.0;  
   
-    if (msg.linear.x && msg.linear.y && msg.angular.z) {
-        robot_high_cmd.velocity[0] = msg.linear.x;
-        robot_high_cmd.velocity[1] = msg.linear.y;
-        robot_high_cmd.yawSpeed = msg.angular.z;
+    if (msg.twist.linear.x && msg.twist.linear.y && msg.twist.angular.z) {
+        robot_high_cmd.velocity[0] = msg.twist.linear.x;
+        robot_high_cmd.velocity[1] = msg.twist.linear.y;
+        robot_high_cmd.yawSpeed = msg.twist.angular.z;
     }
-    else if (msg.linear.x && msg.linear.y) {
-        robot_high_cmd.velocity[0] = msg.linear.x;
-        robot_high_cmd.velocity[1] = msg.linear.y;
+    else if (msg.twist.linear.x && msg.twist.linear.y) {
+        robot_high_cmd.velocity[0] = msg.twist.linear.x;
+        robot_high_cmd.velocity[1] = msg.twist.linear.y;
     }
-    else if (msg.linear.x && msg.angular.z) {
-        robot_high_cmd.velocity[0] = msg.linear.x;
-        robot_high_cmd.yawSpeed = msg.angular.z;
+    else if (msg.twist.linear.x && msg.twist.angular.z) {
+        robot_high_cmd.velocity[0] = msg.twist.linear.x;
+        robot_high_cmd.yawSpeed = msg.twist.angular.z;
     }
-    else if (msg.linear.x) {
-        robot_high_cmd.velocity[0] = msg.linear.x;        
+    else if (msg.twist.linear.x) {
+        robot_high_cmd.velocity[0] = msg.twist.linear.x;        
     }
-    else if (msg.linear.y) {
-         robot_high_cmd.velocity[1] = msg.linear.y;        
+    else if (msg.twist.linear.y) {
+         robot_high_cmd.velocity[1] = msg.twist.linear.y;        
     }
-    else if (msg.angular.z) {
-        robot_high_cmd.yawSpeed = msg.angular.z;
+    else if (msg.twist.angular.z) {
+        robot_high_cmd.yawSpeed = msg.twist.angular.z;
     }
     else {
         robot_high_cmd.velocity = {0.0};

@@ -80,6 +80,7 @@ USER root
 # Make all scripts executable
 RUN chmod +755 *.sh
 
+RUN chmod +rwx /home/go1/app/
 RUN chmod +rwx /home/go1/app/command.txt
 
 # Indicate completion of Dockerfile setup
