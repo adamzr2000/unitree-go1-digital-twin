@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 # Initialize Docker clients for edge and robot environments
 DOCKER_CLIENTS = {
     'edge': docker.from_env(),
-    'robot': docker.DockerClient(base_url='tcp://192.168.40.70:2375')
+    # 'robot': docker.DockerClient(base_url='tcp://192.168.40.70:2375')
 }
 
 
@@ -36,7 +36,7 @@ def deploy_post():
 
         # create_virtual_instance('go1-base', 'go1-base', 'robot', 'TARGET_IP=192.168.123.161', {'8082/udp': 8082, '8090/udp': 8090, '8091/udp': 8091, '8007/udp': 8007, '8080/tcp': 8080, '8081/tcp': 8081})
         
-        # create_virtual_instance('go1-rviz-vnc', 'rviz-vnc', 'edge', None, {'80/tcp': 6080})
+        create_virtual_instance('go1-rviz-vnc', 'rviz-vnc', 'edge', None, {'80/tcp': 6080})
         
         # create_sensor_instance('rplidar-lidar', 'lidar','robot', '/dev/rplidar:/dev/rplidar:rwm', False) 
         

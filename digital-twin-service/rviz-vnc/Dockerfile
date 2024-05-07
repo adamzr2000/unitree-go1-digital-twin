@@ -1,7 +1,6 @@
 # Specify the ROS distribution as a build argument
-ARG ROS_DISTRO=melodic
 
-FROM tiryoh/ros-desktop-vnc:${ROS_DISTRO}
+FROM tiryoh/ros-desktop-vnc:noetic
 
 # Define maintainer
 LABEL maintainer="azahir@pa.uc3m.es"
@@ -16,13 +15,19 @@ SHELL [ "/bin/bash" , "-c" ]
 RUN apt-get update && apt-get install -y \
     git \
     wget \
-    ros-melodic-cartographer-rviz \
-    ros-melodic-rqt-graph \
-    ros-melodic-rqt-tf-tree \
-    ros-melodic-xacro \
-    ros-melodic-turtlesim \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean
+    ros-noetic-rqt-graph \
+    ros-noetic-rqt-tf-tree \
+    ros-noetic-xacro \
+    ros-noetic-turtlesim 
+
+# RUN apt-get update && apt-get install -y \
+#     git \
+#     wget \
+#     ros-noetic-cartographer-rviz \
+#     ros-noetic-rqt-graph \
+#     ros-noetic-rqt-tf-tree \
+#     ros-noetic-xacro \
+#     ros-noetic-turtlesim 
 
 
 # Clone the necessary ROS packages into the catkin workspace
@@ -30,7 +35,7 @@ RUN mkdir -p catkin_ws/src
 COPY catkin_ws/src /home/ubuntu/catkin_ws/src
 
 # Build the catkin workspace
-RUN cd ~/catkin_ws && source /opt/ros/melodic/setup.bash && catkin_make 
+RUN cd ~/catkin_ws && source /opt/ros/noetic/setup.bash && catkin_make 
 
 # Add ROS environment setup to bashrc
 RUN echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
