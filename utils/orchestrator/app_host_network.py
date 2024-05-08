@@ -17,9 +17,17 @@ logging.basicConfig(level=logging.INFO)
 DOCKER_CLIENTS = {
     'edge': docker.from_env(),
     'robot': docker.DockerClient(base_url='tcp://192.168.40.70:2375')
-    # 'robot': docker.DockerClient(base_url='tcp://192.168.40.3:2375')
 }
 
+ROS_MASTER_URI = "http://192.168.40.4:11311"
+
+# Function to set ROS_IP based on constrain
+def get_ros_ip(constrain):
+    if constrain == "edge":
+        return "192.168.40.4"
+    elif constrain == "robot":
+        return "192.168.40.70"
+    return None
 
 @app.route("/deploy/", methods=['POST'])
 def deploy_post():
@@ -113,8 +121,9 @@ def create_virtual_instance(docker_image, instance_name, constrain, robot_target
     Helper function to create a Docker container instance.
     """
     client = DOCKER_CLIENTS.get(constrain)
+    ros_ip = get_ros_ip(constrain)
     if client:
-        env_vars = ['ROS_MASTER_URI=http://roscore-edge:11311']
+        env_vars = [f'ROS_MASTER_URI={ROS_MASTER_URI}', f'ROS_IP={ros_ip}']
 
         # Add robot_target_ip to environment variables if it's provided
         if robot_target_ip:
@@ -128,15 +137,15 @@ def create_virtual_instance(docker_image, instance_name, constrain, robot_target
             "image": docker_image,
             "hostname": instance_name,
             "name": instance_name,
-            "network": 'digital-twin-service',
+            "network_mode": 'host',
             "environment": env_vars,
             "detach": True,
             "privileged": True,
         }
         
-        # Add ports if specified (vnc container)
-        if ports:
-            container_options["ports"] = ports
+        # # Add ports if specified (vnc container)
+        # if ports:
+        #     container_options["ports"] = ports
 
         try:
             client.containers.run(**container_options)
@@ -149,15 +158,15 @@ def create_rviz_vnc_instance(docker_image, instance_name, constrain, ports={'80/
     Helper function to create a Docker container instance.
     """
     client = DOCKER_CLIENTS.get(constrain)
+    ros_ip = get_ros_ip(constrain)
     if client:
-        env_vars = ['ROS_MASTER_URI=http://roscore-edge:11311']
+        env_vars = [f'ROS_MASTER_URI={ROS_MASTER_URI}', f'ROS_IP={ros_ip}']
         
         # Initialize additional options
         container_options = {
             "image": docker_image,
             "hostname": instance_name,
             "name": instance_name,
-            "network": 'digital-twin-service',
             "environment": env_vars,
             "detach": True,
             "ports": ports,
@@ -176,15 +185,16 @@ def create_sensor_instance(docker_image, instance_name, constrain, device, privi
     Helper function to create a Docker container for sensor instances.
     """
     client = DOCKER_CLIENTS.get(constrain)
+    ros_ip = get_ros_ip(constrain)
     if client:
-        env_vars = ['ROS_MASTER_URI=http://roscore-edge:11311']
+        env_vars = [f'ROS_MASTER_URI={ROS_MASTER_URI}', f'ROS_IP={ros_ip}']
 
         try:
             client.containers.run(
                 image=docker_image,
                 hostname=instance_name,
                 name=instance_name,
-                network='digital-twin-service',
+                network_mode='host',
                 environment=env_vars,
                 devices=[device],
                 privileged=privilege,
@@ -199,10 +209,11 @@ def create_gesture_control_app_instance(docker_image, instance_name, constrain):
     Helper function to create a Docker container for gesture control app GUI instance.
     """
     client = DOCKER_CLIENTS.get(constrain)
+    ros_ip = get_ros_ip(constrain)
     if client:
 
         # Set ROS_MASTER_URI 
-        ros_master_uri = "http://roscore-edge:11311" 
+        ros_master_uri = ROS_MASTER_URI
         web_server = "yes"
         camera_type = "webcam_ip"
         control_loop_rate = "50"
@@ -216,7 +227,8 @@ def create_gesture_control_app_instance(docker_image, instance_name, constrain):
             "WEB_SERVER": web_server,
             "ROS_MASTER_URI": ros_master_uri, 
             "CMD_VEL": cmd_vel,
-            "STAMPED": stamped
+            "STAMPED": stamped,
+            "ROS_IP": ros_ip
         }
 
         # Ports to expose and map for the Flask app
@@ -229,8 +241,8 @@ def create_gesture_control_app_instance(docker_image, instance_name, constrain):
                 image=docker_image,
                 hostname=instance_name,
                 name=instance_name,
-                network='digital-twin-service',
-                ports=ports,
+                network_mode='host',
+                # ports=ports,
                 environment=env_vars,
                 privileged=True,
                 group_add=["video"],
@@ -246,10 +258,11 @@ def create_digital_twin_app_instance(docker_image, instance_name, constrain):
     Helper function to create a Docker container for DT app (Isaac Sim) instance.
     """
     client = DOCKER_CLIENTS.get(constrain)
+    ros_ip = get_ros_ip(constrain)
     if client:
 
         # Set ROS_MASTER_URI 
-        ros_master_uri = "http://roscore-edge:11311" 
+        ros_master_uri = ROS_MASTER_URI
 
         relative_path = "../../digital-twin-service/digital-replica/my-environments"
         host_dir = os.path.abspath(os.path.join(os.getcwd(), relative_path))
@@ -259,6 +272,7 @@ def create_digital_twin_app_instance(docker_image, instance_name, constrain):
             "ACCEPT_EULA": "Y",
             "PRIVACY_CONSENT": "Y",
             "ROS_MASTER_URI": ros_master_uri,
+            "ROS_IP": ros_ip
         }
 
         # Container entrypoint
@@ -309,8 +323,8 @@ def create_digital_twin_app_instance(docker_image, instance_name, constrain):
                 command=command,
                 environment=env_vars,
                 volumes=volumes,
-                network='digital-twin-service',
-                ports=ports,
+                network_mode='host',
+                # ports=ports,
                 runtime="nvidia",
                 device_requests=[docker.types.DeviceRequest(count=-1, capabilities=[['gpu']])],
                 detach=True,
@@ -325,9 +339,10 @@ def create_monitoring_instance(docker_image, instance_name, constrain):
     Helper function to create a Docker container instance.
     """
     client = DOCKER_CLIENTS.get(constrain)
+    ros_ip = get_ros_ip(constrain)
     if client:
         # Set ROS_MASTER_URI 
-        ros_master_uri = "http://roscore-edge:11311" 
+        ros_master_uri = ROS_MASTER_URI
 
         # Environment variables
         env_vars = {
@@ -349,8 +364,8 @@ def create_monitoring_instance(docker_image, instance_name, constrain):
                 entrypoint="bash",
                 command=command,
                 environment=env_vars,
-                network='digital-twin-service',
-                ports=ports,
+                network_mode='host',
+                # ports=ports,
                 detach=True,
             )
             logging.info(f"{instance_name} instance created successfully.")
