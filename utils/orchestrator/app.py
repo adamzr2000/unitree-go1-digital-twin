@@ -17,7 +17,6 @@ logging.basicConfig(level=logging.INFO)
 DOCKER_CLIENTS = {
     'edge': docker.from_env(),
     'robot': docker.DockerClient(base_url='tcp://192.168.40.70:2375')
-    # 'robot': docker.DockerClient(base_url='tcp://192.168.40.3:2375')
 }
 
 
@@ -40,6 +39,8 @@ def deploy_post():
         create_rviz_vnc_instance('go1-rviz-vnc', 'rviz-vnc', 'edge', {'80/tcp': 6080})
         
         create_sensor_instance('rplidar-lidar', 'lidar','robot', '/dev/rplidar:/dev/rplidar:rwm', False) 
+
+        # create_sensor_instance('d435i-camera', 'd435i-camera','robot', '/dev:/dev:rwm', False) 
         
         create_virtual_instance('go1-navigation', 'go1-navigation', 'edge')
 
