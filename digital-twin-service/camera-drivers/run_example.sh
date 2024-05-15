@@ -84,19 +84,19 @@ echo "ROS_MASTER_URI: $ros_master_uri"
 echo "ROS_IP: $ros_ip"
 
 # Assemble docker image.
-echo 'Running d435i-camera docker image.'
+echo 'Running astra-camera docker image.'
 
 # Directory on host to map to the container's catkin_ws directory
 host_catkin_ws_dir="$(pwd)/catkin_ws/src"
 
 docker run \
         -it \
-        --name d435i-camera \
-        --hostname d435i-camera \
+        --name astra-camera \
+        --hostname astra-camera \
         --rm \
         --net host \
         --privileged \
         -e ROS_MASTER_URI="$ros_master_uri" \
         -e ROS_IP="$ros_ip" \
-        -v "/dev:/dev" \
-        d435i-camera:latest
+        --device=/dev/astra \
+        astra-camera:latest
