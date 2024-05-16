@@ -1,4 +1,4 @@
-# astra ROS Drivers. 
+# Astra Camera ROS Drivers. 
 
 ## What is it?
 

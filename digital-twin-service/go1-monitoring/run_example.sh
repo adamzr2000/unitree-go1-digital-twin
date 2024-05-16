@@ -92,8 +92,8 @@ echo 'Running go1 docker image.'
 
 docker run \
     -it \
-    --name go1-monitoring-client \
-    --hostname go1-monitoring-client \
+    --name go1-monitoring \
+    --hostname go1-monitoring \
     --rm \
     --net host \
     -e ROS_MASTER_URI="$ros_master_uri" \

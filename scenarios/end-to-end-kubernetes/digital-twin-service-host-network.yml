@@ -48,41 +48,41 @@ spec:
 ### go1-base ###
 ################
 
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: go1-base-deployment
-#   labels:
-#     app: digital-twin-service
-#     node: go1-base
-# spec:
-#   replicas: 1
-#   selector:
-#     matchLabels:
-#       node: go1-base
-#   template:
-#     metadata:
-#       labels:
-#         node: go1-base
-#     spec:
-#       containers:
-#       - name: go1-base
-#         image: go1-base
-#         imagePullPolicy: IfNotPresent
-#         env:
-#         - name: ROS_MASTER_URI
-#           value: "http://192.168.40.4:11311"
-#         - name: ROS_IP
-#           value: "192.168.40.70"
-#         - name: TARGET_IP
-#           value: "192.168.123.161"
-#       hostNetwork: true
-#         securityContext:
-#             privileged: true
-#       nodeSelector:
-#         nodetype: robot
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go1-base-deployment
+  labels:
+    app: digital-twin-service
+    node: go1-base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: go1-base
+  template:
+    metadata:
+      labels:
+        node: go1-base
+    spec:
+      containers:
+      - name: go1-base
+        image: go1-base
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://192.168.40.4:11311"
+        - name: ROS_IP
+          value: "192.168.40.70"
+        - name: TARGET_IP
+          value: "192.168.123.161"
+        securityContext:
+            privileged: true
+      hostNetwork: true
+      nodeSelector:
+        nodetype: robot
 
-# ---
+---
 
 ###########################
 ### gesture-control-app ###
@@ -119,7 +119,7 @@ spec:
         - name: WEB_SERVER
           value: "yes"
         - name: CONTROL_LOOP_RATE
-          value: "50"
+          value: "100"
         - name: CMD_VEL
           value: "go1_controller/cmd_vel"
         - name: STAMPED
@@ -143,46 +143,46 @@ spec:
 ### lidar-drivers ###
 #####################
 
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: lidar-deployment
-#   labels:
-#     app: digital-twin-service
-#     node: lidar
-# spec:
-#   replicas: 1
-#   selector:
-#     matchLabels:
-#       node: lidar
-#   template:
-#     metadata:
-#       labels:
-#         node: lidar
-#     spec:
-#       containers:
-#       - name: lidar
-#         image: rplidar-lidar
-#         imagePullPolicy: IfNotPresent
-#         env:
-#         - name: ROS_MASTER_URI
-#           value: "http://192.168.40.4:11311"
-#         - name: ROS_IP
-#           value: "192.168.40.70"
-#         volumeMounts:
-#           - name: rplidar
-#             mountPath: /dev/rplidar
-#       hostNetwork: true
-#         securityContext:
-#           privileged: true
-#       volumes:
-#         - name: rplidar
-#           hostPath:
-#             path: /dev/rplidar
-#       nodeSelector:
-#         nodetype: robot
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lidar-deployment
+  labels:
+    app: digital-twin-service
+    node: lidar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: lidar
+  template:
+    metadata:
+      labels:
+        node: lidar
+    spec:
+      containers:
+      - name: lidar
+        image: rplidar-lidar
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://192.168.40.4:11311"
+        - name: ROS_IP
+          value: "192.168.40.70"
+        volumeMounts:
+          - name: rplidar
+            mountPath: /dev/rplidar
+        securityContext:
+          privileged: true
+      volumes:
+        - name: rplidar
+          hostPath:
+            path: /dev/rplidar
+      hostNetwork: true
+      nodeSelector:
+        nodetype: robot
 
-# ---
+---
 
 ######################
 ### go1-navigation ###

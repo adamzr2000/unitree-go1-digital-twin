@@ -29,7 +29,9 @@ services:
       ROS_MASTER_URI: "http://roscore-edge:11311"
       CAMERA_TYPE: "webcam"
       WEB_SERVER: "yes"
-      CONTROL_LOOP_RATE: "50"
+      CONTROL_LOOP_RATE: "100"
+      CMD_VEL: "go1_controller/cmd_vel"
+      STAMPED: "true"
     depends_on:
       - roscore-edge
     privileged: true

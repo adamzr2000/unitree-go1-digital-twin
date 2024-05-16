@@ -8,4 +8,4 @@ echo "Using ROS_IP: ${ROS_IP}"
 source /opt/ros/noetic/setup.bash
 source ~/catkin_ws/devel/setup.bash 
 
-rosrun rviz rviz -d /home/ubuntu/scripts/rviz_config/hector_slam.rviz
+rosrun rviz rviz -d /home/ubuntu/scripts/hector_slam.rviz

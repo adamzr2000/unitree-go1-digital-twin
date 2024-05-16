@@ -332,45 +332,6 @@ def create_digital_twin_app_instance(docker_image, instance_name, constrain):
             logging.info(f"{instance_name} instance created successfully.")
         except docker.errors.DockerException as e:
             logging.error(f"Failed to create {instance_name}: {e}")
-            
-
-def create_monitoring_instance(docker_image, instance_name, constrain):
-    """
-    Helper function to create a Docker container instance.
-    """
-    client = DOCKER_CLIENTS.get(constrain)
-    ros_ip = get_ros_ip(constrain)
-    if client:
-        # Set ROS_MASTER_URI 
-        ros_master_uri = ROS_MASTER_URI
-
-        # Environment variables
-        env_vars = {
-            "ROS_MASTER_URI": ros_master_uri
-        }
-
-        # Container entrypoint
-        command=['./start_app.sh']
-
-        ports = {
-            "5000/tcp": 5000
-        }
-
-        try:
-            client.containers.run(
-                image=docker_image,
-                hostname=instance_name,
-                name=instance_name,
-                entrypoint="bash",
-                command=command,
-                environment=env_vars,
-                network_mode='host',
-                # ports=ports,
-                detach=True,
-            )
-            logging.info(f"{instance_name} instance created successfully.")
-        except docker.errors.DockerException as e:
-            logging.error(f"Failed to create {instance_name}: {e}")
 
 # Main entry point of the application
 if __name__ == "__main__":

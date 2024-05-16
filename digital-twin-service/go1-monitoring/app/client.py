@@ -19,7 +19,11 @@ TOPIC_MESSAGE_MAP = {
     '/scan': 'sensor_msgs.msg.LaserScan',
     '/go1_controller/cmd_vel': 'geometry_msgs.msg.TwistStamped',
     '/go1_controller/odom': 'nav_msgs.msg.Odometry',
-    '/joint_states': 'sensor_msgs.msg.JointState'
+    '/joint_states': 'sensor_msgs.msg.JointState',
+    '/camera/color/image_raw': 'sensor_msgs.msg.Image',
+    '/camera/depth/image_raw': 'sensor_msgs.msg.Image',
+    '/camera/depth/points': 'sensor_msgs.msg.PointCloud2'
+
 }
 
 class JitterMonitor:

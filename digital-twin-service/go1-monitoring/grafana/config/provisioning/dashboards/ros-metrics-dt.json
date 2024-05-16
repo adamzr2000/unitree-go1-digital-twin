@@ -18,6 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
+  "id": 1,
   "links": [],
   "panels": [
     {
@@ -348,7 +349,10 @@
       "type": "table"
     },
     {
-      "datasource": {},
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -475,7 +479,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 13,
+        "w": 9,
         "x": 11,
         "y": 15
       },
@@ -508,8 +512,75 @@
           "refId": "A"
         }
       ],
-      "title": "Bandwith Table",
+      "title": "Message Size",
       "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "KBs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 4,
+        "x": 20,
+        "y": 15
+      },
+      "id": 9,
+      "options": {
+        "displayMode": "lcd",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "10.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"ros-metrics\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => r._measurement == \"bandwidth\")\n  |> filter(fn: (r) => r._field == \"average_bandwidth_kilobytes_s\")\n  |> group(columns: [\"topic\"])\n  |> keep(columns: [\"_value\", \"_time\", \"topic\"])",
+          "refId": "A"
+        }
+      ],
+      "title": "Data Rate",
+      "type": "bargauge"
     }
   ],
   "refresh": "auto",
@@ -526,6 +597,6 @@
   "timezone": "browser",
   "title": "Digital Twin ROS Application Metrics",
   "uid": "adlt1x5bqlatcb",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }

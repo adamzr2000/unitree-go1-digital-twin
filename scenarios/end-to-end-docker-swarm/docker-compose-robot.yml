@@ -31,7 +31,16 @@ services:
     devices:
       - "/dev/rplidar:/dev/rplidar"
     network_mode: digital-twin-service
+    privileged: true
 
-
+  # camera:
+  #   image: astra-camera:latest 
+  #   environment: *ros-config
+  #   container_name: camera
+  #   hostname: camera
+  #   devices:
+  #     - "/dev/astra:/dev/astra"
+  #   network_mode: digital-twin-service
+  #   privileged: true
 
 

@@ -188,7 +188,7 @@ spec:
         - name: WEB_SERVER
           value: "yes"
         - name: CONTROL_LOOP_RATE
-          value: "50"
+          value: "100"
         - name: CMD_VEL
           value: "go1_controller/cmd_vel"
         - name: STAMPED
@@ -882,7 +882,7 @@ spec:
         - name: DOCKER_INFLUXDB_INIT_ORG
           value: "desire6g"
         - name: DOCKER_INFLUXDB_INIT_BUCKET
-          value: "desire6g"
+          value: "ros-metrics"
         - name: DOCKER_INFLUXDB_INIT_RETENTION
           value: "1w"
         - name: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN

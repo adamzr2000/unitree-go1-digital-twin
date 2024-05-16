@@ -40,7 +40,7 @@ def deploy_post():
         
         create_sensor_instance('rplidar-lidar', 'lidar','robot', '/dev/rplidar:/dev/rplidar:rwm', False) 
 
-        # create_sensor_instance('d435i-camera', 'd435i-camera','robot', '/dev:/dev:rwm', False) 
+        # create_sensor_instance('astra-camera', 'camera','robot', '/dev/astra:/dev/astra', True) 
         
         create_virtual_instance('go1-navigation', 'go1-navigation', 'edge')
 
@@ -314,44 +314,6 @@ def create_digital_twin_app_instance(docker_image, instance_name, constrain):
                 ports=ports,
                 runtime="nvidia",
                 device_requests=[docker.types.DeviceRequest(count=-1, capabilities=[['gpu']])],
-                detach=True,
-            )
-            logging.info(f"{instance_name} instance created successfully.")
-        except docker.errors.DockerException as e:
-            logging.error(f"Failed to create {instance_name}: {e}")
-            
-
-def create_monitoring_instance(docker_image, instance_name, constrain):
-    """
-    Helper function to create a Docker container instance.
-    """
-    client = DOCKER_CLIENTS.get(constrain)
-    if client:
-        # Set ROS_MASTER_URI 
-        ros_master_uri = "http://roscore-edge:11311" 
-
-        # Environment variables
-        env_vars = {
-            "ROS_MASTER_URI": ros_master_uri
-        }
-
-        # Container entrypoint
-        command=['./start_app.sh']
-
-        ports = {
-            "5000/tcp": 5000
-        }
-
-        try:
-            client.containers.run(
-                image=docker_image,
-                hostname=instance_name,
-                name=instance_name,
-                entrypoint="bash",
-                command=command,
-                environment=env_vars,
-                network='digital-twin-service',
-                ports=ports,
                 detach=True,
             )
             logging.info(f"{instance_name} instance created successfully.")
