@@ -43,7 +43,9 @@ simulator.
  
  - `Lidar Drivers`: Provides the [RPLIDAR A3](https://www.slamtec.ai/product/slamtec-rplidar-a3/) drivers for mapping and navigation purposes (detailed info [here](./digital-twin-service/lidar-drivers/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
 
-  - `Go1 Navigation`: Provides algorithms for simultaneous localization and mapping (SLAM) that enable the creation of maps for indoor environments and facilitate autonomous navigation (detailed info [here](./digital-twin-service/go1-navigation/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
+ - `Camera Drivers`: Provides the [Depth Camera Astra S | Orbbec 3D](https://shop.orbbec3d.com/Astra-S) drivers (detailed info [here](./digital-twin-service/camera-drivers/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
+
+ - `Go1 Navigation`: Provides algorithms for simultaneous localization and mapping (SLAM) that enable the creation of maps for indoor environments and facilitate autonomous navigation (detailed info [here](./digital-twin-service/go1-navigation/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
 
  - `Rviz VNC`: Provides a VNC container with a ROS image, enabling visualization in [RViz](https://wiki.ros.org/rviz) of the SLAM capabilities. This showcases how the map of the environment is being created in real-time (detailed info [here](./digital-twin-service/rviz-vnc/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
 

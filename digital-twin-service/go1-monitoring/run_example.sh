@@ -92,14 +92,18 @@ echo 'Running go1 docker image.'
 
 docker run \
     -it \
-    --name go1-monitoring-server \
-    --hostname go1-monitoring-server \
+    --name go1-monitoring-client \
+    --hostname go1-monitoring-client \
     --rm \
     --net host \
     -e ROS_MASTER_URI="$ros_master_uri" \
     -e ROS_IP="$ros_ip" \
-    -e WEB_SERVER="yes" \
+    -e TOPICS="/scan /joint_states /go1_controller/odom" \
+    -e INFLUXDB_URL="http://localhost:8086" \
+    -e INFLUXDB_TOKEN="desire6g2024;" \
+    -e INFLUXDB_ORG="desire6g" \
+    -e INFLUXDB_BUCKET="ros-metrics" \
+    -e WINDOW_SIZE="50" \
     -v ${host_app_dir}:/home/go1/app \
     --privileged \
     go1-monitoring:latest 
-

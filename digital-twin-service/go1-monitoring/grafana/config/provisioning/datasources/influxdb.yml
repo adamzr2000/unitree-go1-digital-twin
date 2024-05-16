@@ -1,0 +1,17 @@
+# grafana/config/provisioning/datasources/influxdb.yml
+apiVersion: 1
+
+datasources:
+- name: InfluxDB
+  type: influxdb
+  access: proxy
+  orgId: 1
+  url: http://influxdb:8086
+  jsonData:
+    defaultBucket: "ros-metrics"
+    organization: "desire6g"
+    version: "Flux"
+  secureJsonData:
+    token: "desire6g2024;"
+  isDefault: true
+  editable: true

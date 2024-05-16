@@ -1,27 +1,21 @@
 #!/bin/bash
 
-# Read the WEB_SERVER environment variable
-web_server=${WEB_SERVER:-"no"}
+influxdb_url=${INFLUXDB_URL:-"http://192.168.40.4:8086"}
+influxdb_token=${INFLUXDB_TOKEN:-"desire6g2024;"}
+influxdb_org=${INFLUXDB_ORG:-"desire6g"}
+influxdb_bucket=${INFLUXDB_BUCKET:-"ros-metrics"}
+window_size=${WINDOW_SIZE:-"50"}
+topics=${TOPICS:- }
 
-if [ "$web_server" == "yes" ]; then
-    # If WEB_SERVER is "yes", run the Flask server
-    export FLASK_APP=server.py
-    export FLASK_ENV=development
-    flask run --host=0.0.0.0 --port=5000
+echo "influxdb_url: $influxdb_url"
+echo "influxdb_token: $influxdb_token"
+echo "influxdb_org: $influxdb_org"
+echo "influxdb_bucket: $influxdb_bucket"
+echo "window_size: $window_size"
+echo "topics: $topics"
 
-else
-    # If WEB_SERVER is "no", run the client code
-    server_url=${SERVER_URL:-"http://127.0.0.1:5000"}
-    window_size=${WINDOW_SIZE:-"50"}
-    topics=${TOPICS:-"/scan /joint_states /go1_controller/odom"}
+# Convert the topics string into an array
+IFS=' ' read -r -a topics_array <<< "$topics"
 
-    echo "server_url: $server_url"
-    echo "window_size: $window_size"
-    echo "topics: $topics"
-
-    # Convert the topics string into an array
-    IFS=' ' read -r -a topics_array <<< "$topics"
-
-    # Use "${topics_array[@]}" to expand the topics into separate arguments
-    python3 client.py "${topics_array[@]}" --server_url $server_url --window_size $window_size
-fi
+# Use "${topics_array[@]}" to expand the topics into separate arguments
+python3 client.py "${topics_array[@]}" --influxdb_url $influxdb_url --influxdb_token $influxdb_token --influxdb_org $influxdb_org --influxdb_bucket $influxdb_bucket --window_size $window_size

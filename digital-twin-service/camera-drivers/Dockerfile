@@ -73,4 +73,4 @@ COPY rules/* /etc/udev/rules.d/
 RUN chmod +755 /etc/udev/rules.d/56-orbbec-usb.rules
 
 USER astra
-# CMD "./wait-for-ros-nodes.sh"
+CMD "./wait-for-ros-nodes.sh"

@@ -23,10 +23,7 @@ SHELL [ "/bin/bash", "-c" ]
 
 # Install essential tools and clean up after to reduce image size
 RUN apt-get update && apt-get install -y \
-    git \
-    wget \
     screen \
-    vim \
     iperf3 \
     iproute2 \
     iputils-ping \
@@ -37,7 +34,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
-RUN pip3 install flask_socketio flask requests
+RUN pip3 install influxdb-client
 
 # Switch to the newly created user for better security (avoid using root)
 USER go1

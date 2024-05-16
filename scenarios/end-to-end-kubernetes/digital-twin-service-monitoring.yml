@@ -847,40 +847,48 @@ spec:
 ---
 
 
-#############################
-### go1-monitoring-server ###
-#############################
+################
+### influxdb ###
+################
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: monitoring-server-deployment
+  name: influxdb-deployment
   labels:
     app: digital-twin-service
-    node: monitoring-server
+    node: influxdb
 spec:
   replicas: 1
   selector:
     matchLabels:
-      node: monitoring-server
+      node: influxdb
   template:
     metadata:
       labels:
-        node: monitoring-server
+        node: influxdb
     spec:
       containers:
-      - name: monitoring-server
-        image: go1-monitoring
+      - name: influxdb
+        image: influxdb:2
         imagePullPolicy: IfNotPresent
         env:
-        - name: ROS_MASTER_URI
-          value: "http://roscore-edge:11311"
-        - name: ROS_HOSTNAME
-          value: "monitoring-server"
-        - name: WEB_SERVER
-          value: "yes"
+        - name: DOCKER_INFLUXDB_INIT_MODE
+          value: "setup"
+        - name: DOCKER_INFLUXDB_INIT_USERNAME
+          value: "desire6g"
+        - name: DOCKER_INFLUXDB_INIT_PASSWORD
+          value: "desire6g2024;"
+        - name: DOCKER_INFLUXDB_INIT_ORG
+          value: "desire6g"
+        - name: DOCKER_INFLUXDB_INIT_BUCKET
+          value: "desire6g"
+        - name: DOCKER_INFLUXDB_INIT_RETENTION
+          value: "1w"
+        - name: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
+          value: "desire6g2024;"
         ports:
-        - containerPort: 5000
+        - containerPort: 8086
           protocol: TCP
         securityContext:
             privileged: true
@@ -890,18 +898,18 @@ spec:
 ---
 
 ### Headless service declaration.
-### This is required to map to app "monitoring-server" so that other pods can DNS its IP address dynamically.
+### This is required to map to app "influxdb" so that other pods can DNS its IP address dynamically.
 apiVersion: v1
 kind: Service
 metadata:
-  name: monitoring-server
+  name: influxdb
   labels:
     app: digital-twin-service
-    node: monitoring-server
+    node: influxdb
 spec:
   clusterIP: None
   selector:
-    node: monitoring-server
+    node: influxdb
 
 ---
 
@@ -909,58 +917,151 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: monitoring-server-frontend
+  name: influxdb-frontend
   labels:
     app: digital-twin-service
-    node: monitoring-server
+    node: influxdb
 spec:
   type: LoadBalancer
   ports:
-  - name: monitoring-server-frontend
+  - name: influxdb-frontend
     protocol: TCP
-    port: 5000
-    targetPort: 5000
+    port: 8086
+    targetPort: 8086
   selector:
-    node: monitoring-server
+    node: influxdb
 
 ---
 
-##################################
-### go1-monitoring-client-edge ###
-##################################
+###############
+### grafana ###
+###############
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: monitoring-client-edge-deployment
+  name: grafana-deployment
   labels:
     app: digital-twin-service
-    node: monitoring-client-edge
+    node: grafana
 spec:
   replicas: 1
   selector:
     matchLabels:
-      node: monitoring-client-edge
+      node: grafana
   template:
     metadata:
       labels:
-        node: monitoring-client-edge
+        node: grafana
     spec:
       containers:
-      - name: monitoring-client-edge
+      - name: grafana
+        image: grafana/grafana:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: GF_SECURITY_ADMIN_USER
+          value: "desire6g"
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          value: "desire6g2024;"
+        volumeMounts:
+        - name: datasources
+          mountPath: /etc/grafana/provisioning/datasources
+        - name: dashboards
+          mountPath: /etc/grafana/provisioning/dashboards
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        securityContext:
+            privileged: true
+      volumes:
+      - name: datasources
+        hostPath:
+          path: /home/desire6g/unitree-go1-digital-twin/digital-twin-service/go1-monitoring/grafana/config/provisioning/datasources
+      - name: dashboards
+        hostPath:
+          path: /home/desire6g/unitree-go1-digital-twin/digital-twin-service/go1-monitoring/grafana/config/provisioning/dashboards
+      nodeSelector:
+        nodetype: edge
+
+---
+
+### Headless service declaration.
+### This is required to map to app "grafana" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  labels:
+    app: digital-twin-service
+    node: grafana
+spec:
+  clusterIP: None
+  selector:
+    node: grafana
+
+---
+
+### LoadBalancer service declaration.
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-frontend
+  labels:
+    app: digital-twin-service
+    node: grafana
+spec:
+  type: LoadBalancer
+  ports:
+  - name: grafana-frontend
+    protocol: TCP
+    port: 3000
+    targetPort: 3000
+  selector:
+    node: grafana
+
+---
+
+
+###########################
+### go1-monitoring-edge ###
+###########################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoring-edge-deployment
+  labels:
+    app: digital-twin-service
+    node: monitoring-edge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: monitoring-edge
+  template:
+    metadata:
+      labels:
+        node: monitoring-edge
+    spec:
+      containers:
+      - name: monitoring-edge
         image: go1-monitoring
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
           value: "http://roscore-edge:11311"
         - name: ROS_HOSTNAME
-          value: "monitoring-client-edge"
-        - name: WEB_SERVER
-          value: "no"
-        - name: SERVER_URL
-          value: "http://monitoring-server:5000"
+          value: "monitoring-edge"
         - name: TOPICS
           value: "/scan /joint_states /go1_controller/odom"
+        - name: INFLUXDB_URL
+          value: "http://influxdb:8086"
+        - name: INFLUXDB_TOKEN
+          value: "desire6g2024;"
+        - name: INFLUXDB_ORG
+          value: "desire6g"
+        - name: INFLUXDB_BUCKET
+          value: "ros-metrics"
         - name: WINDOW_SIZE
           value: "50"
         securityContext:
@@ -971,57 +1072,61 @@ spec:
 ---
 
 ### Headless service declaration.
-### This is required to map to app "monitoring-client-edge" so that other pods can DNS its IP address dynamically.
+### This is required to map to app "monitoring-edge" so that other pods can DNS its IP address dynamically.
 apiVersion: v1
 kind: Service
 metadata:
-  name: monitoring-client-edge
+  name: monitoring-edge
   labels:
     app: digital-twin-service
-    node: monitoring-client-edge
+    node: monitoring-edge
 spec:
   clusterIP: None
   selector:
-    node: monitoring-client-edge
+    node: monitoring-edge
 
 ---
 
-###################################
-### go1-monitoring-client-robot ###
-###################################
+############################
+### go1-monitoring-robot ###
+############################
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: monitoring-client-robot-deployment
+  name: monitoring-robot-deployment
   labels:
     app: digital-twin-service
-    node: monitoring-client-robot
+    node: monitoring-robot
 spec:
   replicas: 1
   selector:
     matchLabels:
-      node: monitoring-client-robot
+      node: monitoring-robot
   template:
     metadata:
       labels:
-        node: monitoring-client-robot
+        node: monitoring-robot
     spec:
       containers:
-      - name: monitoring-client-robot
+      - name: monitoring-robot
         image: go1-monitoring
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
           value: "http://roscore-edge:11311"
         - name: ROS_HOSTNAME
-          value: "monitoring-client-robot"
-        - name: WEB_SERVER
-          value: "no"
-        - name: SERVER_URL
-          value: "http://monitoring-server:5000"
+          value: "monitoring-robot"
         - name: TOPICS
           value: "/go1_controller/cmd_vel"
+        - name: INFLUXDB_URL
+          value: "http://influxdb:8086"
+        - name: INFLUXDB_TOKEN
+          value: "desire6g2024;"
+        - name: INFLUXDB_ORG
+          value: "desire6g"
+        - name: INFLUXDB_BUCKET
+          value: "ros-metrics"
         - name: WINDOW_SIZE
           value: "50"
         securityContext:
@@ -1032,16 +1137,16 @@ spec:
 ---
 
 ### Headless service declaration.
-### This is required to map to app "monitoring-client-robot" so that other pods can DNS its IP address dynamically.
+### This is required to map to app "monitoring-robot" so that other pods can DNS its IP address dynamically.
 apiVersion: v1
 kind: Service
 metadata:
-  name: monitoring-client-robot
+  name: monitoring-robot
   labels:
     app: digital-twin-service
-    node: monitoring-client-robot
+    node: monitoring-robot
 spec:
   clusterIP: None
   selector:
-    node: monitoring-client-robot
+    node: monitoring-robot
 

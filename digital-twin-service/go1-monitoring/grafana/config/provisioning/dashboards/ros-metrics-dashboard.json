@@ -1,0 +1,531 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {},
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 11,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "maxHeight": 600,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "cdlrxbdcxe7swe"
+          },
+          "query": "from(bucket: \"ros-metrics\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => r._measurement == \"delay\")\n  |> filter(fn: (r) => r._field == \"average_delay_ms\")\n  |> group(columns: [\"topic\"])\n  |> keep(columns: [\"_value\", \"_time\", \"topic\"])",
+          "refId": "A"
+        }
+      ],
+      "title": "Delay",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {},
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 13,
+        "x": 11,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "cellHeight": "md",
+        "footer": {
+          "countRows": false,
+          "enablePagination": false,
+          "fields": [],
+          "reducer": [],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "average_delay_ms {_start=\"2024-05-15 08:19:13.742270545 +0000 UTC\", _stop=\"2024-05-16 08:19:13.742270545 +0000 UTC\", topic=\"/go1_controller/odom\"}"
+          }
+        ]
+      },
+      "pluginVersion": "10.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "cdlrxbdcxe7swe"
+          },
+          "query": "from(bucket: \"ros-metrics\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => r._measurement == \"delay\")\n  |> filter(fn: (r) => \n      r._field == \"average_delay_ms\" or\n      r._field == \"min_delay_ms\" or\n      r._field == \"max_delay_ms\" or\n      r._field == \"std:_dev_delay_ms\"\n  )\n  |> group(columns: [\"topic\", \"_field\"])\n  |> last()\n  |> group() // Regroup to reset group keys after last\n  |> map(fn: (r) => ({\n      r with \n      _field: \n        if r._field == \"average_delay_ms\" then \"avg\"\n        else if r._field == \"min_delay_ms\" then \"min\"\n        else if r._field == \"max_delay_ms\" then \"max\"\n        else if r._field == \"std:_dev_delay_ms\" then \"std_dev\"\n        else r._field\n  }))\n  |> pivot(rowKey: [\"topic\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Delay Table",
+      "type": "table"
+    },
+    {
+      "datasource": {},
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 11,
+        "x": 0,
+        "y": 7
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "maxHeight": 600,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "cdlrxbdcxe7swe"
+          },
+          "query": "from(bucket: \"ros-metrics\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => r._measurement == \"jitter\")\n  |> filter(fn: (r) => r._field == \"jitter_ms\")\n  |> group(columns: [\"topic\"])\n  |> keep(columns: [\"_value\", \"_time\", \"topic\"])",
+          "refId": "A"
+        }
+      ],
+      "title": "Jitter",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {},
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 13,
+        "x": 11,
+        "y": 7
+      },
+      "id": 6,
+      "options": {
+        "cellHeight": "md",
+        "footer": {
+          "countRows": false,
+          "enablePagination": false,
+          "fields": [],
+          "reducer": [],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "average_delay_ms {_start=\"2024-05-15 08:19:13.742270545 +0000 UTC\", _stop=\"2024-05-16 08:19:13.742270545 +0000 UTC\", topic=\"/go1_controller/odom\"}"
+          }
+        ]
+      },
+      "pluginVersion": "10.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "cdlrxbdcxe7swe"
+          },
+          "query": "from(bucket: \"ros-metrics\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => r._measurement == \"jitter\")\n  |> filter(fn: (r) => \n      r._field == \"jitter_ms\" \n  )\n  |> group(columns: [\"topic\", \"_field\"])\n  |> last()\n  |> group() // Regroup to reset group keys after last\n  |> map(fn: (r) => ({\n      r with \n      _field: \n        if r._field == \"jitter_ms\" then \"avg\"\n        else r._field\n  }))\n  |> pivot(rowKey: [\"topic\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Jitter Table",
+      "type": "table"
+    },
+    {
+      "datasource": {},
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "KBs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 11,
+        "x": 0,
+        "y": 15
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "maxHeight": 600,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "cdlrxbdcxe7swe"
+          },
+          "query": "from(bucket: \"ros-metrics\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => r._measurement == \"bandwidth\")\n  |> filter(fn: (r) => r._field == \"average_bandwidth_kilobytes_s\")\n  |> group(columns: [\"topic\"])\n  |> keep(columns: [\"_value\", \"_time\", \"topic\"])",
+          "refId": "A"
+        }
+      ],
+      "title": "Bandwith",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {},
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "deckbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 13,
+        "x": 11,
+        "y": 15
+      },
+      "id": 7,
+      "options": {
+        "cellHeight": "md",
+        "footer": {
+          "countRows": false,
+          "enablePagination": false,
+          "fields": [],
+          "reducer": [],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "average_delay_ms {_start=\"2024-05-15 08:19:13.742270545 +0000 UTC\", _stop=\"2024-05-16 08:19:13.742270545 +0000 UTC\", topic=\"/go1_controller/odom\"}"
+          }
+        ]
+      },
+      "pluginVersion": "10.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "cdlrxbdcxe7swe"
+          },
+          "query": "from(bucket: \"ros-metrics\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => r._measurement == \"bandwidth\")\n  |> filter(fn: (r) => \n      r._field == \"average_message_size_bytes\" or\n      r._field == \"min_message_size_bytes\" or\n      r._field == \"max_message_size_bytes\" or\n      r._field == \"average_message_size_bytes\"\n  )\n  |> group(columns: [\"topic\", \"_field\"])\n  |> last()\n  |> group() // Regroup to reset group keys after last\n  |> map(fn: (r) => ({\n      r with \n      _field: \n        if r._field == \"a\" then \"avg\"\n        else if r._field == \"average_message_size_bytes\" then \"avg\"\n        else if r._field == \"min_message_size_bytes\" then \"min\"\n        else if r._field == \"max_message_size_bytes\" then \"max\"\n        else r._field\n  }))\n  |> pivot(rowKey: [\"topic\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Bandwith Table",
+      "type": "table"
+    }
+  ],
+  "refresh": "auto",
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Digital Twin ROS Application Metrics",
+  "uid": "adlt1x5bqlatcb",
+  "version": 2,
+  "weekStart": ""
+}
