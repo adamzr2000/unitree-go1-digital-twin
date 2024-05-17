@@ -31,7 +31,7 @@ simulator.
 
 ## Getting Started
  ### Digital Twin service description
- The Digital Twin [service](./digital-twin-service/) is composed of 7 different modules:
+ The Digital Twin [service](./digital-twin-service/) is composed of 8 different modules:
  
  - `ROS Master`: The ROS Master provides naming and registration services to the rest of the modules in the Digital Twin service (detailed info [here](./digital-twin-service/ros-master/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
  

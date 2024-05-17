@@ -26,7 +26,7 @@ This is the multi-host setup:
 
 - **Agent Node (ROBOT)**: 
   - IP: `192.168.40.70`
-  - Pods/Services: `lidar`, `go1-base`
+  - Pods/Services: `lidar`, `camera`, `go1-base`
 
 Here is a diagram that represents visually the architecture of the scenario:
 
