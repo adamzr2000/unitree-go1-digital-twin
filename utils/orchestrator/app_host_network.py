@@ -48,6 +48,8 @@ def deploy_post():
         create_rviz_vnc_instance('go1-rviz-vnc', 'rviz-vnc', 'edge', {'80/tcp': 6080})
         
         create_sensor_instance('rplidar-lidar', 'lidar','robot', '/dev/rplidar:/dev/rplidar:rwm', False) 
+
+        # create_sensor_instance('astra-camera', 'camera','robot', '/dev/astra:/dev/astra', True) 
         
         create_virtual_instance('go1-navigation', 'go1-navigation', 'edge')
 

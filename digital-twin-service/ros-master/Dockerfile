@@ -1,5 +1,5 @@
 # Specify the ROS distribution as a build argument
-ARG ROS_DISTRO=melodic
+ARG ROS_DISTRO=noetic
 
 # Use an official ROS base image 
 FROM ros:${ROS_DISTRO}
@@ -19,9 +19,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Use bash shell for subsequent commands
 SHELL [ "/bin/bash", "-c" ]
-
-# Update the GPG key for ROS melodic repository to avoid key expiration issues
-# RUN apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-keys AD19BAB3CBF125EA
 
 # Install essential tools and clean up after to reduce image size
 RUN apt-get update && apt-get install -y \
@@ -47,5 +44,4 @@ RUN chmod +755 *.sh
 
 USER go1
 
-CMD "roscore"
-#CMD "./start_roscore.sh"
+CMD bash -c "source /opt/ros/noetic/setup.bash && roscore"

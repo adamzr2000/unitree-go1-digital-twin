@@ -25,10 +25,6 @@ spec:
         image: go1-roscore
         imagePullPolicy: IfNotPresent
         env:
-        - name: ROS_MASTER_URI
-          value: "http://roscore-edge:11311"
-        - name: ROS_HOSTNAME
-          value: "roscore-edge"
         - name: ENABLE_STATISTICS
           value: "false"
         ports:
@@ -309,61 +305,61 @@ spec:
 ### camera-drivers ###
 ######################
 
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: camera-deployment
-  labels:
-    app: digital-twin-service
-    node: camera
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      node: camera
-  template:
-    metadata:
-      labels:
-        node: camera
-    spec:
-      containers:
-      - name: camera
-        image: astra-camera
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: ROS_MASTER_URI
-          value: "http://roscore-edge:11311"
-        - name: ROS_HOSTNAME
-          value: "camera"
-        volumeMounts:
-          - name: camera
-            mountPath: /dev/astra
-        securityContext:
-          privileged: true
-      volumes:
-        - name: camera
-          hostPath:
-            path: /dev/astra
-      nodeSelector:
-        nodetype: robot
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: camera-deployment
+#   labels:
+#     app: digital-twin-service
+#     node: camera
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       node: camera
+#   template:
+#     metadata:
+#       labels:
+#         node: camera
+#     spec:
+#       containers:
+#       - name: camera
+#         image: astra-camera
+#         imagePullPolicy: IfNotPresent
+#         env:
+#         - name: ROS_MASTER_URI
+#           value: "http://roscore-edge:11311"
+#         - name: ROS_HOSTNAME
+#           value: "camera"
+#         volumeMounts:
+#           - name: camera
+#             mountPath: /dev/astra
+#         securityContext:
+#           privileged: true
+#       volumes:
+#         - name: camera
+#           hostPath:
+#             path: /dev/astra
+#       nodeSelector:
+#         nodetype: robot
 
----
+# ---
 
-### Headless service declaration.
-### This is required to map to app "camera" so that other pods can DNS its IP address dynamically.
-apiVersion: v1
-kind: Service
-metadata:
-  name: camera
-  labels:
-    app: digital-twin-service
-    node: camera
-spec:
-  clusterIP: None
-  selector:
-    node: camera
+# ### Headless service declaration.
+# ### This is required to map to app "camera" so that other pods can DNS its IP address dynamically.
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: camera
+#   labels:
+#     app: digital-twin-service
+#     node: camera
+# spec:
+#   clusterIP: None
+#   selector:
+#     node: camera
 
----
+# ---
 
 ######################
 ### go1-navigation ###
@@ -974,24 +970,24 @@ spec:
 ---
 
 ### LoadBalancer service declaration.
-apiVersion: v1
-kind: Service
-metadata:
-  name: influxdb-frontend
-  labels:
-    app: digital-twin-service
-    node: influxdb
-spec:
-  type: LoadBalancer
-  ports:
-  - name: influxdb-frontend
-    protocol: TCP
-    port: 8086
-    targetPort: 8086
-  selector:
-    node: influxdb
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: influxdb-frontend
+#   labels:
+#     app: digital-twin-service
+#     node: influxdb
+# spec:
+#   type: LoadBalancer
+#   ports:
+#   - name: influxdb-frontend
+#     protocol: TCP
+#     port: 8086
+#     targetPort: 8086
+#   selector:
+#     node: influxdb
 
----
+# ---
 
 ###############
 ### grafana ###
@@ -1074,7 +1070,8 @@ spec:
   ports:
   - name: grafana-frontend
     protocol: TCP
-    port: 3000
+    # port: 3000
+    port: 8889
     targetPort: 3000
   selector:
     node: grafana
@@ -1114,6 +1111,7 @@ spec:
           value: "monitoring-edge"
         - name: TOPICS
           value: "/scan /joint_states /go1_controller/odom"
+          # value: /scan /joint_states /go1_controller/odom /camera/color/image_raw /camera/depth/points
         - name: INFLUXDB_URL
           value: "http://influxdb:8086"
         - name: INFLUXDB_TOKEN
