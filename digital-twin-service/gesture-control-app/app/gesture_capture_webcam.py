@@ -20,6 +20,8 @@ if not os.path.exists(path_to_directory):
     os.makedirs(path_to_directory)
 file_path = os.path.join(path_to_directory, 'command.txt')
 
+# Create a resizable window for displaying the camera output
+cv2.namedWindow('MediaPipe Hands', cv2.WINDOW_NORMAL)
 
 # Configuring MediaPipe Hands
 with mp_hands.Hands(
@@ -158,4 +160,4 @@ with mp_hands.Hands(
 
 # Releasing the webcam and closing all OpenCV windows
 cap.release()
-
+cv2.destroyAllWindows()

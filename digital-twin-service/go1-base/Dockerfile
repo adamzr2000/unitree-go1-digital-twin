@@ -29,6 +29,7 @@ SHELL [ "/bin/bash", "-c" ]
 RUN apt-get update && apt-get install -y \
     git \
     wget \
+    ros-${ROS_DISTRO}-robot-localization \
     python3-catkin-tools 
 
 # Switch to the newly created user for better security (avoid using root)

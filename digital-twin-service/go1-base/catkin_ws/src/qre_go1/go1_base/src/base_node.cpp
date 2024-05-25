@@ -9,6 +9,13 @@ int main(int argc, char *argv[]) {
     Base* base_driver;
     UT::LoopFunc* control_loop;
     UT::InitEnvironment();
+
+    int state_loop_rate;
+    p_nh.param<int>("state_loop_rate", state_loop_rate, 50);  // Retrieve state_loop_rate parameter, default is 50Hz ~ 20ms
+
+    // Debug output for state_loop_rate
+    ROS_INFO("state_loop_rate parameter value: %d", state_loop_rate);
+
     if (argc >= 2) {
         if (strcmp(argv[1], "high_level") == 0) {
             std::cout << "Working mode is set to: " << argv[1] << std::endl;
@@ -40,7 +47,7 @@ int main(int argc, char *argv[]) {
     comm_bus_publisher.start();
     comm_bus_subscriber.start();
     control_loop->start();
-    ros::Rate loop_rate(50);
+    ros::Rate loop_rate(state_loop_rate);  // Use the retrieved state_loop_rate parameter
     while (ros::ok()) {
         base_driver->publishStateMessages();
         ros::spinOnce();

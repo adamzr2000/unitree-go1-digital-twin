@@ -30,8 +30,12 @@ if ! validate_ip "$target_ip"; then
     target_ip="192.168.123.161" # Default IP if TARGET_IP has an invalid format
 fi
 
+# Read the state_loop_rate address from an environment variable
+state_loop_rate=${STATE_LOOP_RATE:-"50"} # Default STATE_LOOP_RATE to 50Hz ~ 20ms
+
 # Debug: Echo the target_ip to ensure it's being set correctly
 echo "Using target_ip: $target_ip"
+echo "Using state_loop_rate: $state_loop_rate"
 
 # Launch with the selected or entered target IP address
-roslaunch go1_bringup bringup.launch target_ip:=$target_ip --wait
+roslaunch go1_bringup bringup.launch target_ip:=$target_ip state_loop_rate:=$state_loop_rate --wait

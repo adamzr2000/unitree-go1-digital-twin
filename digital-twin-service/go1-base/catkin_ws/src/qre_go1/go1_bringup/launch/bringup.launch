@@ -3,10 +3,12 @@
 
   <!-- Define the target_ip argument -->
   <arg name="target_ip" default="10.5.98.70"/> <!-- Default value, can be overridden -->
+  <arg name="state_loop_rate" default="50"/> <!-- Default value is set to 50Hz ~ 20ms -->
 
-    <!-- Pass the target_ip argument to base.launch -->
+    <!-- Pass the target_ip and state_loop_rate arguments to base.launch -->
   <include file="$(find go1_base)/launch/base.launch">
     <arg name="target_ip" value="$(arg target_ip)"/>
+    <arg name="state_loop_rate" value="$(arg state_loop_rate)"/>
   </include>
   <include file="$(find go1_description)/launch/description.launch"/>
   <!-- <include file="$(find go1_control)/launch/teleop.launch"/> -->

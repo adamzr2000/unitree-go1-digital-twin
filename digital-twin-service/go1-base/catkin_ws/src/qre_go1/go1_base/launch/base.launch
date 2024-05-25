@@ -4,9 +4,11 @@
     <arg name="target_port"  default="8082" />            <!-- Target Port for high level mode: 8082, low level mode: 8007 --> 
     <arg name="local_port"   default="8090" />            <!-- Local  Port for high level mode: 8090, low level mode: 8090 --> 
     <arg name="working_mode" default="high_level" />      <!-- Only supported: high_level, low_level-->
+    <arg name="state_loop_rate" default="50"/>            <!-- Default value is set to 50Hz ~ 20ms -->
     <node pkg="go1_base" type="base_node" name="go1_controller" args="$(arg working_mode)" output="screen" >
         <param name="target_ip"   type="str" value="$(arg target_ip)" />
         <param name="target_port" type="int" value="$(arg target_port)" />
         <param name="local_port"  type="int" value="$(arg local_port)" /> 
+        <param name="state_loop_rate" value="$(arg state_loop_rate)"/> 
     </node>
 </launch>

@@ -29,22 +29,17 @@ def deploy_post():
     logging.info("DEPLOYING SERVICE")
     try:
         create_virtual_instance('go1-roscore', 'roscore-edge', 'edge', None, None, 'ENABLE_STATISTICS=true')
-
-        # create_digital_twin_app_instance('isaac-sim:2023.1.0-ubuntu22.04','digital-twin-app','edge')
-
-        # create_gesture_control_app_instance('go1-gesture-control','gesture-control-app','edge')
-
+        create_digital_twin_app_instance('isaac-sim:2023.1.0-ubuntu22.04','digital-twin-app','edge')
+        create_gesture_control_app_instance('go1-gesture-control','gesture-control-app','edge')
         create_virtual_instance('go1-base', 'go1-base', 'robot', 'TARGET_IP=192.168.123.161', {'8082/udp': 8082, '8090/udp': 8090, '8091/udp': 8091, '8007/udp': 8007, '8080/tcp': 8080, '8081/tcp': 8081})
-        
-        # create_rviz_vnc_instance('go1-rviz-vnc', 'rviz-vnc', 'edge', {'80/tcp': 6080})
-        
-        # create_sensor_instance('rplidar-lidar', 'lidar','robot', '/dev/rplidar:/dev/rplidar:rwm', False) 
-
-        # create_sensor_instance('astra-camera', 'camera','robot', '/dev/astra:/dev/astra', True) 
-        
-        # create_virtual_instance('go1-navigation', 'go1-navigation', 'edge')
-
-        
+        create_rviz_vnc_instance('go1-rviz-vnc', 'rviz-vnc', 'edge', {'80/tcp': 6080})
+        create_sensor_instance('rplidar-lidar', 'lidar','robot', '/dev/rplidar:/dev/rplidar:rwm', False) 
+        create_sensor_instance('astra-camera', 'camera','robot', '/dev/astra:/dev/astra', True) 
+        create_virtual_instance('go1-navigation', 'go1-navigation', 'edge')
+        create_influxdb_instance('influxdb:2', 'influxdb', 'edge')  
+        create_grafana_instance('grafana/grafana:latest', 'grafana', 'edge')
+        create_monitoring_instance("go1-monitoring", "go1-monitoring-edge", "edge", topics='/scan /joint_states /go1_controller/odom', influxdb_url="http://influxdb:8086", influxdb_token="desire6g2024;", influxdb_org="desire6g", influxdb_bucket="ros-metrics", window_size=50)
+        create_monitoring_instance("go1-monitoring", "go1-monitoring-robot", "robot", topics='/go1_controller/cmd_vel', influxdb_url="http://influxdb:8086", influxdb_token="desire6g2024;", influxdb_org="desire6g", influxdb_bucket="ros-metrics", window_size=50)
         return jsonify({'success': True}), 200
     except Exception as e:
         logging.error(f"Deployment failed: {e}")
@@ -319,6 +314,123 @@ def create_digital_twin_app_instance(docker_image, instance_name, constrain):
             logging.info(f"{instance_name} instance created successfully.")
         except docker.errors.DockerException as e:
             logging.error(f"Failed to create {instance_name}: {e}")
+
+
+def create_influxdb_instance(docker_image, instance_name, constrain):
+    """
+    Helper function to create a Docker container for gesture control app GUI instance.
+    """
+    client = DOCKER_CLIENTS.get(constrain)
+    if client:
+        env_vars = {
+            "DOCKER_INFLUXDB_INIT_MODE": "setup",
+            "DOCKER_INFLUXDB_INIT_USERNAME": "desire6g", 
+            "DOCKER_INFLUXDB_INIT_PASSWORD": "desire6g2024;",
+            "DOCKER_INFLUXDB_INIT_ORG": "desire6g", 
+            "DOCKER_INFLUXDB_INIT_BUCKET": "ros-metrics", 
+            "DOCKER_INFLUXDB_INIT_RETENTION": "1w",
+            "DOCKER_INFLUXDB_INIT_ADMIN_TOKEN": "desire6g2024;"
+        }
+
+        # Ports to expose and map for the Flask app
+        ports = {
+            "8086/tcp": 8086,
+        }
+
+        try:
+            client.containers.run(
+                image=docker_image,
+                name=instance_name,
+                network='digital-twin-service',
+                ports=ports,
+                environment=env_vars,
+                detach=True
+            )
+            logging.info(f"{instance_name} instance created successfully.")
+        except docker.errors.DockerException as e:
+            logging.error(f"Failed to create {instance_name}: {e}")
+
+def create_grafana_instance(docker_image, instance_name, constrain):
+    """
+    Helper function to create a Docker container for gesture control app GUI instance.
+    """
+    client = DOCKER_CLIENTS.get(constrain)
+    if client:
+        env_vars = {
+            "GF_SECURITY_ADMIN_USER": "desire6g", 
+            "GF_SECURITY_ADMIN_PASSWORD": "desire6g2024;"
+        }
+
+        # Ports to expose and map for the Flask app
+        ports = {
+            "3000/tcp": 3000,
+        }
+
+        relative_path_dashboards = "../../digital-twin-service/go1-monitoring/grafana/config/provisioning/dashboards"
+        host_dir_grafana_dashboards = os.path.abspath(os.path.join(os.getcwd(), relative_path_dashboards))
+
+        relative_path_datasources = "../../digital-twin-service/go1-monitoring/grafana/config/provisioning/datasources"
+        host_dir_grafana_datasources = os.path.abspath(os.path.join(os.getcwd(), relative_path_datasources))
+
+
+        # Volume mappings
+        volumes = {
+            host_dir_grafana_dashboards: {"bind": "/etc/grafana/provisioning/dashboards"},
+            host_dir_grafana_datasources: {"bind": "/etc/grafana/provisioning/datasources"},
+        }
+
+        try:
+            client.containers.run(
+                image=docker_image,
+                name=instance_name,
+                network='digital-twin-service',
+                ports=ports,
+                environment=env_vars,
+                volumes=volumes,
+                detach=True
+            )
+            logging.info(f"{instance_name} instance created successfully.")
+        except docker.errors.DockerException as e:
+            logging.error(f"Failed to create {instance_name}: {e}")
+
+
+def create_monitoring_instance(docker_image, instance_name, constrain, topics, influxdb_url="http://influxdb:8086", influxdb_token="desire6g2024;", influxdb_org="desire6g", influxdb_bucket="ros-metrics", window_size=50):
+    """
+    Helper function to create a Docker container instance.
+    """
+    client = DOCKER_CLIENTS.get(constrain)
+    if client:
+        # Set ROS_MASTER_URI 
+        ros_master_uri = "http://roscore-edge:11311" 
+
+        # Environment variables
+        env_vars = {
+            "ROS_MASTER_URI": ros_master_uri,
+            "INFLUXDB_URL": influxdb_url,
+            "INFLUXDB_TOKEN": influxdb_token,
+            "INFLUXDB_ORG": influxdb_org,
+            "INFLUXDB_BUCKET": influxdb_bucket,
+            "WINDOW_SIZE": window_size,
+            "TOPICS": topics
+        }
+
+        container_kwargs = {
+            "image": docker_image,
+            "hostname": instance_name,
+            "name": instance_name,
+            "environment": env_vars,
+            "network": 'digital-twin-service',
+            "detach": True
+        }
+
+        try:
+            client.containers.run(**container_kwargs)
+            logging.info(f"{instance_name} instance created successfully.")
+        except docker.errors.DockerException as e:
+            logging.error(f"Failed to create {instance_name}: {e}")
+    else:
+        logging.error(f"No Docker client available for constraint: {constrain}")
+
 
 # Main entry point of the application
 if __name__ == "__main__":

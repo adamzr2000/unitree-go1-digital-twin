@@ -87,10 +87,13 @@ fi
 # IP of the robot's high-level board
 target_ip="192.168.123.161"
 
+state_loop_rate="100"
+
 
 echo "ROS_MASTER_URI: $ros_master_uri"
 echo "ROS_IP: $ros_ip"
 echo "TARGET_IP: $target_ip"
+echo "STATE_LOOP_RATE: $state_loop_rate"
 
 # Run docker container with selected ROS MASTER URI and ROS_IP
 echo 'Running go1 docker image.'
@@ -104,6 +107,7 @@ docker run \
     -e ROS_MASTER_URI="$ros_master_uri" \
     -e ROS_IP="$ros_ip" \
     -e TARGET_IP="$target_ip" \
+    -e STATE_LOOP_RATE="$state_loop_rate" \
     --privileged \
     go1-base:latest 
 
