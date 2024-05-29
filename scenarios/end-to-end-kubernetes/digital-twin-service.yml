@@ -25,10 +25,6 @@ spec:
         image: go1-roscore
         imagePullPolicy: IfNotPresent
         env:
-        - name: ROS_MASTER_URI
-          value: "http://roscore-edge:11311"
-        - name: ROS_HOSTNAME
-          value: "roscore-edge"
         - name: ENABLE_STATISTICS
           value: "false"
         ports:
@@ -94,6 +90,8 @@ spec:
           value: "go1-base"
         - name: TARGET_IP
           value: "192.168.123.161"
+        - name: STATE_LOOP_RATE
+          value: "100"
         ports:
         - containerPort: 8082
           protocol: UDP
@@ -188,7 +186,7 @@ spec:
         - name: WEB_SERVER
           value: "yes"
         - name: CONTROL_LOOP_RATE
-          value: "50"
+          value: "100"
         - name: CMD_VEL
           value: "go1_controller/cmd_vel"
         - name: STAMPED

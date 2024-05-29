@@ -90,6 +90,8 @@ spec:
           value: "go1-base"
         - name: TARGET_IP
           value: "192.168.123.161"
+        - name: STATE_LOOP_RATE
+          value: "100"
         ports:
         - containerPort: 8082
           protocol: UDP
@@ -359,7 +361,7 @@ spec:
 #   selector:
 #     node: camera
 
-# ---
+---
 
 ######################
 ### go1-navigation ###

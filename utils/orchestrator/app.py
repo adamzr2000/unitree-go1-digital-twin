@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 # Initialize Docker clients for edge and robot environments
 DOCKER_CLIENTS = {
     'edge': docker.from_env(),
-    'robot': docker.DockerClient(base_url='tcp://192.168.40.70:2375')
+    'robot': docker.DockerClient(base_url='tcp://192.168.40.71:2375')
 }
 
 
@@ -34,12 +34,12 @@ def deploy_post():
         create_virtual_instance('go1-base', 'go1-base', 'robot', 'TARGET_IP=192.168.123.161', {'8082/udp': 8082, '8090/udp': 8090, '8091/udp': 8091, '8007/udp': 8007, '8080/tcp': 8080, '8081/tcp': 8081})
         create_rviz_vnc_instance('go1-rviz-vnc', 'rviz-vnc', 'edge', {'80/tcp': 6080})
         create_sensor_instance('rplidar-lidar', 'lidar','robot', '/dev/rplidar:/dev/rplidar:rwm', False) 
-        create_sensor_instance('astra-camera', 'camera','robot', '/dev/astra:/dev/astra', True) 
+        #create_sensor_instance('astra-camera', 'camera','robot', '/dev/astra:/dev/astra', True) 
         create_virtual_instance('go1-navigation', 'go1-navigation', 'edge')
-        create_influxdb_instance('influxdb:2', 'influxdb', 'edge')  
-        create_grafana_instance('grafana/grafana:latest', 'grafana', 'edge')
-        create_monitoring_instance("go1-monitoring", "go1-monitoring-edge", "edge", topics='/scan /joint_states /go1_controller/odom', influxdb_url="http://influxdb:8086", influxdb_token="desire6g2024;", influxdb_org="desire6g", influxdb_bucket="ros-metrics", window_size=50)
-        create_monitoring_instance("go1-monitoring", "go1-monitoring-robot", "robot", topics='/go1_controller/cmd_vel', influxdb_url="http://influxdb:8086", influxdb_token="desire6g2024;", influxdb_org="desire6g", influxdb_bucket="ros-metrics", window_size=50)
+        #create_influxdb_instance('influxdb:2', 'influxdb', 'edge')  
+        #create_grafana_instance('grafana/grafana:latest', 'grafana', 'edge')
+        #create_monitoring_instance("go1-monitoring", "go1-monitoring-edge", "edge", topics='/scan /joint_states /go1_controller/odom', influxdb_url="http://influxdb:8086", influxdb_token="desire6g2024;", influxdb_org="desire6g", influxdb_bucket="ros-metrics", window_size=50)
+        #create_monitoring_instance("go1-monitoring", "go1-monitoring-robot", "robot", topics='/go1_controller/cmd_vel', influxdb_url="http://influxdb:8086", influxdb_token="desire6g2024;", influxdb_org="desire6g", influxdb_bucket="ros-metrics", window_size=50)
         return jsonify({'success': True}), 200
     except Exception as e:
         logging.error(f"Deployment failed: {e}")
