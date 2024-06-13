@@ -17,7 +17,7 @@ Also, in absence of a centralized registry, the Docker images composing the serv
 This is the multi-host setup: 
 
 - **Master Node (EDGE)**: 
-  - IP: `10.5.98.101`
+  - IP: `192.168.40.4`
   - Containers: `roscore-edge`, `digital-twin-app`, `gesture-control-app`, `go1-navigation`, `rviz-vnc`
 
 - **Worker Node (ROBOT)**: 
@@ -28,14 +28,14 @@ Here is a diagram that represents visually the architecture of the scenario:
 
 ![E2E Scenario 5TONIC](../../images/e2e-scenario-docker-swarm.svg)
 
-First configure the controller/master node (10.5.98.101 in our case) by initializing the Docker swarm like this: 
+First configure the controller/master node (192.168.40.4 in our case) by initializing the Docker swarm like this: 
 ```bash
-docker swarm init --advertise-addr 10.5.98.101
+docker swarm init --advertise-addr 192.168.40.4
 ```
 
 This command will be displayed upon success: 
 ```bash
-docker swarm join --token SWMTKN-1-4pxdygt5zbrytu30z1w8ddsv6ur45k523zqtnsyjta9jglg51o-9qa0q3r8z0s9jutixtcvykhze 10.5.98.101:2377
+docker swarm join --token SWMTKN-1-4pxdygt5zbrytu30z1w8ddsv6ur45k523zqtnsyjta9jglg51o-9qa0q3r8z0s9jutixtcvykhze 192.168.40.4:2377
 ``` 
 with the correct token.
 

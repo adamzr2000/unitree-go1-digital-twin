@@ -3,3 +3,5 @@ ros_bags/*.bag
 
 # But keep the README.md in ros_bags directory
 !ros_bags/README.md
+
+docker-compose.yml
