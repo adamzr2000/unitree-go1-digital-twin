@@ -1,5 +1,4 @@
 # Specify the ROS distribution as a build argument
-
 FROM tiryoh/ros-desktop-vnc:noetic
 
 # Define maintainer
@@ -18,7 +17,9 @@ RUN apt-get update && apt-get install -y \
     ros-noetic-rqt-graph \
     ros-noetic-rqt-tf-tree \
     ros-noetic-xacro \
-    ros-noetic-turtlesim 
+    ros-noetic-turtlesim && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # RUN apt-get update && apt-get install -y \
 #     git \
