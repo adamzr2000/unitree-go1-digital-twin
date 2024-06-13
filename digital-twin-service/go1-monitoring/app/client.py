@@ -135,7 +135,7 @@ def monitor_bw_delay_and_send(topic, metric_type, window_size=None):
             elif is_subscribed:
                 if metric_type == "delay" and line.strip().startswith("average delay:"):
                     parts = line.strip().split()
-                    average_delay = abs(float(parts[2]) * 1000)  # Extract the average delay, convert to milliseconds, and take absolute value
+                    average_delay = float(parts[2]) * 1000  # Extract the average delay, convert to milliseconds, and take absolute value
 
                     stats_line = process.stdout.readline()
                     # print("Debug stats_line:", stats_line) 
@@ -157,9 +157,9 @@ def monitor_bw_delay_and_send(topic, metric_type, window_size=None):
                         min_delay, max_delay, std_dev = '0', '0', '0'  # Default values in case of an error
 
                     # Convert string times to float and format to milliseconds
-                    min_delay_ms = abs(float(min_delay) * 1000)
-                    max_delay_ms = abs(float(max_delay) * 1000)
-                    std_dev_ms = abs(float(std_dev) * 1000)
+                    min_delay_ms = float(min_delay) * 1000
+                    max_delay_ms = float(max_delay) * 1000
+                    std_dev_ms = float(std_dev) * 1000
 
 
                     formatted_average_delay_ms = f"{average_delay:.3f}"
