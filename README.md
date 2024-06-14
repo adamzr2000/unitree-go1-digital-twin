@@ -22,7 +22,7 @@ simulator.
 ## Requirements
  - Ubuntu 20.04/22.04 Operating System 
  - Docker
- - Docker compose
+ - Docker Compose
  - NVIDIA GPU (RTX 2070 or higher)
  - NVIDIA GPU Driver (recommended version 525.85 or higher)
  - NVIDIA Container Toolkit
@@ -56,7 +56,7 @@ simulator.
  - Install NVIDIA Container Toolkit (tutorial [here](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html))
  - Install NVIDIA Omniverse (tutorial [here](https://docs.omniverse.nvidia.com/digital-twins/latest/installation-guide.html))
  - Install K3s Kubernetes distribution (tutorial [here](https://docs.k3s.io/installation))
- - Clone this git repo 
+ - Clone this git repo: `git clone https://github.com/adamzr2000/unitree-go1-digital-twin.git`
  
  ### Run Digital Twin service
  - The scenarios [folder](./scenarios/) is composed of different deployment options for the Digital Twin service.

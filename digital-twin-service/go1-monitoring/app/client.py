@@ -80,6 +80,50 @@ class JitterMonitor:
             log_message("ERROR", f"Failed to send jitter data to InfluxDB for topic {self.topic}: {e}")
 
 
+class DelayMonitor:
+    def __init__(self, topic, write_api, influxdb_bucket):
+        self.topic = topic
+        self.write_api = write_api
+        self.influxdb_bucket = influxdb_bucket
+        self.last_send_time = time.time()
+
+
+        msg_type = TOPIC_MESSAGE_MAP[topic]
+        module_name, class_name = msg_type.rsplit('.', 1)
+        msg_module = importlib.import_module(module_name)
+        msg_class = getattr(msg_module, class_name)
+
+        self.subscriber = rospy.Subscriber(topic, msg_class, self.callback)
+
+    def callback(self, msg):
+        receive_time = rospy.get_rostime().to_sec()
+        publish_time = msg.header.stamp.to_sec() 
+        delay = (receive_time - publish_time) * 1000.0  # Convert to milliseconds
+        
+        current_time = time.time()
+        if current_time - self.last_send_time >= 2.0:  # Send every 2 seconds
+            self.send_delay(delay)
+            self.last_send_time = current_time
+
+
+    def send_delay(self, delay):
+        formatted_delay_ms = f"{delay:.3f}"
+        point = Point("delay")\
+            .tag("topic", self.topic)\
+            .field("current_delay_ms", float(formatted_delay_ms))\
+            .time(time.time_ns(), WritePrecision.NS)
+
+        try:
+            self.write_api.write(bucket=self.influxdb_bucket, record=point)
+            log_message("INFO", f"Sent delay data to InfluxDB for topic {self.topic}: {formatted_delay_ms} ms")
+
+        except Exception as e:
+            log_message("ERROR", f"Failed to send delay data to InfluxDB for topic {self.topic}: {e}")
+
+def monitor_delay_and_send(topic, write_api, influxdb_bucket):
+    delay_monitor = DelayMonitor(topic, write_api, influxdb_bucket)
+    rospy.spin()
+
 def monitor_jitter_and_send(topic, write_api, influxdb_bucket, window_size=50):
     jitter_monitor = JitterMonitor(topic, write_api, influxdb_bucket, window_size)
     rospy.spin()
@@ -209,10 +253,13 @@ def monitor_bw_delay_and_send(topic, metric_type, write_api, influxdb_bucket, wi
         process.wait()
         
 
-def start_monitoring(topics, write_api, influxdb_bucket, window_size=None):
+def start_monitoring(topics, write_api, influxdb_bucket, window_size=None, manual_delay=False):
     threads = []
     for topic in topics:
-        thread_delay = threading.Thread(target=monitor_bw_delay_and_send, args=(topic, "delay", write_api, influxdb_bucket, window_size))
+        if manual_delay:
+            thread_delay = threading.Thread(target=monitor_delay_and_send, args=(topic, write_api, influxdb_bucket))
+        else:
+            thread_delay = threading.Thread(target=monitor_bw_delay_and_send, args=(topic, "delay", write_api, influxdb_bucket, window_size))
         thread_bandwidth = threading.Thread(target=monitor_bw_delay_and_send, args=(topic, "bandwidth", write_api, influxdb_bucket, window_size))
         thread_jitter = threading.Thread(target=monitor_jitter_and_send, args=(topic, write_api, influxdb_bucket, window_size))
         threads.extend([thread_delay, thread_bandwidth, thread_jitter])
@@ -223,8 +270,6 @@ def start_monitoring(topics, write_api, influxdb_bucket, window_size=None):
     for thread in threads:
         thread.join()
 
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Monitor ROS topics and send metrics to InfluxDB.')
     parser.add_argument('topics', type=str, nargs='+', help='List of ROS topics to monitor for both delay and bandwidth metrics.')
@@ -233,6 +278,7 @@ if __name__ == "__main__":
     parser.add_argument('--influxdb_token', type=str, required=True, help='InfluxDB access token')
     parser.add_argument('--influxdb_org', type=str, required=True, help='InfluxDB organization')
     parser.add_argument('--influxdb_bucket', type=str, required=True, help='InfluxDB bucket for data')
+    parser.add_argument('--manual_delay', action='store_true', help='Use manual delay calculation instead of <rostopic delay> command')
 
     args = parser.parse_args()
 
@@ -242,5 +288,4 @@ if __name__ == "__main__":
     influxdb_bucket = args.influxdb_bucket
 
     rospy.init_node('monitoring_node')
-    start_monitoring(args.topics, write_api, influxdb_bucket, args.window_size)
-
+    start_monitoring(args.topics, write_api, influxdb_bucket, args.window_size, args.manual_delay)
