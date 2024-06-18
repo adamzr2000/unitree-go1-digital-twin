@@ -49,7 +49,6 @@ int main(int argc, char **argv)
     
     while (ros::ok())
         {
-        motiontime += 2;  // Motion time increment every loop, was previously missing unit clarification.
 
         // Open "commands.txt" file to read commands from detected gestures
         myfile.open("/home/go1/app/command.txt");
@@ -110,6 +109,8 @@ int main(int argc, char **argv)
 
         ros::spinOnce();
         loop_rate.sleep();
+        motiontime += 2;  // Motion time increment every loop, was previously missing unit clarification.
+
     }
 
     return 0;
