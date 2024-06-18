@@ -7,6 +7,7 @@ influxdb_bucket=${INFLUXDB_BUCKET:-"ros-metrics"}
 window_size=${WINDOW_SIZE:-"50"}
 topics=${TOPICS:- }
 manual_delay=${MANUAL_DELAY:-"false"}
+wait=${WAIT:-"true"}
 
 echo "influxdb_url: $influxdb_url"
 echo "influxdb_token: $influxdb_token"
@@ -15,6 +16,7 @@ echo "influxdb_bucket: $influxdb_bucket"
 echo "window_size: $window_size"
 echo "topics: $topics"
 echo "manual_delay: $manual_delay"
+echo "wait: $wait"
 
 # Convert the topics string into an array
 IFS=' ' read -r -a topics_array <<< "$topics"
@@ -25,6 +27,11 @@ cmd=(python3 client.py "${topics_array[@]}" --influxdb_url "$influxdb_url" --inf
 # Add the --manual_delay flag if manual_delay is set to "true"
 if [ "$manual_delay" == "true" ]; then
     cmd+=("--manual_delay")
+fi
+
+# Add the --wait flag if wait is set to "true"
+if [ "$wait" == "true" ]; then
+    cmd+=("--wait")
 fi
 
 # Run the constructed command

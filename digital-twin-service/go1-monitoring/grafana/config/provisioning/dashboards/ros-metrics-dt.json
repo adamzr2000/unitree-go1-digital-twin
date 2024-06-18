@@ -11,6 +11,12 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
@@ -18,13 +24,14 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 4,
   "links": [],
+  "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "P951FEA4DE68E13C5"
+        "uid": "yBmilKUIz"
       },
       "fieldConfig": {
         "defaults": {
@@ -32,9 +39,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "Delay (ms)",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -46,7 +50,6 @@
               "tooltip": false,
               "viz": false
             },
-            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineStyle": {
               "fill": "solid"
@@ -66,7 +69,6 @@
               "mode": "off"
             }
           },
-          "fieldMinMax": false,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -109,9 +111,9 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "cdlrxbdcxe7swe"
+            "uid": "yBmilKUIz"
           },
-          "query": "from(bucket: \"ros-metrics\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => r._measurement == \"delay\")\n  |> filter(fn: (r) => r._field == \"average_delay_ms\")\n  |> filter(fn: (r) => r.topic == \"/scan\" or r.topic == \"/joint_states\" or r.topic == \"/go1_controller/odom\")\n  |> map(fn: (r) => ({\n      r with\n      topic_name: if r.topic == \"/scan\" then \"Laser Scan\" else if r.topic == \"/joint_states\" then \"Joint States\" else if r.topic == \"/go1_controller/odom\" then \"Odometry\" else if r.topic == \"/go1_controller/cmd_vel\" then \"Control\" else r.topic\n    }))\n  |> group(columns: [\"topic_name\"])\n  |> keep(columns: [\"_value\", \"_time\", \"topic_name\"])\n",
+          "query": "from(bucket: \"ros-metrics\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => r._measurement == \"delay\")\n  |> filter(fn: (r) => r._field == \"average_delay_ms\")\n  |> filter(fn: (r) => r.topic == \"/scan\" or r.topic == \"/joint_states\" or r.topic == \"/go1_controller/odom\" or r.topic == \"/go1_controller/cmd_vel\")\n  |> map(fn: (r) => ({\n      r with\n      topic_name: if r.topic == \"/scan\" then \"Laser Scan\" else if r.topic == \"/joint_states\" then \"Joint States\" else if r.topic == \"/go1_controller/odom\" then \"Odometry\" else if r.topic == \"/go1_controller/cmd_vel\" then \"Control\" else r.topic\n    }))\n  |> group(columns: [\"topic_name\"])\n  |> keep(columns: [\"_value\", \"_time\", \"topic_name\"])\n",
           "refId": "A"
         }
       ],
@@ -122,7 +124,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "P951FEA4DE68E13C5"
+        "uid": "yBmilKUIz"
       },
       "description": "",
       "fieldConfig": {
@@ -168,12 +170,12 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "8.3.2",
       "targets": [
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "cdlrxbdcxe7swe"
+            "uid": "yBmilKUIz"
           },
           "query": "from(bucket: \"ros-metrics\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => r._measurement == \"jitter\")\n  |> filter(fn: (r) => r._field == \"jitter_ms\")\n  |> group(columns: [\"topic\"])\n  |> sort(columns: [\"_time\"], desc: true)\n  |> unique(column: \"topic\")\n  |> map(fn: (r) => ({\n      _time: r._time,\n      _value: r._value,\n      topic_name: if r.topic == \"/scan\" then \"Laser Scan\" else if r.topic == \"/joint_states\" then \"Joint States\" else if r.topic == \"/go1_controller/odom\" then \"Odometry\" else if r.topic == \"/go1_controller/cmd_vel\" then \"Control\" else r.topic\n    }))\n  |> group(columns: [\"topic_name\"])\n  |> keep(columns: [\"_value\", \"_time\", \"topic_name\"])\n",
           "refId": "A"
@@ -186,7 +188,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "P951FEA4DE68E13C5"
+        "uid": "yBmilKUIz"
       },
       "fieldConfig": {
         "defaults": {
@@ -194,9 +196,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "Bandwidth (bit/s)",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -208,7 +207,6 @@
               "tooltip": false,
               "viz": false
             },
-            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 2,
             "pointSize": 5,
@@ -225,7 +223,6 @@
               "mode": "off"
             }
           },
-          "fieldMinMax": false,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -268,7 +265,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "cdlrxbdcxe7swe"
+            "uid": "yBmilKUIz"
           },
           "query": "from(bucket: \"ros-metrics\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => r._measurement == \"bandwidth\")\n  |> filter(fn: (r) => r._field == \"average_bandwidth_kbps\")\n  |> group(columns: [\"topic\"])\n  |> map(fn: (r) => ({\n      r with\n      topic_name: if r.topic == \"/scan\" then \"Laser Scan\" else if r.topic == \"/joint_states\" then \"Joint States\" else if r.topic == \"/go1_controller/odom\" then \"Odometry\" else if r.topic == \"/go1_controller/cmd_vel\" then \"Control\" else r.topic\n    }))\n  |> group(columns: [\"topic_name\"])\n  |> keep(columns: [\"_value\", \"_time\", \"topic_name\"])\n",
           "refId": "A"
@@ -281,7 +278,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "P951FEA4DE68E13C5"
+        "uid": "yBmilKUIz"
       },
       "description": "",
       "fieldConfig": {
@@ -289,7 +286,6 @@
           "color": {
             "mode": "palette-classic"
           },
-          "fieldMinMax": false,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -330,12 +326,12 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "8.3.2",
       "targets": [
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "cdlrxbdcxe7swe"
+            "uid": "yBmilKUIz"
           },
           "query": "from(bucket: \"ros-metrics\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => r._measurement == \"bandwidth\")\n  |> filter(fn: (r) => r._field == \"average_message_size_bytes\")\n  |> group(columns: [\"topic\"])\n  |> sort(columns: [\"_time\"], desc: true)\n  |> unique(column: \"topic\")\n  |> map(fn: (r) => ({\n      _time: r._time,\n      _value: r._value,\n      topic_name: if r.topic == \"/scan\" then \"Laser Scan\" else if r.topic == \"/joint_states\" then \"Joint States\" else if r.topic == \"/go1_controller/odom\" then \"Odometry\" else if r.topic == \"/go1_controller/cmd_vel\" then \"Control\" else r.topic\n    }))\n  |> group(columns: [\"topic_name\"])\n  |> keep(columns: [\"_value\", \"_time\", \"topic_name\"])\n",
           "refId": "A"
@@ -347,7 +343,8 @@
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 39,
+  "schemaVersion": 33,
+  "style": "dark",
   "tags": [],
   "templating": {
     "list": []
@@ -360,6 +357,6 @@
   "timezone": "browser",
   "title": "Digital Twin ROS Application Metrics",
   "uid": "adlt1x5bqlatcb",
-  "version": 1,
+  "version": 3,
   "weekStart": ""
 }

@@ -2,6 +2,22 @@
 ### ros-master ###
 ##################
 
+### Headless service declaration.
+### This is required to map to app "roscore-edge" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: roscore-edge
+  labels:
+    app: digital-twin-service
+    node: roscore-edge
+spec:
+  clusterIP: None
+  selector:
+    node: roscore-edge
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -25,6 +41,10 @@ spec:
         image: go1-roscore
         imagePullPolicy: IfNotPresent
         env:
+        - name: ROS_MASTER_URI
+          value: "http://roscore-edge:11311"
+        - name: ROS_HOSTNAME
+          value: "roscore-edge"
         - name: ENABLE_STATISTICS
           value: "false"
         ports:
@@ -39,22 +59,6 @@ spec:
       - key: node-role.kubernetes.io/control-plane
         operator: Exists
         effect: NoSchedule
-
----
-
-### Headless service declaration.
-### This is required to map to app "roscore-edge" so that other pods can DNS its IP address dynamically.
-apiVersion: v1
-kind: Service
-metadata:
-  name: roscore-edge
-  labels:
-    app: digital-twin-service
-    node: roscore-edge
-spec:
-  clusterIP: None
-  selector:
-    node: roscore-edge
 
 ---
 

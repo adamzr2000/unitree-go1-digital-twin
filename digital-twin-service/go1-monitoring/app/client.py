@@ -5,6 +5,7 @@ import subprocess
 import threading
 import argparse
 import re
+import rosgraph
 
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
@@ -279,8 +280,15 @@ if __name__ == "__main__":
     parser.add_argument('--influxdb_org', type=str, required=True, help='InfluxDB organization')
     parser.add_argument('--influxdb_bucket', type=str, required=True, help='InfluxDB bucket for data')
     parser.add_argument('--manual_delay', action='store_true', help='Use manual delay calculation instead of <rostopic delay> command')
+    parser.add_argument('--wait', action='store_true', help='Wait for ROS master to be ready before starting')
 
     args = parser.parse_args()
+
+    if args.wait:
+        while not rosgraph.is_master_online():
+            log_message("INFO", "Waiting for ROS master...")
+            time.sleep(1)
+
 
     # Initialize InfluxDB client
     client = InfluxDBClient(url=args.influxdb_url, token=args.influxdb_token, org=args.influxdb_org)
