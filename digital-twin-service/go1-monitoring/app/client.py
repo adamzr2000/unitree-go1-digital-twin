@@ -99,11 +99,11 @@ class DelayMonitor:
     def callback(self, msg):
         receive_time = rospy.Time.now()
 
-        publish_time = msg.header.stamp
-        delay = ((receive_time - publish_time).to_sec()) * 1000.0
+        # publish_time = msg.header.stamp
+        # delay = ((receive_time - publish_time).to_sec()) * 1000.0
         
-        # publish_time = msg.header.stamp.to_sec()
-        # delay = (receive_time - publish_time) * 1000.0
+        publish_time = msg.header.stamp.to_sec()
+        delay = (receive_time - publish_time) * 1000.0
 
         # delay = abs((receive_time - publish_time).to_sec() * 1000.0)  # Convert to milliseconds and get absolute value
         
