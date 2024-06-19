@@ -52,7 +52,9 @@ class JitterMonitor:
         current_time = msg.header.stamp
 
         if self.last_time is not None:
-            delay = (current_time - self.last_time).to_sec() * 1000.0
+            delay_ns = (current_time - self.last_time).to_nsec()
+            delay = delay_ns / 1e6  # Convert to milliseconds
+        
             self.delays.append(delay)
 
             if len(self.delays) > 1:
@@ -101,14 +103,13 @@ class DelayMonitor:
 
         publish_time = msg.header.stamp
 
-        # Calculate delay in nanoseconds
-        delay_ns = abs((receive_time - publish_time).to_nsec())
-        delay = delay_ns / 1e6  # Convert to milliseconds
-        
-        # publish_time = msg.header.stamp.to_sec()
-        # delay = (receive_time - publish_time) * 1000.0
+        if not isinstance(publish_time, rospy.Time):
+            log_message("ERROR", f"Message on topic {self.topic} does not have a valid header.stamp")
+            return
 
-        # delay = abs((receive_time - publish_time).to_sec() * 1000.0)  # Convert to milliseconds and get absolute value
+        # Calculate delay in nanoseconds
+        delay_ns = (receive_time - publish_time).to_nsec()
+        delay = abs(delay_ns / 1e6)  # Convert to milliseconds and take absolute value
         
         current_time = time.time()
         if current_time - self.last_send_time >= 2.0:  # Send every 2 seconds
