@@ -194,7 +194,7 @@ def monitor_bw_delay_and_send(topic, metric_type, write_api, influxdb_bucket, wi
             elif is_subscribed:
                 if metric_type == "delay" and line.strip().startswith("average delay:"):
                     parts = line.strip().split()
-                    average_delay = float(parts[2]) * 1000  # Extract the average delay and convert to milliseconds
+                    average_delay = abs(float(parts[2]) * 1000)  # Extract the average delay and convert to milliseconds
 
                     stats_line = process.stdout.readline()
                     # print("Debug stats_line:", stats_line) 
