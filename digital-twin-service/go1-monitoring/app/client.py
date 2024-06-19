@@ -97,21 +97,22 @@ class DelayMonitor:
         self.subscriber = rospy.Subscriber(topic, msg_class, self.callback)
 
     def callback(self, msg):
-        receive_time = rospy.get_rostime().to_sec()
-        publish_time = msg.header.stamp.to_sec() 
-        delay = abs((receive_time - publish_time) * 1000.0)  # Convert to milliseconds and get absolute value
+        receive_time = rospy.Time.now()
+        publish_time = msg.header.stamp
+        delay = abs((receive_time - publish_time).to_sec() * 1000.0)  # Convert to milliseconds and get absolute value
+        self.send_delay(delay)
         
-        current_time = time.time()
-        if current_time - self.last_send_time >= 2.0:  # Send every 2 seconds
-            self.send_delay(delay)
-            self.last_send_time = current_time
+        # current_time = time.time()
+        # if current_time - self.last_send_time >= 2.0:  # Send every 2 seconds
+        #     self.send_delay(delay)
+        #     self.last_send_time = current_time
 
 
     def send_delay(self, delay):
         formatted_delay_ms = f"{delay:.3f}"
         point = Point("delay")\
             .tag("topic", self.topic)\
-            .field("current_delay_ms", float(formatted_delay_ms))\
+            .field("average_delay_ms", float(formatted_delay_ms))\
             .time(time.time_ns(), WritePrecision.NS)
 
         try:
