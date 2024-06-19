@@ -103,9 +103,9 @@ class DelayMonitor:
 
         publish_time = msg.header.stamp
 
-        if not isinstance(publish_time, rospy.Time):
-            log_message("ERROR", f"Message on topic {self.topic} does not have a valid header.stamp")
-            return
+        # if not isinstance(publish_time, rospy.Time):
+        #     log_message("ERROR", f"Message on topic {self.topic} does not have a valid header.stamp")
+        #     return
 
         # Calculate delay in nanoseconds
         delay_ns = (receive_time - publish_time).to_nsec()
