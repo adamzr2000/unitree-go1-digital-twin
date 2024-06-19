@@ -49,10 +49,10 @@ class JitterMonitor:
         self.subscriber = rospy.Subscriber(topic, msg_class, self.callback)
 
     def callback(self, msg):
-        current_time = msg.header.stamp.to_sec()
+        current_time = msg.header.stamp
 
         if self.last_time is not None:
-            delay = (current_time - self.last_time) * 1000.0
+            delay = (current_time - self.last_time).to_sec() * 1000.0
             self.delays.append(delay)
 
             if len(self.delays) > 1:
@@ -99,7 +99,8 @@ class DelayMonitor:
     def callback(self, msg):
         receive_time = rospy.Time.now()
         publish_time = msg.header.stamp
-        delay = abs((receive_time - publish_time).to_sec() * 1000.0)  # Convert to milliseconds and get absolute value
+        delay = (receive_time - publish_time).to_sec() * 1000.0
+        # delay = abs((receive_time - publish_time).to_sec() * 1000.0)  # Convert to milliseconds and get absolute value
         self.send_delay(delay)
         
         # current_time = time.time()
