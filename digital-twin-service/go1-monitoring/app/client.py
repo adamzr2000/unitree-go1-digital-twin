@@ -102,7 +102,7 @@ class DelayMonitor:
         publish_time = msg.header.stamp
 
         # Calculate delay in nanoseconds
-        delay_ns = (receive_time - publish_time).to_nsec()
+        delay_ns = abs((receive_time - publish_time).to_nsec())
         delay = delay_ns / 1e6  # Convert to milliseconds
         
         # publish_time = msg.header.stamp.to_sec()
