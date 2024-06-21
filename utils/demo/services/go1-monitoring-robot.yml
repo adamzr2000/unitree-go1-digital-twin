@@ -1,0 +1,64 @@
+############################
+### go1-monitoring-robot ###
+############################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoring-robot-deployment
+  labels:
+    app: digital-twin-service
+    node: monitoring-robot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: monitoring-robot
+  template:
+    metadata:
+      labels:
+        node: monitoring-robot
+    spec:
+      containers:
+      - name: monitoring-robot
+        image: go1-monitoring
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://roscore-edge:11311"
+        - name: ROS_HOSTNAME
+          value: "monitoring-robot"
+        - name: TOPICS
+          value: "/go1_controller/cmd_vel"
+        - name: INFLUXDB_URL
+          value: "http://influxdb:8086"
+        - name: INFLUXDB_TOKEN
+          value: "desire6g2024;"
+        - name: INFLUXDB_ORG
+          value: "desire6g"
+        - name: INFLUXDB_BUCKET
+          value: "ros-metrics"
+        - name: WINDOW_SIZE
+          value: "50"
+        securityContext:
+            privileged: true
+      nodeSelector:
+        nodetype: robot
+
+---
+
+### Headless service declaration.
+### This is required to map to app "monitoring-robot" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: monitoring-robot
+  labels:
+    app: digital-twin-service
+    node: monitoring-robot
+spec:
+  clusterIP: None
+  selector:
+    node: monitoring-robot
+
+---

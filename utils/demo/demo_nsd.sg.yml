@@ -1,0 +1,128 @@
+lnsd:
+  ## lnsd refers to a network service graph whose subgraph is described
+  ns-instance-id: "11223344-e2a8-4338-bc8c-be685548bad2" 
+  ns:
+    name: "Digital Twin Demo"
+    id: "418420e3-e2a8-4338-bc8c-be685548bad2" # refers to the ns in the service catalog
+    vendor: "D6G"
+    descriptor-version: "1.0"
+    site-id: "d6g-001"
+    network-functions:
+      - nf-instance-id: "flowcl-i01" #Alternatively: member-vnf-index: 1
+        nf-id: "flowcl"
+        nf-name: "Flow Classifier"
+        nf-version: "v1.0"
+        nf-mgmt-network: "shared-mgmt-net" # interconnects data plane and control plane entities, and provides access to higher level controllers
+      - nf-instance-id: "firewall-i01"
+        nf-id: "firewall"
+        nf-name: "ACL Firewall"
+        nf-version: "v1.0"
+        nf-mgmt-network: "shared-mgmt-net"
+      - nf-instance-id: "nat-i01"
+        nf-id: "nat"
+        nf-name: "NAT"
+        nf-version: "v1.0"
+        nf-mgmt-network: "shared-mgmt-net"
+      - nf-instance-id: "dpi-i01"
+        nf-id: "dpi"
+        nf-name: "DPI Middlebox"
+        nf-version: "v1.0"
+        nf-mgmt-network: "shared-mgmt-net"
+    application-functions:
+        #ros-master, go1-base, gesture-control, lidar-drivers, go1-navigation, rviz-vnc, digital-replica, go1-monitoring-edge, go1-monitoring-robot, influxdb, grafana
+      - af-instance-id: "dt-ros-master"
+        af-id: "ros-master"
+        af-name: "ROS Master"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net"
+      - af-instance-id: "dt-go1-base"
+        af-id: "go1-base"
+        af-name: "GO1 ROS Base"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net" 
+      - af-instance-id: "dt-gesture-control"
+        af-id: "gesture-control"
+        af-name: "Gesture Control"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net" 
+      - af-instance-id: "dt-lidar-drivers"
+        af-id: "lidar-drivers"
+        af-name: "Lidar drivers"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net" 
+      - af-instance-id: "dt-go1-navigation"
+        af-id: "go1-navigation"
+        af-name: "Go1 ROS Navigation"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net"
+      - af-instance-id: "dt-rviz-vnc"
+        af-id: "rviz-vnc"
+        af-name: "RViz VNC"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net" 
+      - af-instance-id: "dt-digital-replica"
+        af-id: "digital-replica"
+        af-name: "Digital Twin Replica"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net"
+      - af-instance-id: "dt-influxdb"
+        af-id: "influxdb"
+        af-name: "InfluxDB"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net" 
+      - af-instance-id: "dt-grafana"
+        af-id: "grafana"
+        af-name: "Grafana"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net" 
+      - af-instance-id: "dt-go1-monitoring-edge"
+        af-id: "go1-monitoring-edge"
+        af-name: "Go1 Monitoring Edge"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net"
+      - af-instance-id: "dt-go1-monitoring-robot"
+        af-id: "go1-monitoring-robot"
+        af-name: "Go1 Monitoring Robot"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net" 
+    mas-agent:
+      instance-id: "mas0012"
+      id: "smas001"
+      name: "service_mas"
+      version: "v1.0"
+    site-connections:
+      - site-connection-id: "sc1-sc2"
+        site-id-ref: "d6g-002"
+      - site-connection-id: "sc1-sc3"
+        site-id-ref: "d6g-003"
+      - site-connection-id: "sc1-sc4"
+        site-id-ref: "d6g-004"
+    forwarding_graphs:
+      - member-graph-index: 1 # list of subgraphs/forwarding segments implemented by the given D6G site
+        graph-name: "uplink"
+        links:
+          - id: "input-1"
+            connection-points:
+            - member-connection-point-index: 1
+              member-if-id-ref: "sc1-sc2:input"
+            - member-connection-point-index: 2
+              member-if-id-ref: "flowcl-i01:port-input"
+          - id: "input-2"
+            connection-points:
+            - member-connection-point-index: 1
+              member-if-id-ref: "sc1-sc3:input"
+            - member-connection-point-index: 2
+              member-if-id-ref: "flowcl-i01:port-input"
+          - id: "towebserver"
+            connection-points:
+            - member-connection-point-index: 1
+              member-if-id-ref: "flowcl-i01:port-2"
+            - member-connection-point-index: 2
+              member-if-id-ref: "lws-i01:eth0"
+          - id: "toFW"
+            connection-points:
+            - member-connection-point-index: 1
+              member-if-id-ref: "flowcl:port-3"
+            - member-connection-point-index: 2
+              member-if-id-ref: "firewall-i01:port-1"
+        e2e_delay_budget: "5ms"

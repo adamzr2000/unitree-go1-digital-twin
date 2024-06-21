@@ -8,6 +8,8 @@ NODE_DEPLOYMENT_MAP["/go1_controller"]="go1-base-deployment"
 NODE_DEPLOYMENT_MAP["/OmniIsaacRosBridge"]="digital-twin-app-deployment"
 NODE_DEPLOYMENT_MAP["/local_ekf/ekf_localization_with_odom"]="go1-base-deployment"
 NODE_DEPLOYMENT_MAP["/cartographer_node"]="go1-navigation-deployment"
+NODE_DEPLOYMENT_MAP["/monitoring_node_robot"]="monitoring-robot-deployment"
+NODE_DEPLOYMENT_MAP["/monitoring_node_edge"]="monitoring-edge-deployment"
 
 OUTPUT_FILE="output.csv"
 
@@ -29,6 +31,8 @@ NODE_NAMES=(
     "/OmniIsaacRosBridge"
     "/cartographer_node"
     "/local_ekf/ekf_localization_with_odom"
+    "monitoring_node_edge"
+    "monitoring_node_robot"
 )
 
 declare -A NODE_IP_MAP
@@ -98,6 +102,7 @@ function extract_ports {
 extract_ports "/scan" "/rplidarNode" "/cartographer_node" "outbound"
 extract_ports "/go1_controller/cmd_vel" "/node_gesture_control" "/go1_controller" "outbound"
 extract_ports "/joint_states" "/go1_controller" "/OmniIsaacRosBridge" "outbound"
+extract_ports "/go1_controller/odom" "/go1_controller" "/monitoring_node_edge" "outbound"
 extract_ports "/go1_controller/odom" "/go1_controller" "/cartographer_node" "outbound"
 extract_ports "/odometry/filtered" "/local_ekf/ekf_localization_with_odom" "/cartographer_node" "outbound"
 

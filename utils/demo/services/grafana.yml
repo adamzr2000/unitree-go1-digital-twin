@@ -1,0 +1,88 @@
+###############
+### grafana ###
+###############
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana-deployment
+  labels:
+    app: digital-twin-service
+    node: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: grafana
+  template:
+    metadata:
+      labels:
+        node: grafana
+    spec:
+      containers:
+      - name: grafana
+        image: grafana/grafana:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: GF_SECURITY_ADMIN_USER
+          value: "desire6g"
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          value: "desire6g2024;"
+        volumeMounts:
+        - name: datasources
+          mountPath: /etc/grafana/provisioning/datasources
+        - name: dashboards
+          mountPath: /etc/grafana/provisioning/dashboards
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        securityContext:
+            privileged: true
+      volumes:
+      - name: datasources
+        hostPath:
+          path: /home/desire6g/unitree-go1-digital-twin/digital-twin-service/go1-monitoring/grafana/config/provisioning/datasources
+      - name: dashboards
+        hostPath:
+          path: /home/desire6g/unitree-go1-digital-twin/digital-twin-service/go1-monitoring/grafana/config/provisioning/dashboards
+      nodeSelector:
+        nodetype: edge
+
+---
+
+### Headless service declaration.
+### This is required to map to app "grafana" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  labels:
+    app: digital-twin-service
+    node: grafana
+spec:
+  clusterIP: None
+  selector:
+    node: grafana
+
+---
+
+### LoadBalancer service declaration.
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-frontend
+  labels:
+    app: digital-twin-service
+    node: grafana
+spec:
+  type: LoadBalancer
+  ports:
+  - name: grafana-frontend
+    protocol: TCP
+    # port: 3000
+    port: 8889
+    targetPort: 3000
+  selector:
+    node: grafana
+
+---

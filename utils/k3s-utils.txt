@@ -10,15 +10,20 @@ sudo systemctl start k3s
 
 To stop agents:
 =======================================================
-sudo systemctl stop k3s=agent
+sudo systemctl stop k3s-agent
 
 
 To restart agents:
 =======================================================
-sudo systemctl start k3s=agent
+sudo systemctl start k3s-agent
 
 
 To stop all of the K3s containers and reset the containerd state
 =======================================================
 /usr/local/bin/k3s=killall.sh
+
+
+Avoid using sudo kubectl
+=======================================================
+sudo chmod 644 /etc/rancher/k3s/k3s.yaml
 

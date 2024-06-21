@@ -1,0 +1,77 @@
+################
+### rviz-vnc ###
+################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rviz-vnc-deployment
+  labels:
+    app: digital-twin-service
+    node: rviz-vnc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: rviz-vnc
+  template:
+    metadata:
+      labels:
+        node: rviz-vnc
+    spec:
+      containers:
+      - name: rviz-vnc
+        image: go1-rviz-vnc
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://roscore-edge:11311"
+        - name: ROS_HOSTNAME
+          value: "rviz-vnc"
+        ports:
+        - containerPort: 80
+        securityContext:
+            privileged: true
+        resources:
+            limits:
+              memory: "1Gi"
+      nodeSelector:
+        nodetype: edge
+
+---
+
+### Headless service declaration.
+### This is required to map to app "rviz-vnc" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: rviz-vnc
+  labels:
+    app: digital-twin-service
+    node: rviz-vnc
+spec:
+  clusterIP: None
+  selector:
+    node: rviz-vnc
+
+---
+
+### LoadBalancer service declaration.
+### This is required to expose the ports that enable web access to the rviz-vnc container
+apiVersion: v1
+kind: Service
+metadata:
+  name: rviz-vnc-frontend
+  labels:
+    app: digital-twin-service
+    node: rviz-vnc
+spec:
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 6080
+      targetPort: 80
+  selector:
+    node: rviz-vnc
+
+---
