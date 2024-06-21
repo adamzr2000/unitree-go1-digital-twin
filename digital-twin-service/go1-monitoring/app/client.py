@@ -305,7 +305,10 @@ if __name__ == "__main__":
     write_api = client.write_api(write_options=SYNCHRONOUS)
     influxdb_bucket = args.influxdb_bucket
 
+    # Set the node name based on whether "/joint_states" is in the list of topics
+    node_name = "monitoring_node_edge" if "/joint_states" in args.topics else "monitoring_node_robot"
+
     # Initialize the ROS node with a base name and set anonymous=True
-    rospy.init_node('monitoring_node', anonymous=True)
+    rospy.init_node(node_name, anonymous=False)
 
     start_monitoring(args.topics, write_api, influxdb_bucket, args.window_size, args.manual_delay)

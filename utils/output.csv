@@ -1,6 +1,5 @@
-ros-node,tcp-port,ip-address
-/rplidarNode,41623,10.42.1.69
-/node_gesture_control,43819,10.42.0.35
-/go1_controller,43231,10.42.1.67
-/OmniIsaacRosBridge,45047,10.42.0.41
-/local_ekf/ekf_localization_with_odom,45047,10.42.0.37
+topic,sender,src-port,src-ip,receiver,dst-port,dst-ip
+/scan,/rplidarNode,45975,10.42.1.211,/cartographer_node,36604,10.42.0.248
+/go1_controller/cmd_vel,/node_gesture_control,58375,10.42.0.246,/go1_controller,51164,10.42.1.209
+/go1_controller/odom,/go1_controller,39679,10.42.1.209,/cartographer_node,43052,10.42.0.248
+/joint_states,/go1_controller,39679,10.42.1.209,/robot_state_publisher,37258,10.42.1.209

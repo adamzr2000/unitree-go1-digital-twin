@@ -7,7 +7,10 @@ source ~/catkin_ws/devel/setup.bash
 # Read the SLAM algorithm from an environment variable, default to hector if not set
 slam_algorithm=${SLAM_ALGORITHM:-"cartographer"}
 
+use_odom=${USE_ODOM:-"true"}
+
 echo "Selected SLAM Algorithm: $slam_algorithm"
+echo "Use odom: $use_odom"
 
 case $slam_algorithm in
     "gmapping")
@@ -17,7 +20,7 @@ case $slam_algorithm in
         roslaunch unitree_navigation slam.launch rviz:=false algorithm:=hector --wait
         ;;
     "cartographer")
-        roslaunch go1_navigation_cartographer slam.launch rviz:=false --wait
+        roslaunch go1_navigation_cartographer slam.launch rviz:=false use_odom:=$use_odom --wait
         ;;
     *)
         echo "Invalid SLAM algorithm specified: $slam_algorithm"

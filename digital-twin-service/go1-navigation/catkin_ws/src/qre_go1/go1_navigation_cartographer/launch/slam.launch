@@ -14,7 +14,9 @@
             type="cartographer_node" args="
                 -configuration_directory $(find go1_navigation_cartographer)/config/cartographer
                 -configuration_basename slam.lua"
-            output="screen">
+            output="screen"> 
+            <!-- <remap from="odom" to="go1_controller/odom" /> -->
+            <remap from="odom" to="/odometry/filtered" />
         </node>
 
         <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
