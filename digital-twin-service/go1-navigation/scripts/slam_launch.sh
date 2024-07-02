@@ -7,7 +7,7 @@ source ~/catkin_ws/devel/setup.bash
 # Read the SLAM algorithm from an environment variable, default to hector if not set
 slam_algorithm=${SLAM_ALGORITHM:-"cartographer"}
 
-use_odom=${USE_ODOM:-"true"}
+use_odom=${USE_ODOM:-"false"}
 
 echo "Selected SLAM Algorithm: $slam_algorithm"
 echo "Use odom: $use_odom"
