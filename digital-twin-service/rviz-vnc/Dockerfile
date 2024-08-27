@@ -36,10 +36,10 @@ RUN mkdir -p catkin_ws/src
 COPY catkin_ws/src /home/ubuntu/catkin_ws/src
 
 # Build the catkin workspace
-RUN cd ~/catkin_ws && source /opt/ros/noetic/setup.bash && catkin_make 
+RUN cd /home/ubuntu/catkin_ws && source /opt/ros/noetic/setup.bash && catkin_make 
 
 # Add ROS environment setup to bashrc
-RUN echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
+RUN echo "source ~/catkin_ws/devel/setup.bash" >> /home/ubuntu/.bashrc
 
 RUN mkdir -p /home/ubuntu/scripts
 COPY scripts/* /home/ubuntu/scripts/

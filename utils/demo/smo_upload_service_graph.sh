@@ -16,4 +16,4 @@ fi
 SERVICE_GRAPH_YAML=$1
 
 # Upload service graph
-curl -X POST -F "file=@$SERVICE_GRAPH_YAML" http://10.5.15.55:32006/upload/
+curl -X POST -F "file=@$SERVICE_GRAPH_YAML" http://localhost:32006/upload/
