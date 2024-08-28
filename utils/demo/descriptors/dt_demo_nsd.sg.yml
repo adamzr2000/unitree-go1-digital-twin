@@ -29,7 +29,7 @@ lnsd:
         nf-version: "v1.0"
         nf-mgmt-network: "shared-mgmt-net"
     application-functions:
-        #ros-master, go1-base, gesture-control, lidar-drivers, camera-drivers, go1-navigation, rviz-vnc, digital-replica, go1-monitoring-edge, go1-monitoring-robot, influxdb, grafana
+        #ros-master, go1-base, gesture-control, lidar-drivers, camera-drivers, go1-navigation, rviz-vnc, digital-replica, go1-monitoring-edge, go1-monitoring-robot, influxdb
       - af-instance-id: "dt-ros-master"
         af-id: "ros-master"
         af-name: "ROS Master"

@@ -26,8 +26,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Use bash shell for subsequent commands
 SHELL [ "/bin/bash", "-c" ]
 
-# Install essential tools
-RUN apt-get update && apt-get install -y \
+# Install essential tools and ROS dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
     libboost-all-dev \
     git \
     wget \
@@ -41,13 +42,18 @@ RUN apt-get update && apt-get install -y \
     libswscale-dev \
     libgstreamer-plugins-base1.0-dev \
     libgstreamer1.0-dev \
-    libgtk2.0-dev \
- && rm -rf /var/lib/apt/lists/* \
- && apt-get clean
+    libgtk2.0-dev && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean
 
-RUN pip3 install --timeout=1000 mediapipe numpy==1.20 pyrealsense2 Flask \
- && rm -rf /root/.cache/pip
+RUN pip3 install --no-cache-dir --timeout=1000 \
+    mediapipe \
+    numpy==1.20 \
+    pyrealsense2 \
+    Flask
 
+RUN pip3 install --upgrade numpy
+    
 # Switch to the newly created user for better security (avoid using root)
 USER go1
 WORKDIR /home/go1

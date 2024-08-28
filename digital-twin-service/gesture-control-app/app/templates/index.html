@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gesture Recognition Stream</title>
     <style>
         body {
@@ -11,28 +12,70 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
+            background-color: #e9ecef; /* Slightly darker background for contrast */
+            font-family: 'Arial', sans-serif;
+            overflow: hidden; /* Prevent scrollbars */
         }
         h1 {
-            color: #333;
-        }
-        img {
-            border: 4px solid #555;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            max-width: 100%;
-            height: auto;
+            color: #212529; /* Darker text color for better readability */
+            margin-bottom: 20px;
+            font-size: 2.5em; /* Larger font size for headings */
+            font-weight: 600; /* Semi-bold font for headings */
         }
         .container {
-            text-align: center;
-            padding: 20px;
+            display: flex;
+            flex-direction: row;
+            gap: 20px; /* Increased space between containers */
+            width: 80vw; /* Adjust width for better centering */
+            height: auto; /* Height adjusts to fit content */
+            padding: 20px; /* Added padding around the container */
+            box-sizing: border-box;
+            overflow: hidden; /* Prevent overflow */
+            background: #ffffff; /* White background for the container */
+            border-radius: 12px; /* Rounded corners for the container */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Softer shadow for depth */
+        }
+        .section {
+            background-color: #f8f9fa; /* Slightly different background color for sections */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            flex: 1; /* Allow sections to grow and shrink as needed */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px; /* Increased padding inside each section */
+            box-sizing: border-box; /* Include padding in width and height */
+            overflow: hidden; /* Ensure no content spills outside the container */
+            transition: transform 0.3s, box-shadow 0.3s; /* Smooth transitions */
+        }
+        .section:hover {
+            transform: translateY(-5px); /* Slight lift effect on hover */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+        }
+        .section img, .section video {
+            max-width: 100%; /* Ensure images and videos don't overflow their container */
+            max-height: 70vh; /* Limit height for better fit */
+            object-fit: contain; /* Ensure content scales to fit within container without distortion */
+            border-radius: 8px;
+            border: 4px solid #343a40; /* Darker border color */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Gesture Recognition Video Stream</h1>
-        <img src="{{ url_for('video_feed') }}" alt="Video stream">
+        <!-- Gesture Recognition Stream Section -->
+        <div class="section">
+            <h1>Gesture Recognition Stream</h1>
+            <img src="{{ url_for('video_feed') }}" alt="Gesture Recognition Stream">
+        </div>
+
+        <!-- Gesture Control Commands Section -->
+        <div class="section">
+            <h1>Gesture Control Commands</h1>
+            <img src="{{ url_for('static', filename='gesture-control-commands.png') }}" alt="Gesture Control Commands">
+        </div>
     </div>
 </body>
 </html>

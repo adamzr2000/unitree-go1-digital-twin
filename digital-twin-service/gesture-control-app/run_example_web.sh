@@ -113,9 +113,10 @@ docker run \
     -e ROS_IP="$ros_ip" \
     -e CAMERA_TYPE="$camera_type" \
     -e WEB_SERVER="$web_server" \
-    -e CAMERA_TYPE="$camera_type" \
     -e CMD_VEL="$cmd_vel" \
     -e STAMPED="$stamped" \
+    -e CONTROL_LOOP_RATE="$control_loop_rate" \
+    -v "$host_app_dir":/home/go1/app \
     --rm \
     --net host \
     --privileged \

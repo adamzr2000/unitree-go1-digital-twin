@@ -15,5 +15,14 @@ fi
 
 SERVICE_GRAPH_YAML=$1
 
+# Construct the full path to the service graph YAML file
+SERVICE_GRAPH_PATH="descriptors/$SERVICE_GRAPH_YAML"
+
+# Check if the specified YAML file exists in the descriptors directory
+if [ ! -f "$SERVICE_GRAPH_PATH" ]; then
+    echo "Error: Service graph YAML file '$SERVICE_GRAPH_PATH' not found."
+    exit 1
+fi
+
 # Upload service graph
-curl -X POST -F "file=@$SERVICE_GRAPH_YAML" http://localhost:32006/upload/
+curl -X POST -F "file=@$SERVICE_GRAPH_PATH" http://localhost:32006/upload/

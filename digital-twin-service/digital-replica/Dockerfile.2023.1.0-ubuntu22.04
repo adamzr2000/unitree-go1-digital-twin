@@ -57,5 +57,11 @@ WORKDIR /isaac-sim
 # Add symlink
 RUN ln -s exts/omni.isaac.examples/omni/isaac/examples extension_examples
 
+# Copy the custom runheadless.native.sh with ROS1 bridge enabled from host to container
+COPY ./app/runheadless.native.sh /isaac-sim/runheadless.native.sh
+
+# Ensure the script has executable permissions
+RUN chmod +x /isaac-sim/runheadless.native.sh
+
 # Default entrypoint to launch headless with streaming
 ENTRYPOINT /isaac-sim/runheadless.native.sh 

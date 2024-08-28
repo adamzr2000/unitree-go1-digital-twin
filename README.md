@@ -27,7 +27,7 @@ simulator.
  - NVIDIA GPU Driver (recommended version 525.85 or higher)
  - NVIDIA Container Toolkit
  - NVIDIA Omniverse 
- - Kubernetes Distribution: K3s v1.28.8+k3s1
+ - Kubernetes Distribution: K3s >= v1.28.8+k3s1
 
 ## Getting Started
  ### Digital Twin service description
@@ -45,7 +45,7 @@ simulator.
 
  - `Camera Drivers`: Provides the [Depth Camera Astra S | Orbbec 3D](https://shop.orbbec3d.com/Astra-S) drivers (detailed info [here](./digital-twin-service/camera-drivers/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
 
- - `Go1 Navigation`: Provides algorithms for simultaneous localization and mapping (SLAM) that enable the creation of maps for indoor environments and facilitate autonomous navigation (detailed info [here](./digital-twin-service/go1-navigation/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
+ - `Go1 Navigation`: Provides algorithms for simultaneous localization and mapping (SLAM) that enable the creation of maps for indoor environments and autonomous navigation (detailed info [here](./digital-twin-service/go1-navigation/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
 
  - `Rviz VNC`: Provides a VNC container with a ROS image, enabling visualization in [RViz](https://wiki.ros.org/rviz) of the SLAM capabilities. This showcases how the map of the environment is being created in real-time (detailed info [here](./digital-twin-service/rviz-vnc/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
 
