@@ -34,7 +34,7 @@ spec:
             privileged: true
         resources:
             limits:
-              memory: "1Gi"
+              memory: "2Gi"
       nodeSelector:
         nodetype: edge
 

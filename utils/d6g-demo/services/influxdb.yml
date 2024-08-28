@@ -63,3 +63,23 @@ spec:
     node: influxdb
 
 ---
+
+## LoadBalancer service declaration.
+apiVersion: v1
+kind: Service
+metadata:
+  name: influxdb-frontend
+  labels:
+    app: digital-twin-service
+    node: influxdb
+spec:
+  type: LoadBalancer
+  ports:
+  - name: influxdb-frontend
+    protocol: TCP
+    port: 8087
+    targetPort: 8086
+  selector:
+    node: influxdb
+
+---

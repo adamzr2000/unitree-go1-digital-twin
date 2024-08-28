@@ -40,6 +40,8 @@ spec:
           value: "ros-metrics"
         - name: WINDOW_SIZE
           value: "50"
+        - name: MANUAL_DELAY
+          value: "true"
         securityContext:
             privileged: true
       nodeSelector:
