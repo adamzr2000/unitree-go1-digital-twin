@@ -26,7 +26,10 @@ RUN apt-get update && apt-get install -y \
     lsof \
     ros-${ROS_DISTRO}-tf \
     python-rosinstall \
-    python-rosinstall-generator 
+    python-rosinstall-generator \
+    libeigen3-dev && \
+    apt-get clean
+
 
 # Switch to the newly created user for better security (avoid using root)
 USER lidar

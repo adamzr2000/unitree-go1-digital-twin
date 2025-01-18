@@ -1,0 +1,16 @@
+<launch>
+  <!-- Include RPLIDAR driver launch -->
+  <include file="$(find rplidar_ros)/launch/rplidar_go1.launch"/>
+
+  <!-- Include RF2O Laser Odometry launch -->
+  <include file="$(find rf2o_laser_odometry)/launch/rf2o_laser_odometry.launch">
+    <!-- Override parameters if needed -->
+    <arg name="laser_scan_topic" value="/scan"/>
+    <arg name="base_frame_id" value="/base"/>
+    <arg name="odom_frame_id" value="/odom"/>
+    <arg name="publish_tf" value="true"/>
+    <arg name="init_pose_from_topic" value=""/>
+    <arg name="freq" value="10.0"/>
+    <arg name="verbose" value="false"/>
+  </include>
+</launch>
