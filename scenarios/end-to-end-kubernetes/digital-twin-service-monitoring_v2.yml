@@ -200,12 +200,17 @@ spec:
         volumeMounts:
           - name: webcam
             mountPath: /dev/video0
+          - name: utils
+            mountPath: /home/go1/utils
         securityContext:
           privileged: true
       volumes:
         - name: webcam
           hostPath:
             path: /dev/video0
+        - name: utils
+          hostPath:
+            path: /home/desire6g/adam/demo_failures/utils
       nodeSelector:
         nodetype: edge
 
@@ -311,61 +316,61 @@ spec:
 ### camera-drivers ###
 ######################
 
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: camera-deployment
-  labels:
-    app: digital-twin-service
-    node: camera
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      node: camera
-  template:
-    metadata:
-      labels:
-        node: camera
-    spec:
-      containers:
-      - name: camera
-        image: astra-camera
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: ROS_MASTER_URI
-          value: "http://roscore-edge:11311"
-        - name: ROS_HOSTNAME
-          value: "camera"
-        volumeMounts:
-          - name: camera
-            mountPath: /dev/astra
-        securityContext:
-          privileged: true
-      volumes:
-        - name: camera
-          hostPath:
-            path: /dev/astra
-      nodeSelector:
-        nodetype: robot
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: camera-deployment
+#   labels:
+#     app: digital-twin-service
+#     node: camera
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       node: camera
+#   template:
+#     metadata:
+#       labels:
+#         node: camera
+#     spec:
+#       containers:
+#       - name: camera
+#         image: astra-camera
+#         imagePullPolicy: IfNotPresent
+#         env:
+#         - name: ROS_MASTER_URI
+#           value: "http://roscore-edge:11311"
+#         - name: ROS_HOSTNAME
+#           value: "camera"
+#         volumeMounts:
+#           - name: camera
+#             mountPath: /dev/astra
+#         securityContext:
+#           privileged: true
+#       volumes:
+#         - name: camera
+#           hostPath:
+#             path: /dev/astra
+#       nodeSelector:
+#         nodetype: robot
 
----
+# ---
 
-### Headless service declaration.
-### This is required to map to app "camera" so that other pods can DNS its IP address dynamically.
-apiVersion: v1
-kind: Service
-metadata:
-  name: camera
-  labels:
-    app: digital-twin-service
-    node: camera
-spec:
-  clusterIP: None
-  selector:
-    node: camera
+# ### Headless service declaration.
+# ### This is required to map to app "camera" so that other pods can DNS its IP address dynamically.
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: camera
+#   labels:
+#     app: digital-twin-service
+#     node: camera
+# spec:
+#   clusterIP: None
+#   selector:
+#     node: camera
 
----
+# ---
 
 ######################
 ### go1-navigation ###
