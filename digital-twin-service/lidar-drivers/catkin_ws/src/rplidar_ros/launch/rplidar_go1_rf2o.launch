@@ -2,7 +2,8 @@
 
   <!-- Declare arguments with default values -->
   <arg name="laser_scan_topic" default="/scan"/> 
-  <arg name="odom_topic" default="/odom_rf2o"/>
+  <arg name="odom_topic" default="/odom"/>
+  <!-- <arg name="odom_topic" default="/odom_rf2o"/> -->
   <arg name="publish_tf" default="true"/>
   <arg name="base_frame_id" default="/base"/>
   <arg name="odom_frame_id" default="/odom"/>

@@ -20,5 +20,4 @@ echo "Using ODOM_TOPIC: $ODOM_TOPIC"
 echo "Launching file: $LAUNCH_FILE"
 
 # Launch the selected file with the ODOM_TOPIC argument
-# roslaunch rplidar_ros $LAUNCH_FILE odom_topic:=$ODOM_TOPIC --wait 
-roslaunch rplidar_ros $LAUNCH_FILE rf2o_laser_odometry/odom_topic:=$ODOM_TOPIC --wait
+roslaunch rplidar_ros $LAUNCH_FILE odom_topic:=$ODOM_TOPIC --wait 
