@@ -4,8 +4,8 @@
   <arg name="laser_scan_topic" default="/scan"/> 
   <arg name="odom_topic" default="/odom_rf2o"/>
   <arg name="publish_tf" default="true"/>
-  <arg name="base_frame_id" default="/base"/>
-  <arg name="odom_frame_id" default="/odom"/>
+  <arg name="base_frame_id" default="base"/>
+  <arg name="odom_frame_id" default="odom"/>
   <arg name="freq" default="10.0"/>
   <arg name="init_pose_from_topic" default=""/>
   <arg name="verbose" default="false"/>

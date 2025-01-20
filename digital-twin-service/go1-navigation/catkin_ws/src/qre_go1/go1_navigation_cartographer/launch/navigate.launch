@@ -5,43 +5,38 @@
     <arg name="use_odom"   default="false"/>
     <arg name="odom_topic" default="odom_rf2o"/>
 
-
     <env name="CARTOGRAPHER_USE_ODOM" value="$(arg use_odom)" />
 
     <arg if="$(eval arg('robot_name') == '/')"  name="frame_prefix" value="" />
     <arg unless="$(eval arg('robot_name') == '/')" name="frame_prefix" value="$(arg robot_name)/" />
 
-    <group ns="$(arg robot_name)">
-        <!-- Map server -->
-        <arg name="map_file" default="$(find go1_navigation_cartographer)/maps/map.yaml"/>
-        <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)" >
-            <param name="frame_id" value="$(arg frame_prefix)map" />
-        </node>
+    <!-- Map server -->
+    <arg name="map_file" default="$(find go1_navigation_cartographer)/maps/map.yaml"/>
+    <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)" >
+        <param name="frame_id" value="$(arg frame_prefix)map" />
+    </node>
 
-        <!-- Localization -->
-        <arg name="pbstream_file" default="$(find go1_navigation_cartographer)/maps/map.pbstream"/>
-        <node name="cartographer_node" pkg="cartographer_ros"
-            type="cartographer_node" args="
-            -configuration_directory $(find go1_navigation_cartographer)/config/cartographer
-            -configuration_basename nav.lua
-            -load_state_filename $(arg pbstream_file)"
-            output="screen">
-            <remap from="odom" to="$(arg odom_topic)" />
-        </node>
+    <!-- Localization -->
+    <arg name="pbstream_file" default="$(find go1_navigation_cartographer)/maps/map.pbstream"/>
+    <node name="cartographer_node" pkg="cartographer_ros"
+        type="cartographer_node" args="
+        -configuration_directory $(find go1_navigation_cartographer)/config/cartographer
+        -configuration_basename nav.lua
+        -load_state_filename $(arg pbstream_file)"
+        output="screen">
+        <!-- <remap from="odom" to="$(arg odom_topic)" /> -->
+    </node>
 
+    <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
+        type="cartographer_occupancy_grid_node" args="-resolution 0.05" />
 
-        <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
-            type="cartographer_occupancy_grid_node" args="-resolution 0.05" />
+    <!-- Calls navigation stack -->
+    <include file="$(find go1_navigation_cartographer)/launch/include/move_base.launch.xml">
+        <arg name="frame_prefix" value="$(arg frame_prefix)"/>
+        <arg name="robot_name"   value="$(arg robot_name)"/>
+    </include>
 
-        <!-- Calls navigation stack -->
-        <include file="$(find go1_navigation_cartographer)/launch/include/move_base.launch.xml">
-            <arg name="frame_prefix" value="$(arg frame_prefix)"/>
-            <arg name="robot_name"   value="$(arg robot_name)"/>
-        </include>
-
-
-        <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz"
-            args="-d $(find champ_navigation)/rviz/navigate.rviz -f $(arg frame_prefix)map"
-            output="screen"/>
-    </group>
+    <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz"
+        args="-d $(find champ_navigation)/rviz/navigate.rviz -f $(arg frame_prefix)map"
+        output="screen"/>
 </launch>

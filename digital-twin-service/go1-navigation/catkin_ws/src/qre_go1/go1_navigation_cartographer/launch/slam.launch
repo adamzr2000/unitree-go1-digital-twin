@@ -16,7 +16,7 @@
                 -configuration_basename slam.lua"
             output="screen"> 
             <!-- <remap from="odom" to="go1_controller/odom" /> -->
-            <remap from="odom" to="/odometry/filtered" />
+            <!-- <remap from="odom" to="/odometry/filtered" /> -->
         </node>
 
         <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
