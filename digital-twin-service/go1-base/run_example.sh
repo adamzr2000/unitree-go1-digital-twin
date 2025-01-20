@@ -108,6 +108,7 @@ docker run \
     -e ROS_IP="$ros_ip" \
     -e TARGET_IP="$target_ip" \
     -e STATE_LOOP_RATE="$state_loop_rate" \
+    -e USE_EKF_ODOM="true" \
     --privileged \
     go1-base:latest 
 
