@@ -30,12 +30,18 @@ if ! validate_ip "$target_ip"; then
     target_ip="192.168.123.161" # Default IP if TARGET_IP has an invalid format
 fi
 
-# Read the state_loop_rate address from an environment variable
-state_loop_rate=${STATE_LOOP_RATE:-"50"} # Default STATE_LOOP_RATE to 50Hz ~ 20ms
+# Read the EKF odometry usage flag from an environment variable
+use_ekf_odom=${USE_EKF_ODOM:-"true"} # Default to true if USE_EKF_ODOM is not set
 
-# Debug: Echo the target_ip to ensure it's being set correctly
+# Validate the EKF odometry flag
+if [[ "$use_ekf_odom" != "true" && "$use_ekf_odom" != "false" ]]; then
+    echo "Invalid value for USE_EKF_ODOM: $use_ekf_odom. Defaulting to true."
+    use_ekf_odom="true"
+fi
+
+# Debug: Echo the variables to ensure they are being set correctly
 echo "Using target_ip: $target_ip"
-echo "Using state_loop_rate: $state_loop_rate"
+echo "Using use_ekf_odom: $use_ekf_odom"
 
-# Launch with the selected or entered target IP address
-roslaunch go1_bringup bringup.launch target_ip:=$target_ip state_loop_rate:=$state_loop_rate --wait
+# Launch with the selected or entered target IP address and EKF odometry flag
+roslaunch go1_bringup bringup.launch target_ip:=$target_ip use_ekf_odom:=$use_ekf_odom --wait

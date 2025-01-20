@@ -95,4 +95,4 @@ USER root
 RUN chmod +755 *.sh
 
 USER go1
-CMD "./slam_launch.sh"
+# CMD "./slam_launch.sh"

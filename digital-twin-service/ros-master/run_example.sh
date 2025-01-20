@@ -42,6 +42,7 @@ docker run \
     -e ROS_MASTER_URI="$ros_master_uri" \
     -e ROS_IP="$ros_master_ip" \
     --privileged \
+    -v ./scripts:/home/go1/scripts \
     go1-roscore:latest \
 
 echo "Done."
