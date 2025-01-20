@@ -98,6 +98,7 @@ docker run \
         -e ROS_MASTER_URI="$ros_master_uri" \
         -e ROS_IP="$ros_ip" \
         -e RF2O_LASER_ODOMETRY="true" \
+        -e ODOM_TOPIC="/odom" \
         -v ${host_catkin_ws_dir}:/home/lidar/catkin_ws/src \
         --device=/dev/rplidar \
         rplidar-lidar:latest
