@@ -2,8 +2,7 @@
 
   <!-- Declare arguments with default values -->
   <arg name="laser_scan_topic" default="/scan"/> 
-  <arg name="odom_topic" default="/odom"/>
-  <!-- <arg name="odom_topic" default="/odom_rf2o"/> -->
+  <arg name="odom_topic" default="/odom_rf2o"/>
   <arg name="publish_tf" default="true"/>
   <arg name="base_frame_id" default="/base"/>
   <arg name="odom_frame_id" default="/odom"/>
@@ -21,6 +20,7 @@
     <arg name="base_frame_id" value="$(arg base_frame_id)"/>
     <arg name="odom_frame_id" value="$(arg odom_frame_id)"/>
     <arg name="publish_tf" value="$(arg publish_tf)"/>
+    <arg name="odom_topic" value="$(arg odom_topic)"/>
     <arg name="init_pose_from_topic" value="$(arg init_pose_from_topic)"/>
     <arg name="freq" value="$(arg freq)"/>
     <arg name="verbose" value="$(arg verbose)"/>
