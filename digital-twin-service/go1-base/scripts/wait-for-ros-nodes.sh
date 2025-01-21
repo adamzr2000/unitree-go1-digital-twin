@@ -39,9 +39,13 @@ if [[ "$use_ekf_odom" != "true" && "$use_ekf_odom" != "false" ]]; then
     use_ekf_odom="true"
 fi
 
+# Read the state loop rate from an environment variable
+state_loop_rate=${STATEE_LOOP_RATE:-"100"}
+
 # Debug: Echo the variables to ensure they are being set correctly
 echo "Using target_ip: $target_ip"
 echo "Using use_ekf_odom: $use_ekf_odom"
+echo "Using state_loop_rate: $state_loop_rate"
 
 # Launch with the selected or entered target IP address and EKF odometry flag
-roslaunch go1_bringup bringup.launch target_ip:=$target_ip use_ekf_odom:=$use_ekf_odom --wait
+roslaunch go1_bringup bringup.launch target_ip:=$target_ip use_ekf_odom:=$use_ekf_odom state_loop_rate:=$state_loop_rate --wait

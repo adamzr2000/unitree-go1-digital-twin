@@ -1,8 +1,11 @@
 <?xml version="1.0"?>
 <launch>
 
-  <!-- Define the target_ip argument -->
   <arg name="target_ip" default="192.168.123.161"/> <!-- Default value, can be overridden -->
+  <arg name="state_loop_rate" default="50"/>        <!-- Default value is set to 50Hz ~ 20ms -->
+  <arg name="udp_send_dt" default="0.002"/>        <!-- Default value is set to 2ms -->
+  <arg name="udp_recv_dt" default="0.002"/>        <!-- Default value is set to 2ms -->
+
 
   <!-- Define the use_ekf_odom argument -->
   <arg name="use_ekf_odom" default="true"/> <!-- Default value is true -->
@@ -10,6 +13,9 @@
   <!-- Pass the target_ip argument to base.launch -->
   <include file="$(find go1_base)/launch/base.launch">
     <arg name="target_ip" value="$(arg target_ip)"/>
+    <arg name="state_loop_rate" value="$(arg state_loop_rate)"/>
+    <arg name="udp_send_dt" value="$(arg udp_send_dt)"/>
+    <arg name="udp_recv_dt" value="$(arg udp_recv_dt)"/>
   </include>
 
   <!-- Include the description.launch -->

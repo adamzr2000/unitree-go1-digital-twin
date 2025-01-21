@@ -6,6 +6,8 @@ ros_ip="127.0.0.1"
 target_ip="192.168.123.161"
 state_loop_rate="100"
 use_ekf_odom="true"
+udp_send_dt="0.01"
+udp_recv_dt="0.01"
 
 # Function to validate IP address format
 validate_ip() {
@@ -45,9 +47,19 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
+        --udp-send-dt)
+            udp_send_dt="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --udp-recv-dt)
+            udp_recv_dt="$2"
+            shift # past argument
+            shift # past value
+            ;;
         *)
             echo "Unknown option: $1"
-            echo "Usage: $0 [--ros-master-uri <ROS_MASTER_URI>] [--ros-ip <ROS_IP>] [--target-ip <TARGET_IP>] [--state-loop-rate <RATE>] [--use-ekf-odom <true/false>]"
+            echo "Usage: $0 [--ros-master-uri <ROS_MASTER_URI>] [--ros-ip <ROS_IP>] [--target-ip <TARGET_IP>] [--state-loop-rate <RATE>] [--use-ekf-odom <true/false>] [--udp-send-dt <VALUE>] [--udp-recv-dt <VALUE>]"
             exit 1
             ;;
     esac
@@ -74,6 +86,8 @@ echo "ROS_IP: $ros_ip"
 echo "TARGET_IP: $target_ip"
 echo "STATE_LOOP_RATE: $state_loop_rate"
 echo "USE_EKF_ODOM: $use_ekf_odom"
+echo "UDP_SEND_DT: $udp_send_dt"
+echo "UDP_RECV_DT: $udp_recv_dt"
 echo "==============================="
 
 # Run docker container
@@ -89,5 +103,7 @@ docker run \
     -e TARGET_IP="$target_ip" \
     -e STATE_LOOP_RATE="$state_loop_rate" \
     -e USE_EKF_ODOM="$use_ekf_odom" \
+    -e UDP_SEND_DT="$udp_send_dt" \
+    -e UDP_RECV_DT="$udp_recv_dt" \
     --privileged \
     go1-base:latest
