@@ -40,7 +40,7 @@ In this folder we also provide a docker run example.
 
 To run the Unitree Go1 ROS Navigation:
 ```bash
-./run_example.sh
+./run_example.sh --ros-master-uri http://192.168.40.3:11311 --ros-ip 192.168.40.3
 ```
 
 Verify that the container is up and running:

@@ -1,37 +1,43 @@
 #!/bin/bash
 
-# Function to display the menu
-display_menu() {
-    echo "==========================="
-    echo "   Select ROS MASTER IP    "
-    echo "==========================="
-    echo "  1 -> localhost"
-    echo "  2 -> alienware (10.5.98.101)"
-    echo "  3 -> edge (10.5.1.21)"
-    echo "  4 -> custom"
-    echo "==========================="
-}
+# Default values
+ros_master_ip="127.0.0.1"
 
-# Function to get user choice
-get_choice() {
-    read -p "Enter your choice (1/2/3/4): " choice
-    case $choice in
-        1) ros_master_ip="127.0.0.1"; return;;
-        2) ros_master_ip="10.5.98.101"; return;;
-        3) ros_master_ip="10.5.1.21"; return;;
-        4) read -p "Enter custom ROS MASTER IP: " custom_ip; ros_master_ip="$custom_ip"; return;;
-        *) echo "Invalid choice. Please enter 1, 2, 3, or 4."; get_choice;;
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+        --ros-master-ip)
+            ros_master_ip="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Usage: $0 --ros-master-ip <ROS_MASTER_IP>"
+            exit 1
+            ;;
     esac
-}
+done
 
-# Prompt the user to select ROS MASTER IP
-display_menu
-get_choice
+# Validate ROS_MASTER_IP
+if [[ -z "$ros_master_ip" ]]; then
+    echo "ROS_MASTER_IP is required. Use --ros-master-ip to specify it."
+    exit 1
+fi
 
-# Construct ROS MASTER URI
+# Construct ROS_MASTER_URI
 ros_master_uri="http://${ros_master_ip}:11311"
 
-# Run docker container with selected ROS MASTER URI and ROS_IP
+# Display the selected parameters
+echo "==========================="
+echo " Parameters in Use"
+echo "==========================="
+echo "ROS_MASTER_IP: $ros_master_ip"
+echo "ROS_MASTER_URI: $ros_master_uri"
+echo "==========================="
+
+# Run docker container with selected ROS_MASTER_URI and ROS_IP
 echo 'Running go1-robot docker image.'
 
 docker run \
@@ -41,8 +47,7 @@ docker run \
     --net host \
     -e ROS_MASTER_URI="$ros_master_uri" \
     -e ROS_IP="$ros_master_ip" \
-    --privileged \
     -v ./scripts:/home/go1/scripts \
-    go1-roscore:latest \
+    go1-roscore:latest
 
 echo "Done."
