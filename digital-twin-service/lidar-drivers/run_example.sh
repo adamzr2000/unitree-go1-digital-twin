@@ -47,14 +47,6 @@ validate_ip() {
     fi
 }
 
-# Validate ROS_MASTER_URI IP
-if [[ $ros_master_uri =~ http://([^:]+):11311 ]]; then
-    validate_ip "${BASH_REMATCH[1]}"
-else
-    echo "Invalid ROS_MASTER_URI format: $ros_master_uri"
-    exit 1
-fi
-
 # Validate ROS_IP
 validate_ip "$ros_ip"
 

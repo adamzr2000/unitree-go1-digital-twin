@@ -15,13 +15,13 @@ int main(int argc, char *argv[]) {
 
     float udp_send_dt;
     float udp_recv_dt;
-    p_nh.param<float>("udp_send_dt", udp_send_dt, 0.002);  // Retrieve state_loop_rate parameter, default is 2ms
-    p_nh.param<float>("udp_recv_dt", udp_recv_dt, 0.002);  // Retrieve state_loop_rate parameter, default is 2ms
+    p_nh.param<float>("udp_send_dt", udp_send_dt, 0.002f);  // Retrieve state_loop_rate parameter, default is 2ms
+    p_nh.param<float>("udp_recv_dt", udp_recv_dt, 0.002f);  // Retrieve state_loop_rate parameter, default is 2ms
 
     // Debug output
     ROS_INFO("state_loop_rate parameter value: %d", state_loop_rate);
-    ROS_INFO("udp_send_dt parameter value: %d", udp_send_dt);
-    ROS_INFO("udp_recv_dt parameter value: %d", udp_recv_dt);
+    ROS_INFO("udp_send_dt parameter value: %.3f", udp_send_dt);
+    ROS_INFO("udp_recv_dt parameter value: %.3f", udp_recv_dt);
 
     if (argc >= 2) {
         if (strcmp(argv[1], "high_level") == 0) {

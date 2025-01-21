@@ -39,13 +39,16 @@ if [[ "$use_ekf_odom" != "true" && "$use_ekf_odom" != "false" ]]; then
     use_ekf_odom="true"
 fi
 
-# Read the state loop rate from an environment variable
 state_loop_rate=${STATEE_LOOP_RATE:-"100"}
+udp_send_dt=${UDP_SEND_DT:-"0.005"}
+udp_recv_dt=${UDP_RECV_DT:-"0.005"}
 
 # Debug: Echo the variables to ensure they are being set correctly
 echo "Using target_ip: $target_ip"
 echo "Using use_ekf_odom: $use_ekf_odom"
 echo "Using state_loop_rate: $state_loop_rate"
+echo "Using udp_send_dt: $udp_send_dt"
+echo "Using udp_recv_dt: $udp_recv_dt"
 
 # Launch with the selected or entered target IP address and EKF odometry flag
-roslaunch go1_bringup bringup.launch target_ip:=$target_ip use_ekf_odom:=$use_ekf_odom state_loop_rate:=$state_loop_rate --wait
+roslaunch go1_bringup bringup.launch target_ip:=$target_ip use_ekf_odom:=$use_ekf_odom state_loop_rate:=$state_loop_rate udp_send_dt:=$udp_send_dt udp_recv_dt:=$udp_recv_dt --wait
