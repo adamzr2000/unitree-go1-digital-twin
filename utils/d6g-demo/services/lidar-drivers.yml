@@ -28,6 +28,10 @@ spec:
           value: "http://roscore-edge:11311"
         - name: ROS_HOSTNAME
           value: "lidar"
+        - name: RF2O_LASER_ODOMETRY
+          value: "false"
+        - name: ODOM_TOPIC
+          value: "/odom"                    
         volumeMounts:
           - name: rplidar
             mountPath: /dev/rplidar

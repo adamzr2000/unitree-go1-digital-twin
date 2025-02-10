@@ -32,9 +32,6 @@ spec:
         - containerPort: 80
         securityContext:
             privileged: true
-        resources:
-            limits:
-              memory: "2Gi"
       nodeSelector:
         nodetype: edge
 
