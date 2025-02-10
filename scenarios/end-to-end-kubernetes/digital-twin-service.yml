@@ -92,6 +92,10 @@ spec:
           value: "192.168.123.161"
         - name: STATE_LOOP_RATE
           value: "100"
+        - name: UDP_SEND_DT
+          value: "0.01"
+        - name: UDP_RECV_DT
+          value: "0.01"          
         ports:
         - containerPort: 8082
           protocol: UDP
@@ -272,7 +276,7 @@ spec:
         - name: ROS_MASTER_URI
           value: "http://roscore-edge:11311"
         - name: ROS_HOSTNAME
-          value: "lidar"
+          value: "lidar"          
         volumeMounts:
           - name: rplidar
             mountPath: /dev/rplidar
@@ -455,9 +459,6 @@ spec:
         - containerPort: 80
         securityContext:
             privileged: true
-        resources:
-            limits:
-              memory: "1Gi"
       nodeSelector:
         nodetype: edge
 

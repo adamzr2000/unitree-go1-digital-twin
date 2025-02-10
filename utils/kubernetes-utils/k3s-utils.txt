@@ -27,3 +27,13 @@ Avoid using sudo kubectl
 =======================================================
 sudo chmod 644 /etc/rancher/k3s/k3s.yaml
 
+
+List docker images in the k3s registry
+=======================================================
+sudo k3s ctr images list | grep docker.io
+
+Import docker image into k3s registry
+=======================================================
+docker save <docker-image-name> | sudo k3s ctr images import -
+
+
