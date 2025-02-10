@@ -8,13 +8,14 @@
 
 </div>
 
-
 This repository comprises the code developed and integrated in [DESIRE6G](https://desire6g.eu/) project
 in order to implement the Digital Twin use case.
 
-Currently, this use case uses the [Unitree Go1](https://unitree-docs.readthedocs.io/en/latest/get_started/Go1_Edu.html)
+The use case uses the [Unitree Go1](https://unitree-docs.readthedocs.io/en/latest/get_started/Go1_Edu.html)
 quadruped robot and the [NVIDIA Isaac Sim](https://developer.nvidia.com/isaac-sim) robot
 simulator.
+
+![Go1 5TONIC](./images/go1-5tonic.png)
 
 ## Version
  - 0.1

@@ -1,0 +1,22 @@
+lnsd:
+  ## lnsd refers to a network service graph whose subgraph is described
+  ns-instance-id: "11223344-e2a8-4338-bc8c-be685548bad2" 
+  ns:
+    name: "Alpine Test"
+    id: "418420e3-e2a8-4338-bc8c-be685548bad2" # refers to the ns in the service catalog
+    vendor: "D6G"
+    descriptor-version: "1.0"
+    site-id: "d6g-001"
+    application-functions:
+      - af-instance-id: "test-alpine-1"
+        af-id: "d6g-test-alpine-1"
+        af-name: "Alpine Test 1"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net"
+      - af-instance-id: "test-alpine-2"
+        af-id: "d6g-test-alpine-2"
+        af-name: "Alpine Test 2"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net"
+      
+    
