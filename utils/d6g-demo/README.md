@@ -1,6 +1,6 @@
 # Demo Workflow
 
-## 1. Service Management Orchestrator (SMO)
+## 1. SMO
 
 ### Deploy the Service
 
@@ -22,7 +22,7 @@ curl http://localhost:32008/deployed_services
 curl -X DELETE "http://localhost:32008/main_id/<service_id>" | jq
 ```
 
-## 2. Traffic Generator
+## 2. Remote Operator
 
 ### Start iperf server
 
@@ -30,6 +30,16 @@ curl -X DELETE "http://localhost:32008/main_id/<service_id>" | jq
 cd ~/ppv/pyperf
 ./pyperf.py script_name_s.cc0*srv -ft GC0 -p 6000
 ```
+
+## 3. Edge Server 1
+
+### Send video frames to the 5TONIC server:
+
+```bash
+./video_sender.sh --server_url http://10.5.1.21:5000/upload_frame
+```
+
+## 4. Traffic Generator
 
 ### Simulate Traffic for 100 Users
 
@@ -48,7 +58,7 @@ To stop the simulated traffic, launch the GUI and select `kill all`:
 ./pyperf.py gui
 ```
 
-## 3. Infrastructure Management Layer (IML)
+## 5. IML
 
 ### Load Equal Sharing Policy
 
