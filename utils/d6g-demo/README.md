@@ -36,7 +36,7 @@ cd ~/ppv/pyperf
 ### Send video frames to the 5TONIC server:
 
 ```bash
-./video_sender.sh --server_url http://10.5.1.21:5000/upload_frame
+./video_sender.sh --server_url http://10.5.1.21:8888/upload_frame
 ```
 
 ## 4. Traffic Generator
