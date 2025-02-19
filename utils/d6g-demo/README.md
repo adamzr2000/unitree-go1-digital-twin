@@ -22,7 +22,7 @@ curl http://localhost:32008/deployed_services
 curl -X DELETE "http://localhost:32008/main_id/<service_id>" | jq
 ```
 	
-## 2. Edge Server 1
+## 2. Remote Operator
 
 ### Send video frames to the 5TONIC server:
 
@@ -30,7 +30,7 @@ curl -X DELETE "http://localhost:32008/main_id/<service_id>" | jq
 ./video_sender.sh --server_url http://10.5.1.21:8888/upload_frame
 ```
 
-## 3. Remote Operator
+## 3. Edge Server 1
 
 ### Start iperf server
 
