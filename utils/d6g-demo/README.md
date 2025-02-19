@@ -21,22 +21,22 @@ curl http://localhost:32008/deployed_services
 ```bash
 curl -X DELETE "http://localhost:32008/main_id/<service_id>" | jq
 ```
+	
+## 2. Edge Server 1
 
-## 2. Remote Operator
+### Send video frames to the 5TONIC server:
+
+```bash
+./video_sender.sh --server_url http://10.5.1.21:8888/upload_frame
+```
+
+## 3. Remote Operator
 
 ### Start iperf server
 
 ```bash
 cd ~/ppv/pyperf
 ./pyperf.py script_name_s.cc0*srv -ft GC0 -p 6000
-```
-
-## 3. Edge Server 1
-
-### Send video frames to the 5TONIC server:
-
-```bash
-./video_sender.sh --server_url http://10.5.1.21:8888/upload_frame
 ```
 
 ## 4. Traffic Generator
