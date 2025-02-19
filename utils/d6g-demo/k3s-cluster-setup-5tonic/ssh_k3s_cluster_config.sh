@@ -41,9 +41,9 @@ echo "Executing local script: ./delete_k3s_node.sh robot"
 # Step 2: Execute remote commands via SSH
 echo "Executing remote commands on $ROBOT_IP..."
 
-ssh -T "${REMOTE_USER}@${ROBOT_IP}" << EOF
+sshpass -p ${PASSWORD} ssh -T "${REMOTE_USER}@${ROBOT_IP}" << EOF
 cd /home/${REMOTE_USER}/d6g-demo-k3s-cluster-setup-5tonic
-./update_k3s_agent_service.sh --k3s-interface ${FLANNEL_INTERFACE} --k3s-ip ${ROBOT_IP}
+echo "${PASSWORD}" | sudo -S ./update_k3s_agent_service.sh --k3s-interface ${FLANNEL_INTERFACE} --k3s-ip ${ROBOT_IP}
 EOF
 
 echo "Deployment completed successfully!"

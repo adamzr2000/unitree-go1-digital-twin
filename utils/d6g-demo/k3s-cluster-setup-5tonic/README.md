@@ -17,10 +17,11 @@ python3 connect_5g_5tonic_nat_robot.py --robot-ip 192.168.2.2
 ## 3. Robot (miniPC)
 Update the K3s agent service with the correct network interface and IP:
 ```bash
-./update_k3s_agent_service.sh --k3s-interface ue0 --k3s-ip 10.11.15.132
+./update_k3s_agent_service.sh --k3s-interface ue0 --k3s-ip 10.11.15.X
 ```
 
-## Test
+## Quick-Start Guide
+
 ```bash
 ./ssh_k3s_cluster_config.sh --user netcom --host 10.11.15.X --flannel-interface ue0
 ```
@@ -34,7 +35,7 @@ kubectl describe node robot | grep flannel.alpha.coreos.com/public-ip
 
 ## Set Flannel Public IP Annotation
 ```bash
-kubectl annotate node robot flannel.alpha.coreos.com/public-ip-overwrite=10.11.15.132
+kubectl annotate node robot flannel.alpha.coreos.com/public-ip-overwrite=10.11.15.X
 ```
 
 ## Alpine Deployment Test

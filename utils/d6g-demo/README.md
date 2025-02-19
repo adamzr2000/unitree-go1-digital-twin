@@ -13,14 +13,25 @@ curl -X POST -H "Content-Type: application/json" -d '{"json_data": {"type": "ser
 Verify the status of deployed services and retrieve the `service_id`:
 
 ```bash
-curl http://localhost:32008/deployed_services
+curl http://localhost:32008/deployed_services 
+```
+
+### Delete the Service
+
+```bash
+curl -X DELETE "http://localhost:32008/main_id/<service_id>" | jq
 ```
 
 ## 2. Traffic Generator
 
-### Simulate Traffic for 100 Users
+### Start iperf server
 
-Navigate to the `~/ppv/pyperf` and simulate traffic for 100 users:
+```bash
+cd ~/ppv/pyperf
+./pyperf.py script_name_s.cc0*srv -ft GC0 -p 6000
+```
+
+### Simulate Traffic for 100 Users
 
 ```bash
 cd ~/ppv/pyperf
