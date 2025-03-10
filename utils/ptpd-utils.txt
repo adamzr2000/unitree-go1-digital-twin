@@ -1,12 +1,12 @@
-Edge
-====
+Edge server node (Master)
+=========================
 sudo ptpd --masteronly --interface <wired-interface> -V
 -------------------------------------------------------
 sudo ptpd --masteronly --interface enp9s0f1 -V
 
 
-Robot UE
-========
-sudo ptpd --slaveonly --interface <wireless-interface> -C <edge-ip> -V
+Robot node (Slave)
+==================
+sudo ptpd --slaveonly --interface <wireless-interface> -C <master-ip> -V
 ----------------------------------------------------------------------
 sudo ptpd --slaveonly --interface wlan0 -C 192.168.40.4 -V

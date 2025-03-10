@@ -1,0 +1,1231 @@
+##################
+### ros-master ###
+##################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: roscore-edge-deployment
+  labels:
+    app: digital-twin-service
+    node: roscore-edge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: roscore-edge
+  template:
+    metadata:
+      labels:
+        node: roscore-edge
+    spec:
+      containers:
+      - name: roscore-edge
+        tty: true
+        image: go1-roscore
+        imagePullPolicy: IfNotPresent
+        # env:
+        # - name: ENABLE_STATISTICS
+        #   value: "false"
+        # - name: ROS_MASTER_URI
+        #   value: "http://roscore-edge:11311"
+        # - name: ROS_HOSTNAME
+        #   value: "roscore-edge"
+        ports:
+        - containerPort: 11311
+          name: roscore-port
+      nodeSelector:
+        nodetype: edge
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+
+---
+
+### Headless service declaration.
+### This is required to map to app "roscore-edge" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: roscore-edge
+  labels:
+    app: digital-twin-service
+    node: roscore-edge
+spec:
+  clusterIP: None
+  selector:
+    node: roscore-edge
+
+---
+
+################
+### go1-base ###
+################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go1-base-deployment
+  labels:
+    app: digital-twin-service
+    node: go1-base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: go1-base
+  template:
+    metadata:
+      labels:
+        node: go1-base
+    spec:
+      containers:
+      - name: go1-base
+        image: go1-base
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://roscore-edge:11311"
+        - name: ROS_HOSTNAME
+          value: "go1-base"
+        - name: TARGET_IP
+          value: "192.168.123.161"
+        - name: STATE_LOOP_RATE
+          value: "100"
+        - name: UDP_SEND_DT
+          value: "0.01"
+        - name: UDP_RECV_DT
+          value: "0.01"
+        ports:
+        - containerPort: 8082
+          protocol: UDP
+        - containerPort: 8007
+          protocol: UDP
+        - containerPort: 8090
+          protocol: UDP
+        securityContext:
+            privileged: true
+      nodeSelector:
+        nodetype: robot
+
+---
+
+### Headless service declaration.
+### This is required to map to app "go1-base" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: go1-base
+  labels:
+    app: digital-twin-service
+    node: go1-base
+spec:
+  clusterIP: None
+  selector:
+    node: go1-base
+
+---
+
+### LoadBalancer service declaration.
+### This is required to expose the ports that enable communication from outside the cluster to the internal computers of the robot.
+apiVersion: v1
+kind: Service
+metadata:
+  name: go1-base-robot-communication
+  labels:
+    app: digital-twin-service
+    node: go1-base
+spec:
+  type: LoadBalancer
+  ports:
+  - name: high-level-pc
+    protocol: UDP
+    port: 8082
+    targetPort: 8082
+  - name: low-level-pc
+    protocol: UDP
+    port: 8007
+    targetPort: 8007
+  - name: go1-base-local
+    protocol: UDP
+    port: 8090
+    targetPort: 8090
+  selector:
+    node: go1-base
+
+---
+
+###########################
+### gesture-control-app ###
+###########################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gesture-control-app-deployment
+  labels:
+    app: digital-twin-service
+    node: gesture-control-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: gesture-control-app
+  template:
+    metadata:
+      labels:
+        node: gesture-control-app
+    spec:
+      containers:
+      - name: gesture-control-app
+        image: go1-gesture-control
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://roscore-edge:11311"
+        - name: ROS_HOSTNAME
+          value: "gesture-control-app"
+        - name: CAMERA_TYPE
+          value: "webcam_ip"
+        - name: WEB_SERVER
+          value: "yes"
+        - name: CONTROL_LOOP_RATE
+          value: "100"
+        - name: CMD_VEL
+          value: "go1_controller/cmd_vel"
+        - name: STAMPED
+          value: "true"
+        ports:
+        - containerPort: 8888
+        volumeMounts:
+          - name: webcam
+            mountPath: /dev/video0
+        securityContext:
+          privileged: true
+      volumes:
+        - name: webcam
+          hostPath:
+            path: /dev/video0
+      nodeSelector:
+        nodetype: edge
+
+---
+
+### Headless service declaration.
+### This is required to map to app "gesture-control-app" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: gesture-control-app
+  labels:
+    app: digital-twin-service
+    node: gesture-control-app
+spec:
+  clusterIP: None
+  selector:
+    node: gesture-control-app
+
+---
+
+### LoadBalancer service declaration.
+### This is required to expose the ports that enable web access to the gesture-control-app container
+apiVersion: v1
+kind: Service
+metadata:
+  name: gesture-control-app-frontend
+  labels:
+    app: digital-twin-service
+    node: gesture-control-app
+spec:
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8888
+      targetPort: 8888
+  selector:
+    node: gesture-control-app
+
+---
+
+#####################
+### lidar-drivers ###
+#####################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lidar-deployment
+  labels:
+    app: digital-twin-service
+    node: lidar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: lidar
+  template:
+    metadata:
+      labels:
+        node: lidar
+    spec:
+      containers:
+      - name: lidar
+        image: rplidar-lidar
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://roscore-edge:11311"
+        - name: ROS_HOSTNAME
+          value: "lidar"
+        volumeMounts:
+          - name: rplidar
+            mountPath: /dev/rplidar
+        securityContext:
+          privileged: true
+      volumes:
+        - name: rplidar
+          hostPath:
+            path: /dev/rplidar
+      nodeSelector:
+        nodetype: robot
+
+---
+
+### Headless service declaration.
+### This is required to map to app "lidar" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: lidar
+  labels:
+    app: digital-twin-service
+    node: lidar
+spec:
+  clusterIP: None
+  selector:
+    node: lidar
+
+---
+
+######################
+### camera-drivers ###
+######################
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: camera-deployment
+#   labels:
+#     app: digital-twin-service
+#     node: camera
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       node: camera
+#   template:
+#     metadata:
+#       labels:
+#         node: camera
+#     spec:
+#       containers:
+#       - name: camera
+#         image: astra-camera
+#         imagePullPolicy: IfNotPresent
+#         env:
+#         - name: ROS_MASTER_URI
+#           value: "http://roscore-edge:11311"
+#         - name: ROS_HOSTNAME
+#           value: "camera"
+#         volumeMounts:
+#           - name: camera
+#             mountPath: /dev/astra
+#         securityContext:
+#           privileged: true
+#       volumes:
+#         - name: camera
+#           hostPath:
+#             path: /dev/astra
+#       nodeSelector:
+#         nodetype: robot
+
+# ---
+
+# ### Headless service declaration.
+# ### This is required to map to app "camera" so that other pods can DNS its IP address dynamically.
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: camera
+#   labels:
+#     app: digital-twin-service
+#     node: camera
+# spec:
+#   clusterIP: None
+#   selector:
+#     node: camera
+
+# ---
+
+######################
+### go1-navigation ###
+######################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go1-navigation-deployment
+  labels:
+    app: digital-twin-service
+    node: go1-navigation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: go1-navigation
+  template:
+    metadata:
+      labels:
+        node: go1-navigation
+    spec:
+      containers:
+      - name: go1-navigation
+        image: go1-navigation
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://roscore-edge:11311"
+        - name: ROS_HOSTNAME
+          value: "go1-navigation"
+        - name: USE_ODOM
+          value: "false"
+      nodeSelector:
+        nodetype: edge
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+
+---
+
+### Headless service declaration.
+### This is required to map to app "go1-navigation" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: go1-navigation
+  labels:
+    app: digital-twin-service
+    node: go1-navigation
+spec:
+  clusterIP: None
+  selector:
+    node: go1-navigation
+
+---
+
+################
+### vizanti ###
+################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vizanti-deployment
+  labels:
+    app: digital-twin-service
+    node: vizanti
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: vizanti
+  template:
+    metadata:
+      labels:
+        node: vizanti
+    spec:
+      containers:
+      - name: vizanti
+        image: go1-vizanti
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://roscore-edge:11311"
+        - name: ROS_HOSTNAME
+          value: "vizanti"
+        - name: IP_ADDRESS_ROSBRIDGE
+          value: "0.0.0.0"
+        ports:
+        - containerPort: 5000
+        - containerPort: 5001
+        securityContext:
+            privileged: true
+      nodeSelector:
+        nodetype: edge
+
+---
+
+### Headless service declaration.
+### This is required to map to app "vizanti" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: vizanti
+  labels:
+    app: digital-twin-service
+    node: vizanti
+spec:
+  clusterIP: None
+  selector:
+    node: vizanti
+
+---
+
+### LoadBalancer service declaration.
+### This is required to expose the ports that enable web access to the vizanti container
+apiVersion: v1
+kind: Service
+metadata:
+  name: vizanti-frontend
+  labels:
+    app: digital-twin-service
+    node: vizanti
+spec:
+  type: LoadBalancer
+  ports:
+  - name: port-5000
+    protocol: TCP
+    port: 5005
+    targetPort: 5000
+  - name: port-5001
+    protocol: TCP
+    port: 5001
+    targetPort: 5001
+  selector:
+    node: vizanti
+
+---
+
+#######################
+### digital-replica ###
+#######################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: digital-twin-app-deployment
+  labels:
+    app: digital-twin-service
+    node: digital-twin-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: digital-twin-app
+  template:
+    metadata:
+      labels:
+        node: digital-twin-app
+    spec:
+      containers:
+      - name: digital-twin-app
+        image: isaac-sim:2023.1.0-ubuntu22.04
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://roscore-edge:11311"
+        - name: ROS_HOSTNAME
+          value: "digital-twin-app"
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: PRIVACY_CONSENT
+          value: "Y"
+        volumeMounts:
+        - name: cache-kit
+          mountPath: /isaac-sim/kit/cache
+        - name: cache-ov
+          mountPath: /root/.cache/ov
+        - name: cache-pip
+          mountPath: /root/.cache/pip
+        - name: cache-glcache
+          mountPath: /root/.cache/nvidia/GLCache
+        - name: cache-computecache
+          mountPath: /root/.nv/ComputeCache
+        - name: logs
+          mountPath: /root/.nvidia-omniverse/logs
+        - name: data
+          mountPath: /root/.local/share/ov/data
+        - name: documents
+          mountPath: /root/Documents
+        - name: my-environments
+          mountPath: /isaac-sim/my-environments
+        ports:
+        - containerPort: 47995
+        - containerPort: 47996
+        - containerPort: 47997
+        - containerPort: 47998
+        - containerPort: 47999
+        - containerPort: 48000
+        - containerPort: 48001
+        - containerPort: 48002
+        - containerPort: 48003
+        - containerPort: 48004
+        - containerPort: 48005
+        - containerPort: 48006
+        - containerPort: 48007
+        - containerPort: 48008
+        - containerPort: 48009
+        - containerPort: 48010
+        - containerPort: 48011
+        - containerPort: 48012
+        - containerPort: 49000
+        - containerPort: 49001
+        - containerPort: 49002
+        - containerPort: 49003
+        - containerPort: 49004
+        - containerPort: 49005
+        - containerPort: 49006
+        - containerPort: 49007
+        - containerPort: 49100
+        - containerPort: 8211
+        - containerPort: 8011
+        - containerPort: 8111
+        - containerPort: 8311
+        command: ["bash", "-c", "./runheadless.native.sh -v"]
+        securityContext:
+            privileged: true
+      runtimeClassName: nvidia
+      volumes:
+      - name: cache-kit
+        hostPath:
+          path: /home/desire6g/docker/isaac-sim/cache/kit
+      - name: cache-ov
+        hostPath:
+          path: /home/desire6g/docker/isaac-sim/cache/ov
+      - name: cache-pip
+        hostPath:
+          path: /home/desire6g/docker/isaac-sim/cache/pip
+      - name: cache-glcache
+        hostPath:
+          path: /home/desire6g/docker/isaac-sim/cache/glcache
+      - name: cache-computecache
+        hostPath:
+          path: /home/desire6g/isaac-sim/cache/computecache
+      - name: logs
+        hostPath:
+          path: /home/desire6g/docker/isaac-sim/logs
+      - name: data
+        hostPath:
+          path: /home/desire6g/docker/isaac-sim/data
+      - name: documents
+        hostPath:
+          path: /home/desire6g/docker/isaac-sim/documents
+      - name: my-environments
+        hostPath:
+          path: /home/desire6g/unitree-go1-digital-twin/digital-twin-service/digital-replica/my-environments
+      nodeSelector:
+        nodetype: edge
+
+---
+
+### Headless service declaration.
+### This is required to map to app "digital-twin-app" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: digital-twin-app
+  labels:
+    app: digital-twin-service
+    node: digital-twin-app
+spec:
+  clusterIP: None
+  selector:
+    node: digital-twin-app
+
+---
+
+### LoadBalancer service declaration.
+### This is required to expose the ports that enable web access to the digital-twin-app container
+apiVersion: v1
+kind: Service
+metadata:
+  name: digital-twin-app-frontend
+  labels:
+    app: digital-twin-service
+    node: digital-twin-app
+spec:
+  type: LoadBalancer
+  ports:
+  - name: port-47995
+    protocol: TCP
+    port: 47995
+    targetPort: 47995
+  - name: port-47996
+    protocol: TCP
+    port: 47996
+    targetPort: 47996
+  - name: port-47997
+    protocol: TCP
+    port: 47997
+    targetPort: 47997
+  - name: port-47998
+    protocol: TCP
+    port: 47998
+    targetPort: 47998
+  - name: port-47999
+    protocol: TCP
+    port: 47999
+    targetPort: 47999
+  - name: port-48000
+    protocol: TCP
+    port: 48000
+    targetPort: 48000
+  - name: port-48001
+    protocol: TCP
+    port: 48001
+    targetPort: 48001
+  - name: port-48002
+    protocol: TCP
+    port: 48002
+    targetPort: 48002
+  - name: port-48003
+    protocol: TCP
+    port: 48003
+    targetPort: 48003
+  - name: port-48004
+    protocol: TCP
+    port: 48004
+    targetPort: 48004
+  - name: port-48005
+    protocol: TCP
+    port: 48005
+    targetPort: 48005
+  - name: port-48006
+    protocol: TCP
+    port: 48006
+    targetPort: 48006
+  - name: port-48007
+    protocol: TCP
+    port: 48007
+    targetPort: 48007
+  - name: port-48008
+    protocol: TCP
+    port: 48008
+    targetPort: 48008
+  - name: port-48009
+    protocol: TCP
+    port: 48009
+    targetPort: 48009
+  - name: port-48010
+    protocol: TCP
+    port: 48010
+    targetPort: 48010
+  - name: port-48011
+    protocol: TCP
+    port: 48011
+    targetPort: 48011
+  - name: port-48012
+    protocol: TCP
+    port: 48012
+    targetPort: 48012
+  - name: port-49000
+    protocol: TCP
+    port: 49000
+    targetPort: 49000
+  - name: port-49001
+    protocol: TCP
+    port: 49001
+    targetPort: 49001
+  - name: port-49002
+    protocol: TCP
+    port: 49002
+    targetPort: 49002
+  - name: port-49003
+    protocol: TCP
+    port: 49003
+    targetPort: 49003
+  - name: port-49004
+    protocol: TCP
+    port: 49004
+    targetPort: 49004
+  - name: port-49005
+    protocol: TCP
+    port: 49005
+    targetPort: 49005
+  - name: port-49006
+    protocol: TCP
+    port: 49006
+    targetPort: 49006
+  - name: port-49007
+    protocol: TCP
+    port: 49007
+    targetPort: 49007
+  - name: port-49100
+    protocol: TCP
+    port: 49100
+    targetPort: 49100
+  - name: port-8211
+    protocol: TCP
+    port: 8211
+    targetPort: 8211
+  - name: port-8011
+    protocol: TCP
+    port: 8011
+    targetPort: 8011
+  - name: port-8111
+    protocol: TCP
+    port: 8111
+    targetPort: 8111
+  - name: port-8311
+    protocol: TCP
+    port: 8311
+    targetPort: 8311
+  - name: port-udp-47995
+    protocol: UDP
+    port: 47995
+    targetPort: 47995
+  - name: port-udp-47996
+    protocol: UDP
+    port: 47996
+    targetPort: 47996
+  - name: port-udp-47997
+    protocol: UDP
+    port: 47997
+    targetPort: 47997
+  - name: port-udp-47998
+    protocol: UDP
+    port: 47998
+    targetPort: 47998
+  - name: port-udp-47999
+    protocol: UDP
+    port: 47999
+    targetPort: 47999
+  - name: port-udp-48000
+    protocol: UDP
+    port: 48000
+    targetPort: 48000
+  - name: port-udp-48001
+    protocol: UDP
+    port: 48001
+    targetPort: 48001
+  - name: port-udp-48002
+    protocol: UDP
+    port: 48002
+    targetPort: 48002
+  - name: port-udp-48003
+    protocol: UDP
+    port: 48003
+    targetPort: 48003
+  - name: port-udp-48004
+    protocol: UDP
+    port: 48004
+    targetPort: 48004
+  - name: port-udp-48005
+    protocol: UDP
+    port: 48005
+    targetPort: 48005
+  - name: port-udp-48006
+    protocol: UDP
+    port: 48006
+    targetPort: 48006
+  - name: port-udp-48007
+    protocol: UDP
+    port: 48007
+    targetPort: 48007
+  - name: port-udp-48008
+    protocol: UDP
+    port: 48008
+    targetPort: 48008
+  - name: port-udp-48009
+    protocol: UDP
+    port: 48009
+    targetPort: 48009
+  - name: port-udp-48010
+    protocol: UDP
+    port: 48010
+    targetPort: 48010
+  - name: port-udp-48011
+    protocol: UDP
+    port: 48011
+    targetPort: 48011
+  - name: port-udp-48012
+    protocol: UDP
+    port: 48012
+    targetPort: 48012
+  - name: port-udp-49000
+    protocol: UDP
+    port: 49000
+    targetPort: 49000
+  - name: port-udp-49001
+    protocol: UDP
+    port: 49001
+    targetPort: 49001
+  - name: port-udp-49002
+    protocol: UDP
+    port: 49002
+    targetPort: 49002
+  - name: port-udp-49003
+    protocol: UDP
+    port: 49003
+    targetPort: 49003
+  - name: port-udp-49004
+    protocol: UDP
+    port: 49004
+    targetPort: 49004
+  - name: port-udp-49005
+    protocol: UDP
+    port: 49005
+    targetPort: 49005
+  - name: port-udp-49006
+    protocol: UDP
+    port: 49006
+    targetPort: 49006
+  - name: port-udp-49007
+    protocol: UDP
+    port: 49007
+    targetPort: 49007
+  - name: port-udp-49100
+    protocol: UDP
+    port: 49100
+    targetPort: 49100
+  - name: port-udp-8211
+    protocol: UDP
+    port: 8211
+    targetPort: 8211
+  - name: port-udp-8011
+    protocol: UDP
+    port: 8011
+    targetPort: 8011
+  - name: port-udp-8111
+    protocol: UDP
+    port: 8111
+    targetPort: 8111
+  - name: port-udp-8311
+    protocol: UDP
+    port: 8311
+    targetPort: 8311
+
+  selector:
+    node: digital-twin-app
+
+
+---
+
+
+################
+### influxdb ###
+################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: influxdb-deployment
+  labels:
+    app: digital-twin-service
+    node: influxdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: influxdb
+  template:
+    metadata:
+      labels:
+        node: influxdb
+    spec:
+      containers:
+      - name: influxdb
+        image: influxdb:2
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: DOCKER_INFLUXDB_INIT_MODE
+          value: "setup"
+        - name: DOCKER_INFLUXDB_INIT_USERNAME
+          value: "desire6g"
+        - name: DOCKER_INFLUXDB_INIT_PASSWORD
+          value: "desire6g2024;"
+        - name: DOCKER_INFLUXDB_INIT_ORG
+          value: "desire6g"
+        - name: DOCKER_INFLUXDB_INIT_BUCKET
+          value: "ros-metrics"
+        - name: DOCKER_INFLUXDB_INIT_RETENTION
+          value: "1w"
+        - name: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
+          value: "desire6g2024;"
+        ports:
+        - containerPort: 8086
+          protocol: TCP
+        securityContext:
+            privileged: true
+      nodeSelector:
+        nodetype: edge
+
+---
+
+### Headless service declaration.
+### This is required to map to app "influxdb" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: influxdb
+  labels:
+    app: digital-twin-service
+    node: influxdb
+spec:
+  clusterIP: None
+  selector:
+    node: influxdb
+
+---
+
+## LoadBalancer service declaration.
+apiVersion: v1
+kind: Service
+metadata:
+  name: influxdb-frontend
+  labels:
+    app: digital-twin-service
+    node: influxdb
+spec:
+  type: LoadBalancer
+  ports:
+  - name: influxdb-frontend
+    protocol: TCP
+    port: 8087
+    targetPort: 8086
+  selector:
+    node: influxdb
+
+---
+
+###############
+### grafana ###
+###############
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: grafana-deployment
+#   labels:
+#     app: digital-twin-service
+#     node: grafana
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       node: grafana
+#   template:
+#     metadata:
+#       labels:
+#         node: grafana
+#     spec:
+#       containers:
+#       - name: grafana
+#         image: grafana/grafana:latest
+#         imagePullPolicy: IfNotPresent
+#         env:
+#         - name: GF_SECURITY_ADMIN_USER
+#           value: "desire6g"
+#         - name: GF_SECURITY_ADMIN_PASSWORD
+#           value: "desire6g2024;"
+#         volumeMounts:
+#         - name: datasources
+#           mountPath: /etc/grafana/provisioning/datasources
+#         - name: dashboards
+#           mountPath: /etc/grafana/provisioning/dashboards
+#         ports:
+#         - containerPort: 3000
+#           protocol: TCP
+#         securityContext:
+#             privileged: true
+#       volumes:
+#       - name: datasources
+#         hostPath:
+#           path: /home/desire6g/unitree-go1-digital-twin/digital-twin-service/go1-monitoring/grafana/config/provisioning/datasources
+#       - name: dashboards
+#         hostPath:
+#           path: /home/desire6g/unitree-go1-digital-twin/digital-twin-service/go1-monitoring/grafana/config/provisioning/dashboards
+#       nodeSelector:
+#         nodetype: edge
+
+# ---
+
+# ### Headless service declaration.
+# ### This is required to map to app "grafana" so that other pods can DNS its IP address dynamically.
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: grafana
+#   labels:
+#     app: digital-twin-service
+#     node: grafana
+# spec:
+#   clusterIP: None
+#   selector:
+#     node: grafana
+
+# ---
+
+# ### LoadBalancer service declaration.
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: grafana-frontend
+#   labels:
+#     app: digital-twin-service
+#     node: grafana
+# spec:
+#   type: LoadBalancer
+#   ports:
+#   - name: grafana-frontend
+#     protocol: TCP
+#     # port: 3000
+#     port: 8889
+#     targetPort: 3000
+#   selector:
+#     node: grafana
+
+# ---
+
+
+###########################
+### go1-monitoring-edge ###
+###########################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoring-edge-deployment
+  labels:
+    app: digital-twin-service
+    node: monitoring-edge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: monitoring-edge
+  template:
+    metadata:
+      labels:
+        node: monitoring-edge
+    spec:
+      containers:
+      - name: monitoring-edge
+        image: go1-monitoring
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://roscore-edge:11311"
+        - name: ROS_HOSTNAME
+          value: "monitoring-edge"
+        - name: TOPICS
+          value: "/scan /joint_states /go1_controller/odom"
+          # value: /scan /joint_states /go1_controller/odom /camera/color/image_raw /camera/depth/points
+        - name: INFLUXDB_URL
+          value: "http://influxdb:8086"
+        - name: INFLUXDB_TOKEN
+          value: "desire6g2024;"
+        - name: INFLUXDB_ORG
+          value: "desire6g"
+        - name: INFLUXDB_BUCKET
+          value: "ros-metrics"
+        - name: WINDOW_SIZE
+          value: "50"
+        - name: MANUAL_DELAY
+          value: "false"
+        securityContext:
+            privileged: true
+      nodeSelector:
+        nodetype: edge
+
+---
+
+### Headless service declaration.
+### This is required to map to app "monitoring-edge" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: monitoring-edge
+  labels:
+    app: digital-twin-service
+    node: monitoring-edge
+spec:
+  clusterIP: None
+  selector:
+    node: monitoring-edge
+
+---
+
+############################
+### go1-monitoring-robot ###
+############################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoring-robot-deployment
+  labels:
+    app: digital-twin-service
+    node: monitoring-robot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: monitoring-robot
+  template:
+    metadata:
+      labels:
+        node: monitoring-robot
+    spec:
+      containers:
+      - name: monitoring-robot
+        image: go1-monitoring
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://roscore-edge:11311"
+        - name: ROS_HOSTNAME
+          value: "monitoring-robot"
+        - name: TOPICS
+          value: "/go1_controller/cmd_vel"
+        - name: INFLUXDB_URL
+          value: "http://influxdb:8086"
+        - name: INFLUXDB_TOKEN
+          value: "desire6g2024;"
+        - name: INFLUXDB_ORG
+          value: "desire6g"
+        - name: INFLUXDB_BUCKET
+          value: "ros-metrics"
+        - name: WINDOW_SIZE
+          value: "50"
+        - name: MANUAL_DELAY
+          value: "true"
+        securityContext:
+            privileged: true
+      nodeSelector:
+        nodetype: robot
+
+---
+
+### Headless service declaration.
+### This is required to map to app "monitoring-robot" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: monitoring-robot
+  labels:
+    app: digital-twin-service
+    node: monitoring-robot
+spec:
+  clusterIP: None
+  selector:
+    node: monitoring-robot
+

@@ -20,7 +20,7 @@ This container captures video stream from the user's camera, detects his hand ge
 
 Here is a visual representation of the possible hand gestures and their corresponding control commands:
 
-![Gesture Control Commands](../../images/gesture-control-commands.svg)
+![Gesture Control Commands](../../images/gesture-control-commands.png)
 
 ## Run it?
 

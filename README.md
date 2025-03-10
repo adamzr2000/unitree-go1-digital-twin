@@ -17,8 +17,10 @@ simulator.
 
 ![Go1 5TONIC](./images/go1-5tonic.png)
 
+**Author:** Adam Zahir Rodriguez
+
 ## Version
- - 0.1
+ - 1.0
 
 ## Requirements
  - Ubuntu 20.04/22.04 Operating System 
@@ -61,8 +63,8 @@ simulator.
  
  ### Run Digital Twin service
  - The scenarios [folder](./scenarios/) is composed of different deployment options for the Digital Twin service.
-    - end-to-end-docker scenarios (tutorial [here](./scenarios/end-to-end-docker-swarm/)) ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available   
-    - end-to-end-kubernetes scenarios (tutorial [here](./scenarios/end-to-end-kubernetes/)) ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available   
+    - Docker scenarios (tutorial [here](./scenarios/docker/)) ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available   
+    - Kubernetes scenarios (tutorial [here](./scenarios/kubernetes/)) ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available   
  
 ## DISCLAIMER
 The modules provided in this repository are distributed in the hope that they
@@ -77,3 +79,10 @@ The full license agreement can be found in the file LICENSE
 in this distribution.
 This software may not be copied, modified, sold or distributed other than
 expressed in the named license agreement.
+
+## Acknowledgments
+This project utilizes software provided by **Mybotshop GmbH**.  
+For more details, visit [Mybotshop](https://www.mybotshop.de).
+
+Use of this software is governed by the **Mybotshop Software Usage Agreement**, which prohibits forwarding, sharing, or distributing the software without explicit consent.
+
