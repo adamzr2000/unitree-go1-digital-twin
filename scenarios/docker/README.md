@@ -26,7 +26,7 @@ This is the multi-host setup:
 
 Here is a diagram that represents visually the architecture of the scenario:
 
-![E2E Scenario 5TONIC](../../images/e2e-scenario-docker-swarm.png)
+![E2E Scenario Docker](../../images/e2e-scenario-docker-swarm.png)
 
 First configure the controller/master node (192.168.40.4 in our case) by initializing the Docker swarm like this: 
 ```bash

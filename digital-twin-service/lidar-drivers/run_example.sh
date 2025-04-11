@@ -3,7 +3,7 @@
 # Default values
 ros_master_uri="http://localhost:11311"
 ros_ip="127.0.0.1"
-rf2o_odometry="true"
+rf2o_odometry="false"
 odom_topic="/odom"
 
 # Parse arguments

@@ -56,7 +56,7 @@ In this folder we also provide a docker run example.
 
 To run the Unitree Go1 ROS Base in high-level mode:
 ```bash
-./run_example.sh --ros-master-uri http://192.168.40.3:11311 --ros-ip 192.168.40.70 --target-ip 192.168.123.161 --state-loop-rate 100 --use-ekf-odom false
+./run_example.sh --target-ip 192.168.123.161 --udp-send-dt 0.01 --udp-recve-dt 0.01 --state-loop-rate 100
 ```
 
 This command initiates the `bringup.launch` with the `TARGET_IP` parameter set to `192.168.123.161`, representing the IP address of the target internal computer board for high-level control.

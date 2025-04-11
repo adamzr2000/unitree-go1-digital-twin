@@ -35,7 +35,7 @@ In this folder we also provide a docker run example.
 
 To run the ROS Master:
 ```bash
-./run_example.sh --ros-master-ip 192.168.40.3
+./run_example.sh --ros-master-ip 10.11.7.4
 ```
 
 Verify that the container is up and running:

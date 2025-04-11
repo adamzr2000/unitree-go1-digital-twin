@@ -1,88 +1,90 @@
-# Digital Twin Application @ DESIRE6G Project
+# Digital Twin Application — DESIRE6G Project
 
 <div align="center">
-
-[![Static Badge](https://img.shields.io/badge/Latest_Release-dev-orange)](https://github.com/adamzr2000/unitree-go1-digital-twin/)
-[![Static Badge](https://img.shields.io/badge/K3s-v1.28.8%2Bk3s1-blue)](https://github.com/k3s-io/k3s/releases/tag/v1.28.8%2Bk3s1)
-[![Static Badge](https://img.shields.io/badge/Docker-v25.0.3-blue)](https://github.com/docker)
-
+  <img src="./images/go1-5tonic.png" alt="Go1 at 5TONIC" width="500"/>
+  <br><br>
+  <a href="https://github.com/adamzr2000/unitree-go1-digital-twin/">
+    <img src="https://img.shields.io/badge/Latest_Release-dev-orange" alt="Latest Release">
+  </a>
+  <a href="https://github.com/k3s-io/k3s/releases/tag/v1.28.8%2Bk3s1">
+    <img src="https://img.shields.io/badge/K3s-v1.28.8%2Bk3s1-blue" alt="K3s">
+  </a>
+  <a href="https://github.com/docker">
+    <img src="https://img.shields.io/badge/Docker-v25.0.3-blue" alt="Docker">
+  </a>
 </div>
 
-This repository comprises the code developed and integrated in [DESIRE6G](https://desire6g.eu/) project
-in order to implement the Digital Twin use case.
+---
 
-The use case uses the [Unitree Go1](https://unitree-docs.readthedocs.io/en/latest/get_started/Go1_Edu.html)
-quadruped robot and the [NVIDIA Isaac Sim](https://developer.nvidia.com/isaac-sim) robot
-simulator.
+This repository contains the implementation of the **Digital Twin** use case developed as part of the [DESIRE6G](https://desire6g.eu/) project.
 
-![Go1 5TONIC](./images/go1-5tonic.png)
+The use case involves the [Unitree Go1](https://unitree-docs.readthedocs.io/en/latest/get_started/Go1_Edu.html) quadruped robot and the [NVIDIA Isaac Sim](https://developer.nvidia.com/isaac-sim) simulator.
 
-**Author:** Adam Zahir Rodriguez
+**Author:** Adam Zahir Rodriguez  
+**Version:** 1.0
 
-## Version
- - 1.0
+---
+
+## Table of Contents
+
+- [Requirements](#requirements)
+- [Digital Twin Modules](#digital-twin-modules)
+- [Running the Digital Twin Service](#running-the-digital-twin-service)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+
+---
 
 ## Requirements
- - Ubuntu 20.04/22.04 Operating System 
- - Docker
- - Docker Compose
- - NVIDIA GPU (RTX 2070 or higher)
- - NVIDIA GPU Driver (recommended version 525.85 or higher)
- - NVIDIA Container Toolkit
- - NVIDIA Omniverse 
- - Kubernetes Distribution: K3s >= v1.28.8+k3s1
 
-## Getting Started
- ### Digital Twin service description
- The Digital Twin [service](./digital-twin-service/) is composed of 8 different modules:
- 
- - `ROS Master`: The ROS Master provides naming and registration services to the rest of the modules in the Digital Twin service (detailed info [here](./digital-twin-service/ros-master/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
- 
- - `Go1 Base`: Enables interaction with the robot stack (integrated as a native application with a proprietary SDK) using [Robot Operating System (ROS)](https://www.ros.org/) (detailed info [here](./digital-twin-service/go1-base/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
- 
- - `Gesture Contol App`: Provides gesture control capabilities, utilizing a camera input to translate gestures into velocity commands for the robot. (detailed info [here](./digital-twin-service/gesture-control-app/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
- 
- - `Digital Replica`: Provides the virtual object that replicates the behavior of the Unitree Go1 quadruped robot (detailed info [here](./digital-twin-service/digital-replica/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
- 
- - `Lidar Drivers`: Provides the [RPLIDAR A3](https://www.slamtec.ai/product/slamtec-rplidar-a3/) drivers for mapping and navigation purposes (detailed info [here](./digital-twin-service/lidar-drivers/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
+- Ubuntu (tested on 18.04 LTS)
+- Docker (tested on version 23.0.1)
+- Docker Compose (tested on version 2.16.0)
+- NVIDIA GPU (RTX 2070 or higher)
+- NVIDIA GPU Driver (version 525.85 or higher recommended)
+- NVIDIA Container Toolkit (tested on version 1.14.3)
+- NVIDIA Omniverse
+- Kubernetes distribution: (tested on version 1.28.8+k3s1)
 
- - `Camera Drivers`: Provides the [Depth Camera Astra S | Orbbec 3D](https://shop.orbbec3d.com/Astra-S) drivers (detailed info [here](./digital-twin-service/camera-drivers/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
+---
 
- - `Go1 Navigation`: Provides algorithms for simultaneous localization and mapping (SLAM) that enable the creation of maps for indoor environments and autonomous navigation (detailed info [here](./digital-twin-service/go1-navigation/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
+## Digital Twin Modules
 
- - `Rviz VNC`: Provides a VNC container with a ROS image, enabling visualization in [RViz](https://wiki.ros.org/rviz) of the SLAM capabilities. This showcases how the map of the environment is being created in real-time (detailed info [here](./digital-twin-service/rviz-vnc/)). ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available
+The [Digital Twin service](./digital-twin-service/) is composed of the following main components:
 
- ### Install Requirements
- - Install Docker Engine (tutorial [here](https://docs.docker.com/engine/install/ubuntu/))
- - Install Docker Compose (tutorial [here](https://docs.docker.com/compose/install/))
- - Install NVIDIA GPU Driver (tutorial [here](https://www.nvidia.com/en-us/drivers/unix/))
- - Install NVIDIA Container Toolkit (tutorial [here](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html))
- - Install NVIDIA Omniverse (tutorial [here](https://docs.omniverse.nvidia.com/digital-twins/latest/installation-guide.html))
- - Install K3s Kubernetes distribution (tutorial [here](https://docs.k3s.io/installation))
- - Clone this git repo: `git clone https://github.com/adamzr2000/unitree-go1-digital-twin.git`
+| Module                | Description                                                                                                     | Status       |
+|------------------------|-----------------------------------------------------------------------------------------------------------------|--------------|
+| **ROS Master**         | Provides naming and registration services to ROS nodes ([details](./digital-twin-service/ros-master/))         | ✅ Available |
+| **Go1 Base**           | Interfaces with the robot using the proprietary SDK via ROS ([details](./digital-twin-service/go1-base/))       | ✅ Available |
+| **Gesture Control App**| Translates camera-based gestures into robot velocity commands ([details](./digital-twin-service/gesture-control-app/)) | ✅ Available |
+| **Digital Replica**    | Simulates the Unitree Go1 in NVIDIA Isaac Sim ([details](./digital-twin-service/digital-replica/))              | ✅ Available |
+| **Lidar Drivers**      | Drivers for the RPLIDAR A3 used in mapping and navigation ([details](./digital-twin-service/lidar-drivers/))    | ✅ Available |
+| **Camera Drivers**     | Drivers for the Orbbec Astra S depth camera ([details](./digital-twin-service/camera-drivers/))                 | ✅ Available |
+| **Go1 Navigation**     | SLAM-based algorithms for indoor mapping ([details](./digital-twin-service/go1-navigation/))                          | ✅ Available |
+| **RViz VNC**           | Provides RViz access through VNC for visualizing mapping and sensor streams ([details](./digital-twin-service/rviz-vnc/))                  | ✅ Available |
+
+---
  
- ### Run Digital Twin service
- - The scenarios [folder](./scenarios/) is composed of different deployment options for the Digital Twin service.
-    - Docker scenarios (tutorial [here](./scenarios/docker/)) ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available   
-    - Kubernetes scenarios (tutorial [here](./scenarios/kubernetes/)) ![#00FF00](https://via.placeholder.com/15/00ff00/000000?text=+) Available   
- 
-## DISCLAIMER
-The modules provided in this repository are distributed in the hope that they
-will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.
-See the License section for more details.
+## Running the Digital Twin Service
+
+The scenarios [folder](./scenarios/) contains various deployment options:
+- Docker scenarios (tutorial [here](./scenarios/docker/)) ✅ Available   
+- Kubernetes scenarios (tutorial [here](./scenarios/kubernetes/)) ✅ Available   
+
+---
 
 ## License
-The modules provided in this repository are distributed under a license.
-The full license agreement can be found in the file LICENSE
-in this distribution.
+This repository is distributed under a specific license. See the [LICENSE](./LICENSE.txt) file for more details.
+
+⚠️ This software may not be copied, modified, sold, or distributed beyond the terms expressed in the license agreement.
+
 This software may not be copied, modified, sold or distributed other than
 expressed in the named license agreement.
 
+---
+
 ## Acknowledgments
 This project utilizes software provided by **Mybotshop GmbH**.  
-For more details, visit [Mybotshop](https://www.mybotshop.de).
+Visit [Mybotshop](https://www.docs.mybotshop.de/) for more information
 
 Use of this software is governed by the **Mybotshop Software Usage Agreement**, which prohibits forwarding, sharing, or distributing the software without explicit consent.
-
