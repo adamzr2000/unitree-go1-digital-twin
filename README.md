@@ -12,6 +12,9 @@
   <a href="https://github.com/docker">
     <img src="https://img.shields.io/badge/Docker-v25.0.3-blue" alt="Docker">
   </a>
+  <a href="https://youtu.be/E5fGB1bzGsE?si=zCtv7Jmg6u1TIVQ2">
+    <img src="https://img.shields.io/badge/Watch-Demo-red?logo=youtube" alt="Year-2 project Demo Video">
+  </a>
 </div>
 
 ---
@@ -19,6 +22,9 @@
 This repository contains the implementation of the **Digital Twin** use case developed as part of the [DESIRE6G](https://desire6g.eu/) project.
 
 The use case involves the [Unitree Go1](https://unitree-docs.readthedocs.io/en/latest/get_started/Go1_Edu.html) quadruped robot and the [NVIDIA Isaac Sim](https://developer.nvidia.com/isaac-sim) simulator.
+
+🎥 **Watch the Year-2 project demo video:**  
+[https://youtu.be/E5fGB1bzGsE](https://youtu.be/E5fGB1bzGsE?si=zCtv7Jmg6u1TIVQ2)
 
 **Author:** Adam Zahir Rodriguez  
 **Version:** 1.0
