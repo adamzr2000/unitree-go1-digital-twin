@@ -71,8 +71,10 @@ class JitterMonitor:
 
     def send_jitter(self, jitter):
         formatted_jitter_ms = f"{jitter:.3f}"
-        point = Point("jitter")\
+        point = Point("ros_metrics")\
             .tag("topic", self.topic)\
+            .tag("source", "ros")\
+            .tag("metric_type", "jitter")\
             .field("jitter_ms", float(formatted_jitter_ms))\
             .time(time.time_ns(), WritePrecision.NS)
 
@@ -119,8 +121,10 @@ class DelayMonitor:
 
     def send_delay(self, delay):
         formatted_delay_ms = f"{delay:.3f}"
-        point = Point("delay")\
+        point = Point("ros_metrics")\
             .tag("topic", self.topic)\
+            .tag("source", "ros")\
+            .tag("metric_type", "delay")\
             .field("average_delay_ms", float(formatted_delay_ms))\
             .time(time.time_ns(), WritePrecision.NS)
 
@@ -214,8 +218,10 @@ def monitor_bw_delay_and_send(topic, metric_type, write_api, influxdb_bucket, wi
                     max_delay_ms = float(max_delay) * 1000
                     std_dev_ms = float(std_dev) * 1000
 
-                    point = Point("delay")\
+                    point = Point("ros_metrics")\
                         .tag("topic", topic)\
+                        .tag("source", "ros")\
+                        .tag("metric_type", "delay")\
                         .field("average_delay_ms", average_delay)\
                         .field("min_delay_ms", min_delay_ms)\
                         .field("max_delay_ms", max_delay_ms)\
@@ -244,8 +250,10 @@ def monitor_bw_delay_and_send(topic, metric_type, write_api, influxdb_bucket, wi
                         min_bw, max_bw, mean_size = 0, 0, 0
 
 
-                    point = Point(metric_type)\
+                    point = Point("ros_metrics")\
                         .tag("topic", topic)\
+                        .tag("source", "ros")\
+                        .tag("metric_type", "bandwidth")\
                         .field("average_bandwidth_kbps", average_bandwidth_kbps)\
                         .field("average_message_size_bytes", mean_size)\
                         .field("min_message_size_bytes", min_bw)\

@@ -18,8 +18,8 @@ This container runs the robotics simulation platform NVIDIA Isaac Sim.
 
 The Unitree Go1 Digital Twin depend on:
 
-- ros-master (tutorial [here](../ros-master/)).
-- go1-base (tutorial [here](../go1-base)).
+- ros-master (tutorial [here](../ros-master/))
+- go1-base (tutorial [here](../go1-base))
  
 > Note: be sure that all the dependencies are running before you run the Unitree Go1 Digital Twin container
 
@@ -73,6 +73,9 @@ If you opt for the first approach:
 - Launch the `Omniverse Platform`
 - Access the `Library` and launch the `Streaming Client` application.
 - Enter the IP address of the edge machine where the container is running
+
+![Omniverse Streaming Client](../../images/omniverse-streaming-client.png)
+
 - Once the GUI is available, navigate to `Window -> Extensions` and activate the `ros_bridge` extension
 - Open the `go1-warehouse-env.usd` scene and click the play button
 - You should see the Unitree Go1 digital replica

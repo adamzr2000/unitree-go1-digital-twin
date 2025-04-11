@@ -10,7 +10,7 @@
     <img src="https://img.shields.io/badge/K3s-v1.28.8%2Bk3s1-blue" alt="K3s">
   </a>
   <a href="https://github.com/docker">
-    <img src="https://img.shields.io/badge/Docker-v25.0.3-blue" alt="Docker">
+    <img src="https://img.shields.io/badge/Docker-v23.0.1-blue" alt="Docker">
   </a>
   <a href="https://youtu.be/E5fGB1bzGsE?si=zCtv7Jmg6u1TIVQ2">
     <img src="https://img.shields.io/badge/Watch-Demo-red?logo=youtube" alt="Year-2 project Demo Video">
@@ -44,13 +44,13 @@ The use case involves the [Unitree Go1](https://unitree-docs.readthedocs.io/en/l
 ## Requirements
 
 - Ubuntu (tested on 18.04 LTS)
-- Docker (tested on version 23.0.1)
-- Docker Compose (tested on version 2.16.0)
+- [Docker Engine](https://docs.docker.com/engine/install/ubuntu/) (tested on version 23.0.1)
+- [Docker Compose](https://docs.docker.com/compose/install/) (tested on version 2.16.0)
 - NVIDIA GPU (RTX 2070 or higher)
-- NVIDIA GPU Driver (version 525.85 or higher recommended)
-- NVIDIA Container Toolkit (tested on version 1.14.3)
-- NVIDIA Omniverse
-- Kubernetes distribution: (tested on version 1.28.8+k3s1)
+- [NVIDIA GPU Driver](https://www.nvidia.com/en-us/drivers/unix/) (version 525.85 or higher recommended)
+- [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-container-toolkit) (tested on version 1.14.3)
+- [NVIDIA Omniverse Streaming Client](https://docs.isaacsim.omniverse.nvidia.com/latest/installation/manual_livestream_clients.html)
+- Kubernetes: (tested on K3s distribution — version 1.28.8+k3s1)
 
 ---
 

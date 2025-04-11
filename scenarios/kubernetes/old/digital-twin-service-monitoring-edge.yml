@@ -921,87 +921,87 @@ spec:
 ### influxdb ###
 ################
 
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: influxdb-deployment
-  labels:
-    app: digital-twin-service
-    node: influxdb
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      node: influxdb
-  template:
-    metadata:
-      labels:
-        node: influxdb
-    spec:
-      containers:
-      - name: influxdb
-        image: influxdb:2
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: DOCKER_INFLUXDB_INIT_MODE
-          value: "setup"
-        - name: DOCKER_INFLUXDB_INIT_USERNAME
-          value: "desire6g"
-        - name: DOCKER_INFLUXDB_INIT_PASSWORD
-          value: "desire6g2024;"
-        - name: DOCKER_INFLUXDB_INIT_ORG
-          value: "desire6g"
-        - name: DOCKER_INFLUXDB_INIT_BUCKET
-          value: "ros-metrics"
-        - name: DOCKER_INFLUXDB_INIT_RETENTION
-          value: "1w"
-        - name: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
-          value: "desire6g2024;"
-        ports:
-        - containerPort: 8086
-          protocol: TCP
-        securityContext:
-            privileged: true
-      nodeSelector:
-        nodetype: edge
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: influxdb-deployment
+#   labels:
+#     app: digital-twin-service
+#     node: influxdb
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       node: influxdb
+#   template:
+#     metadata:
+#       labels:
+#         node: influxdb
+#     spec:
+#       containers:
+#       - name: influxdb
+#         image: influxdb:2
+#         imagePullPolicy: IfNotPresent
+#         env:
+#         - name: DOCKER_INFLUXDB_INIT_MODE
+#           value: "setup"
+#         - name: DOCKER_INFLUXDB_INIT_USERNAME
+#           value: "desire6g"
+#         - name: DOCKER_INFLUXDB_INIT_PASSWORD
+#           value: "desire6g2024;"
+#         - name: DOCKER_INFLUXDB_INIT_ORG
+#           value: "desire6g"
+#         - name: DOCKER_INFLUXDB_INIT_BUCKET
+#           value: "infrastructure-monitoring"
+#         - name: DOCKER_INFLUXDB_INIT_RETENTION
+#           value: "1w"
+#         - name: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
+#           value: "desire6g2024;"
+#         ports:
+#         - containerPort: 8086
+#           protocol: TCP
+#         securityContext:
+#             privileged: true
+#       nodeSelector:
+#         nodetype: edge
 
----
+# ---
 
-### Headless service declaration.
-### This is required to map to app "influxdb" so that other pods can DNS its IP address dynamically.
-apiVersion: v1
-kind: Service
-metadata:
-  name: influxdb
-  labels:
-    app: digital-twin-service
-    node: influxdb
-spec:
-  clusterIP: None
-  selector:
-    node: influxdb
+# ### Headless service declaration.
+# ### This is required to map to app "influxdb" so that other pods can DNS its IP address dynamically.
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: influxdb
+#   labels:
+#     app: digital-twin-service
+#     node: influxdb
+# spec:
+#   clusterIP: None
+#   selector:
+#     node: influxdb
 
----
+# ---
 
-## LoadBalancer service declaration.
-apiVersion: v1
-kind: Service
-metadata:
-  name: influxdb-frontend
-  labels:
-    app: digital-twin-service
-    node: influxdb
-spec:
-  type: LoadBalancer
-  ports:
-  - name: influxdb-frontend
-    protocol: TCP
-    port: 8087
-    targetPort: 8086
-  selector:
-    node: influxdb
+# ## LoadBalancer service declaration.
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: influxdb-frontend
+#   labels:
+#     app: digital-twin-service
+#     node: influxdb
+# spec:
+#   type: LoadBalancer
+#   ports:
+#   - name: influxdb-frontend
+#     protocol: TCP
+#     port: 8087
+#     targetPort: 8086
+#   selector:
+#     node: influxdb
 
----
+# ---
 
 ###############
 ### grafana ###
@@ -1124,16 +1124,16 @@ spec:
         - name: ROS_HOSTNAME
           value: "monitoring-edge"
         - name: TOPICS
-          value: "/scan /joint_states /go1_controller/odom"
+          value: "/scan /joint_states /go1_controller/odom /go1_controller/cmd_vel"
           # value: /scan /joint_states /go1_controller/odom /camera/color/image_raw /camera/depth/points
         - name: INFLUXDB_URL
-          value: "http://influxdb:8086"
+          value: "http://10.5.1.21:8088"
         - name: INFLUXDB_TOKEN
           value: "desire6g2024;"
         - name: INFLUXDB_ORG
           value: "desire6g"
         - name: INFLUXDB_BUCKET
-          value: "ros-metrics"
+          value: "infrastructure-monitoring"
         - name: WINDOW_SIZE
           value: "50"
         - name: MANUAL_DELAY
@@ -1200,7 +1200,7 @@ spec:
 #         - name: INFLUXDB_ORG
 #           value: "desire6g"
 #         - name: INFLUXDB_BUCKET
-#           value: "ros-metrics"
+#           value: "infrastructure-monitoring"
 #         - name: WINDOW_SIZE
 #           value: "50"
 #         - name: MANUAL_DELAY

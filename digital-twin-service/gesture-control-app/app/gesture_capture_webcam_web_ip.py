@@ -17,10 +17,10 @@ mp_hands = mp.solutions.hands
 
 # Buffer to store the frame
 frame_buffer = None
+new_frame = False
 buffer_lock = threading.Lock()
 
 # Define a specific path to save the file
-# Replace 'path_to_directory' with your desired directory path
 path_to_directory = '/home/go1/app/'
 if not os.path.exists(path_to_directory):
     os.makedirs(path_to_directory)
@@ -28,16 +28,17 @@ file_path = os.path.join(path_to_directory, 'command.txt')
 
 @app.route('/upload_frame', methods=['POST'])
 def upload_frame():
-    global frame_buffer
+    global frame_buffer, new_frame
     nparr = np.frombuffer(request.data, np.uint8)
     frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     with buffer_lock:
         frame_buffer = frame
+        new_frame = True
     return Response("Frame received", status=200)
 
 # Function to process and stream frames
 def gen_frames():
-    global frame_buffer
+    global frame_buffer, new_frame
 
     # Configuring MediaPipe Hands
     with mp_hands.Hands(
@@ -50,9 +51,9 @@ def gen_frames():
         while True:
             image = None 
             with buffer_lock:
-                if frame_buffer is not None:
-                    image = frame_buffer.copy()
-
+               if new_frame and frame_buffer is not None: 
+                    image = frame_buffer  
+                    new_frame = False 
 
             if image is not None:
                 # The existing MediaPipe processing code here
@@ -117,43 +118,43 @@ def gen_frames():
                     # Change the directory according to your sdk build file
                     with open(file_path, 'w') as f: # write command to file
                         if orient_ratio <0.5:
-                            print('normal')
+                            # print('normal')
                             if tip_mcp_middle_delta_y >0:
                                 if tip_mcp_index_delta_y<0:
-                                    print('up')
+                                    # print('up')
                                     f.write("u")
                                 else:
-                                    print('gum')
+                                    # print('gum')
                                     f.write("d")
                             else:
-                                print('bae')
+                                # print('bae')
                                 f.write("n")
                         else:
                             print('parallel')
                             if hands_x_side <0:
                                 #left
                                 if tip_pip_middle_delta_x >0:
-                                    print('bae')
+                                    # print('bae')
                                     f.write("n")
                                 else:
                                     if tip_pip_index_delta_x>0:
-                                        print('left')
+                                        # print('left')
                                         f.write("l")
                                     else:
-                                        print('gum')
+                                        # print('gum')
                                         f.write("d")
                             
                             else:
                                 #rigth
                                 if tip_pip_middle_delta_x <0:
-                                    print('bae')
+                                    # print('bae')
                                     f.write("n")
                                 else:
                                     if tip_pip_index_delta_x<0:
-                                        print('right')
+                                        # print('right')
                                         f.write("r")
                                     else:
-                                        print('gum')
+                                        # print('gum')
                                         f.write("d")
                 
                 # In case no hands are detected
@@ -170,7 +171,7 @@ def gen_frames():
                 frame = buffer.tobytes()
 
                 yield (b'--frame\r\n'
-                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                       b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
 
 @app.route('/video_feed')

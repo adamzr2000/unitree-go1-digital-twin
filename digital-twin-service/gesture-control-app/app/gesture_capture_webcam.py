@@ -10,11 +10,16 @@ mp_hands = mp.solutions.hands
 
 # Setting up webcam input
 cap = cv2.VideoCapture(0) # Start capturing video from the webcam
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1024)
+# cap = cv2.VideoCapture("/dev/video0") 
+
+cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+cap.set(cv2.CAP_PROP_FPS, 30)
+cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+
 
 # Define a specific path to save the file
-# Replace 'path_to_directory' with your desired directory path
 path_to_directory = '/home/go1/app/'
 if not os.path.exists(path_to_directory):
     os.makedirs(path_to_directory)

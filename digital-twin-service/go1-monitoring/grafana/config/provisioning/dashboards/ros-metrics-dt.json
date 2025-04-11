@@ -25,9 +25,23 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 4,
+  "iteration": 1744367575842,
   "links": [],
   "liveNow": false,
   "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 9,
+      "panels": [],
+      "title": "ROS Metrics",
+      "type": "row"
+    },
     {
       "datasource": {
         "type": "influxdb",
@@ -39,11 +53,11 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisLabel": "Delay (ms)",
+            "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 6,
+            "fillOpacity": 10,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -55,7 +69,7 @@
               "fill": "solid"
             },
             "lineWidth": 2,
-            "pointSize": 5,
+            "pointSize": 1,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -76,22 +90,64 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
           "unit": "ms"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Joint States"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Laser Scan"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Odometry"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 19,
-        "w": 14,
+        "h": 15,
+        "w": 12,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 2,
       "options": {
@@ -103,7 +159,7 @@
         },
         "tooltip": {
           "maxHeight": 600,
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -113,77 +169,12 @@
             "type": "influxdb",
             "uid": "yBmilKUIz"
           },
-          "query": "from(bucket: \"ros-metrics\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => r._measurement == \"delay\")\n  |> filter(fn: (r) => r._field == \"average_delay_ms\")\n  |> filter(fn: (r) => r.topic == \"/scan\" or r.topic == \"/joint_states\" or r.topic == \"/go1_controller/odom\" or r.topic == \"/go1_controller/cmd_vel\")\n  |> map(fn: (r) => ({\n      r with\n      topic_name: if r.topic == \"/scan\" then \"Laser Scan\" else if r.topic == \"/joint_states\" then \"Joint States\" else if r.topic == \"/go1_controller/odom\" then \"Odometry\" else if r.topic == \"/go1_controller/cmd_vel\" then \"Control\" else r.topic\n    }))\n  |> group(columns: [\"topic_name\"])\n  |> keep(columns: [\"_value\", \"_time\", \"topic_name\"])\n",
+          "query": "from(bucket: \"infrastructure-monitoring\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => \n    r._measurement == \"ros_metrics\" and\n    r._field == \"average_delay_ms\" and\n    r.metric_type == \"delay\" and\n    contains(value: r.topic, set: [\n      \"/scan\",\n      \"/joint_states\",\n      \"/go1_controller/odom\",\n      \"/go1_controller/cmd_vel\"\n    ])\n  )\n  |> map(fn: (r) => ({\n    r with\n    topic_name: \n      if r.topic == \"/scan\" then \"Laser Scan\" \n      else if r.topic == \"/joint_states\" then \"Joint States\" \n      else if r.topic == \"/go1_controller/odom\" then \"Odometry\" \n      else if r.topic == \"/go1_controller/cmd_vel\" then \"Control\" \n      else r.topic\n  }))\n  |> group(columns: [\"topic_name\"])\n  |> keep(columns: [\"_time\", \"_value\", \"topic_name\"])\n",
           "refId": "A"
         }
       ],
-      "title": "ROS Topic Average Delay",
-      "transparent": true,
+      "title": "Average Delay",
       "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "yBmilKUIz"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 19,
-        "w": 10,
-        "x": 14,
-        "y": 0
-      },
-      "id": 3,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "8.3.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "yBmilKUIz"
-          },
-          "query": "from(bucket: \"ros-metrics\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => r._measurement == \"jitter\")\n  |> filter(fn: (r) => r._field == \"jitter_ms\")\n  |> group(columns: [\"topic\"])\n  |> sort(columns: [\"_time\"], desc: true)\n  |> unique(column: \"topic\")\n  |> map(fn: (r) => ({\n      _time: r._time,\n      _value: r._value,\n      topic_name: if r.topic == \"/scan\" then \"Laser Scan\" else if r.topic == \"/joint_states\" then \"Joint States\" else if r.topic == \"/go1_controller/odom\" then \"Odometry\" else if r.topic == \"/go1_controller/cmd_vel\" then \"Control\" else r.topic\n    }))\n  |> group(columns: [\"topic_name\"])\n  |> keep(columns: [\"_value\", \"_time\", \"topic_name\"])\n",
-          "refId": "A"
-        }
-      ],
-      "title": "ROS Topic Average Jitter",
-      "transparent": true,
-      "type": "gauge"
     },
     {
       "datasource": {
@@ -196,11 +187,11 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisLabel": "Bandwidth (bit/s)",
+            "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 6,
+            "fillOpacity": 10,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -208,8 +199,11 @@
               "viz": false
             },
             "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
             "lineWidth": 2,
-            "pointSize": 5,
+            "pointSize": 1,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -239,13 +233,74 @@
           },
           "unit": "Kbits"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Control"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Joint States"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Laser Scan"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Odometry"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 18,
-        "w": 14,
-        "x": 0,
-        "y": 19
+        "h": 15,
+        "w": 12,
+        "x": 12,
+        "y": 1
       },
       "id": 1,
       "options": {
@@ -257,7 +312,7 @@
         },
         "tooltip": {
           "maxHeight": 600,
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -267,12 +322,11 @@
             "type": "influxdb",
             "uid": "yBmilKUIz"
           },
-          "query": "from(bucket: \"ros-metrics\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => r._measurement == \"bandwidth\")\n  |> filter(fn: (r) => r._field == \"average_bandwidth_kbps\")\n  |> group(columns: [\"topic\"])\n  |> map(fn: (r) => ({\n      r with\n      topic_name: if r.topic == \"/scan\" then \"Laser Scan\" else if r.topic == \"/joint_states\" then \"Joint States\" else if r.topic == \"/go1_controller/odom\" then \"Odometry\" else if r.topic == \"/go1_controller/cmd_vel\" then \"Control\" else r.topic\n    }))\n  |> group(columns: [\"topic_name\"])\n  |> keep(columns: [\"_value\", \"_time\", \"topic_name\"])\n",
+          "query": "from(bucket: \"infrastructure-monitoring\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => \n    r._measurement == \"ros_metrics\" and\n    r._field == \"average_bandwidth_kbps\" and\n    r.metric_type == \"bandwidth\" and\n    contains(value: r.topic, set: [\n      \"/scan\",\n      \"/joint_states\",\n      \"/go1_controller/odom\",\n      \"/go1_controller/cmd_vel\"\n    ])\n  )\n  |> map(fn: (r) => ({\n    r with\n    topic_name: \n      if r.topic == \"/scan\" then \"Laser Scan\" \n      else if r.topic == \"/joint_states\" then \"Joint States\" \n      else if r.topic == \"/go1_controller/odom\" then \"Odometry\" \n      else if r.topic == \"/go1_controller/cmd_vel\" then \"Control\" \n      else r.topic\n  }))\n  |> group(columns: [\"topic_name\"])\n  |> keep(columns: [\"_time\", \"_value\", \"topic_name\"])\n",
           "refId": "A"
         }
       ],
-      "title": "ROS Topic Average Bandwidth",
-      "transparent": true,
+      "title": "Average Bandwidth",
       "type": "timeseries"
     },
     {
@@ -283,38 +337,32 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "orange",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
-          "unit": "deckbytes"
+          "unit": "ms"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 18,
-        "w": 10,
-        "x": 14,
-        "y": 19
+        "h": 5,
+        "w": 12,
+        "x": 0,
+        "y": 16
       },
-      "id": 7,
+      "id": 3,
       "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -322,9 +370,7 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
+        "textMode": "value_and_name"
       },
       "pluginVersion": "8.3.2",
       "targets": [
@@ -333,13 +379,69 @@
             "type": "influxdb",
             "uid": "yBmilKUIz"
           },
-          "query": "from(bucket: \"ros-metrics\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => r._measurement == \"bandwidth\")\n  |> filter(fn: (r) => r._field == \"average_message_size_bytes\")\n  |> group(columns: [\"topic\"])\n  |> sort(columns: [\"_time\"], desc: true)\n  |> unique(column: \"topic\")\n  |> map(fn: (r) => ({\n      _time: r._time,\n      _value: r._value,\n      topic_name: if r.topic == \"/scan\" then \"Laser Scan\" else if r.topic == \"/joint_states\" then \"Joint States\" else if r.topic == \"/go1_controller/odom\" then \"Odometry\" else if r.topic == \"/go1_controller/cmd_vel\" then \"Control\" else r.topic\n    }))\n  |> group(columns: [\"topic_name\"])\n  |> keep(columns: [\"_value\", \"_time\", \"topic_name\"])\n",
+          "query": "from(bucket: \"infrastructure-monitoring\")\n  |> range(start: -5m)\n  |> filter(fn: (r) =>\n    r._measurement == \"ros_metrics\" and\n    r._field == \"jitter_ms\" and\n    r.metric_type == \"jitter\" and\n    contains(value: r.topic, set: [\n      \"/scan\",\n      \"/joint_states\",\n      \"/go1_controller/odom\",\n      \"/go1_controller/cmd_vel\"\n    ])\n  )\n  |> group(columns: [\"topic\"])\n  |> sort(columns: [\"_time\"], desc: true)\n  |> unique(column: \"topic\")  // Gets latest value per topic\n  |> map(fn: (r) => ({\n    r with\n    topic_name:\n      if r.topic == \"/scan\" then \"Laser Scan\"\n      else if r.topic == \"/joint_states\" then \"Joint States\"\n      else if r.topic == \"/go1_controller/odom\" then \"Odometry\"\n      else if r.topic == \"/go1_controller/cmd_vel\" then \"Control\"\n      else r.topic\n  }))\n  |> group(columns: [\"topic_name\"])\n  |> keep(columns: [\"_time\", \"_value\", \"topic_name\"])\n",
           "refId": "A"
         }
       ],
-      "title": "ROS Topic Average Message Size",
-      "transparent": true,
-      "type": "gauge"
+      "title": "Average Jitter",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "yBmilKUIz"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "8.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "yBmilKUIz"
+          },
+          "query": "from(bucket: \"infrastructure-monitoring\")\n  |> range(start: -5m)\n  |> filter(fn: (r) =>\n    r._measurement == \"ros_metrics\" and\n    r._field == \"average_message_size_bytes\" and\n    r.metric_type == \"bandwidth\" and\n    contains(value: r.topic, set: [\n      \"/scan\",\n      \"/joint_states\",\n      \"/go1_controller/odom\",\n      \"/go1_controller/cmd_vel\"\n    ])\n  )\n  |> group(columns: [\"topic\"])\n  |> sort(columns: [\"_time\"], desc: true)\n  |> unique(column: \"topic\")  // Get the latest value for each topic\n  |> map(fn: (r) => ({\n    r with\n    topic_name:\n      if r.topic == \"/scan\" then \"Laser Scan\"\n      else if r.topic == \"/joint_states\" then \"Joint States\"\n      else if r.topic == \"/go1_controller/odom\" then \"Odometry\"\n      else if r.topic == \"/go1_controller/cmd_vel\" then \"Control\"\n      else r.topic\n  }))\n  |> group(columns: [\"topic_name\"])\n  |> keep(columns: [\"_time\", \"_value\", \"topic_name\"])\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Average Message Size",
+      "type": "stat"
     }
   ],
   "refresh": "5s",
@@ -347,7 +449,32 @@
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "yBmilKUIz"
+        },
+        "definition": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"ros-metrics\",\n  tag: \"topic\",\n  predicate: (r) => r._measurement == \"jitter\" or r._measurement == \"delay\" or r._measurement == \"bandwidth\",\n  start: -15m\n)\n",
+        "hide": 0,
+        "includeAll": true,
+        "label": "ROS Topic",
+        "multi": false,
+        "name": "topic",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"ros-metrics\",\n  tag: \"topic\",\n  predicate: (r) => r._measurement == \"jitter\" or r._measurement == \"delay\" or r._measurement == \"bandwidth\",\n  start: -15m\n)\n",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
   },
   "time": {
     "from": "now-5m",
@@ -357,6 +484,6 @@
   "timezone": "browser",
   "title": "Digital Twin ROS Application Metrics",
   "uid": "adlt1x5bqlatcb",
-  "version": 3,
+  "version": 10,
   "weekStart": ""
 }

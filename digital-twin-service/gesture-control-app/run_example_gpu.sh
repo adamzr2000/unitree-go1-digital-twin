@@ -2,98 +2,89 @@ xhost local:root
 
 XAUTH=/tmp/.docker.xauth
 
+# Default values
+ros_master_uri="http://localhost:11311"
+ros_ip="127.0.0.1"
+camera_type="webcam_ip"
+web_server="yes"
+control_loop_rate="500"
+cmd_vel="go1_controller/cmd_vel"
+stamped="true"
+
 # Function to validate IP address format
 validate_ip() {
     local ip=$1
-    if [[ $ip =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-        return 0
-    else
-        return 1
+    if [[ ! $ip =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "Invalid IP address format: $ip"
+        exit 1
     fi
 }
 
-# Function to display the menu for ROS_MASTER_URI
-display_menu_master() {
-    echo "==============================="
-    echo "      Select ROS_MASTER_URI    "
-    echo "==============================="
-    echo "  1 -> localhost"
-    echo "  2 -> edge (10.5.98.101)"
-    echo "  3 -> custom"
-    echo "==============================="
-}
-
-# Function to display the menu for ROS_IP
-display_menu_ip() {
-    echo "==============================="
-    echo "        Set ROS_IP             "
-    echo "==============================="
-    echo "  1 -> UE (10.5.98.70)"    
-    echo "  2 -> edge (10.5.98.101)"
-    echo "  3 -> custom"
-    echo "==============================="
-}
-
-# Function to get user choice for ROS_MASTER_URI
-get_choice_master() {
-    read -p "Enter your choice for ROS_MASTER_URI (1/2/3): " choice_master
-    case $choice_master in
-        1) ros_master_uri="http://localhost:11311"; return;;
-        2) ros_master_uri="http://10.5.98.101:11311"; return;;
-        3) read -p "Enter custom ROS MASTER IP: " custom_uri;
-            if validate_ip $custom_uri; then
-                ros_master_uri="http://${custom_uri}:11311"; 
-            else
-                echo "Invalid IP address format. Please enter a valid IP address."
-                get_choice_master
-            fi
-            return;;    
-        *) echo "Invalid choice. Please enter 1, 2, or 3."; get_choice_master;;
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+        --ros-master-uri)
+            ros_master_uri="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --ros-ip)
+            ros_ip="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --camera-type)
+            camera_type="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --web-server)
+            web_server="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --control-loop-rate)
+            control_loop_rate="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --cmd-vel)
+            cmd_vel="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --stamped)
+            stamped="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Usage: $0 [--ros-master-uri <ROS_MASTER_URI>] [--ros-ip <ROS_IP>] [--camera-type <webcam/intel/webcam_ip>] [--web-server <yes/no>] [--control-loop-rate <RATE>] [--cmd-vel <TOPIC>] [--stamped <true/false>]"
+            exit 1
+            ;;
     esac
-}
+done
 
-# Function to get user choice for ROS_IP
-get_choice_ip() {
-    read -p "Enter your choice for ROS_IP (1/2/3): " choice_ip
-    case $choice_ip in
-        1) ros_ip="10.5.98.70"; return;;
-        2) ros_ip="10.5.98.101"; return;;
-        3) read -p "Enter custom ROS IP: " custom_ip; ros_ip="${custom_ip}";
-            if validate_ip $custom_ip; then
-                ros_ip="${custom_ip}"; 
-            else
-                echo "Invalid IP address format. Please enter a valid IP address."
-                get_choice_ip
-            fi
-            return;;
-        *) echo "Invalid choice. Please enter 1, 2, or 3."; get_choice_ip;;
-    esac
-}
+# Validate ROS_IP
+validate_ip "$ros_ip"
 
-# Prompt the user to select ROS MASTER URI
-display_menu_master
-get_choice_master
-
-# If localhost selected, set ROS_IP to 127.0.0.1
-if [[ $ros_master_uri == "http://localhost:11311" ]]; then
-    ros_ip="127.0.0.1"
-else
-    # Prompt the user to select ROS_IP if ROS_MASTER_URI is not localhost
-    display_menu_ip
-    get_choice_ip
-fi
-
-# Options: "webcam" or "intel"
-camera_type="webcam"
-
-# Options: "yes" or "no"
-web_server="no"
-
+# Display parameters in use
+echo "==============================="
+echo " Parameters in Use             "
+echo "==============================="
 echo "ROS_MASTER_URI: $ros_master_uri"
 echo "ROS_IP: $ros_ip"
 echo "CAMERA_TYPE: $camera_type"
 echo "WEB_SERVER: $web_server"
+echo "CONTROL_LOOP_RATE (Hz): $control_loop_rate"
+echo "CMD_VEL: $cmd_vel"
+echo "STAMPED: $stamped"
+echo "==============================="
 
+# Run docker container
+echo "Running go1-gesture-control docker image."
 # Directory on host to map to the container's app directory
 host_app_dir="$(pwd)/app"
 
@@ -110,6 +101,10 @@ docker run \
     -e ROS_MASTER_URI="$ros_master_uri" \
     -e ROS_IP="$ros_ip" \
     -e CAMERA_TYPE="$camera_type" \
+    -e WEB_SERVER="$web_server" \
+    -e CMD_VEL="$cmd_vel" \
+    -e STAMPED="$stamped" \
+    -e CONTROL_LOOP_RATE="$control_loop_rate" \
     -v ${host_app_dir}:/home/go1/app \
     --rm \
     --net host \

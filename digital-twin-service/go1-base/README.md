@@ -33,7 +33,8 @@ This container runs the [bringup.launch](catkin_ws/src/qre_go1/go1_bringup/launc
 ### Dependencies:
 
 The Unitree Go1 ROS Base depends on:
-  - ros-master (tutorial [here](../ros-master/))
+
+- ros-master (tutorial [here](../ros-master/))
 
 ### First you will need to build the container. 
 

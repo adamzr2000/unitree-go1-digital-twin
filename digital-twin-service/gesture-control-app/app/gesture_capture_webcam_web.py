@@ -1,12 +1,17 @@
 
 # Importing necessary libraries
-from flask import Flask, Response, render_template
+from flask import Flask, Response, render_template, request, jsonify
+import threading
 import cv2  # OpenCV for image processing and computer vision tasks
 import mediapipe as mp  # MediaPipe for hand tracking
 import os
-
+import time
+import numpy as np
 # Initialize Flask app
 app = Flask(__name__)
+
+camera_enabled = True  # Global flag to control camera
+lock = threading.Lock()
 
 # Setting up MediaPipe drawing utilities for visualization
 mp_drawing = mp.solutions.drawing_utils
@@ -22,9 +27,14 @@ file_path = os.path.join(path_to_directory, 'command.txt')
 
 # Function to process and stream frames
 def gen_frames():
+    global camera_enabled
+
     cap = cv2.VideoCapture(0)
+    cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1024)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    cap.set(cv2.CAP_PROP_FPS, 30)
+    cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
     # Configuring MediaPipe Hands
     with mp_hands.Hands(
@@ -35,7 +45,26 @@ def gen_frames():
 
         # Main loop to process video frames
         while True:
-            success, image = cap.read() # Read a frame from the webcam
+            with lock:
+                enabled = camera_enabled
+
+            if not enabled:
+                # Write "n" to command.txt to indicate neutral/no gesture
+                with open(file_path, 'w') as f:
+                    f.write("n")
+
+                # Show a "camera disabled" black frame every 0.5 seconds
+                black_frame = (255 * np.ones((480, 640, 3), dtype=np.uint8))
+                cv2.putText(black_frame, "Camera Disabled", (150, 240),
+                            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 3)
+                ret, buffer = cv2.imencode('.jpg', black_frame)
+                frame = buffer.tobytes()
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                time.sleep(0.5)
+                continue
+
+            success, image = cap.read()
             if not success:
                 break
 
@@ -161,6 +190,13 @@ def gen_frames():
         # Releasing the webcam and closing all OpenCV windows
         cap.release()
 
+@app.route('/toggle_camera', methods=['POST'])
+def toggle_camera():
+    global camera_enabled
+    with lock:
+        camera_enabled = not camera_enabled
+    return jsonify({'camera_enabled': camera_enabled})
+
 @app.route('/video_feed')
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
@@ -168,7 +204,7 @@ def video_feed():
 @app.route('/')
 def index():
     # Video stream home page
-    return render_template('index.html')
+    return render_template('indexJS.html')
 
 # Main entry point of the application
 if __name__ == '__main__':

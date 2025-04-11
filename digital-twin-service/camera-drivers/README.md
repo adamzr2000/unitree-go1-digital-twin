@@ -16,7 +16,8 @@ This container runs the ROS drivers for the Depth Camera Astra S | Orbbec 3D
 ### Dependencies:
 
 The astra ROS Drivers depends on:
-  - ros-master (tutorial [here](../ros-master/))
+
+- ros-master (tutorial [here](../ros-master/))
 
 ### First you will need to build the container. 
 

@@ -25,8 +25,9 @@ This container captures video stream from the user's camera, detects his hand ge
 ### Dependencies:
 
 The Unitree Go1 Gesture Control App depends on:
-  - ros-master (tutorial [here](../ros-master/))
-  - go1-base (tutorial [here](../go1-base/))
+
+- ros-master (tutorial [here](../ros-master/))
+- go1-base (tutorial [here](../go1-base/))
 
 > Note: be sure that all the dependencies are running before you run the Unitree Go1 Gesture Control App container
 
@@ -51,7 +52,7 @@ In this folder we also provide a docker run example.
 
 To run the Unitree Go1 Gesture Control App:
 ```bash
-./run_example_web.sh
+./run_example.sh
 ```
 
 This will start the gesture control app on a Flask web server.
@@ -73,8 +74,8 @@ http://127.0.0.1:8888/
 
 You can adjust the behavior of the application by specifying the following environment variables:
 
-- `CAMERA_TYPE`: Choose between "webcam" (default) or "intel" (for Intel RealSense D435i model).
-- `CONTROL_LOOP_RATE`: Set the control loop frequency in Hz for sending control commands to move the robot (default 50Hz ~ 20ms).
+- `CAMERA_TYPE`: Choose between "webcam" (default) for local camera input, or "webcam_ip" to receive video from a remote source.
+- `CONTROL_LOOP_RATE`: Set the ROS control loop frequency in Hz for sending velocity commands to move the robot (default 50Hz ~ 20ms).
 
 ### Reference Documentation
 

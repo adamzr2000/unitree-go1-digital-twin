@@ -36,16 +36,6 @@ case "$camera_type" in
         start_command="flask run --host=0.0.0.0 --port=8888"
         camera_type="Webcam"
         ;;
-    "intel")
-        if [[ "$web_server" == "yes" ]]; then
-            python_script="gesture_capture_d435i_web.py"
-            start_command="flask run --host=0.0.0.0 --port=8888"
-        else
-            python_script="gesture_capture_d435i.py"
-            start_command="python3 $python_script"
-        fi
-        camera_type="Intel D435i"
-        ;;
     *)
         echo "Invalid or no CAMERA_TYPE environment variable set, defaulting to 'Webcam'."
         if [[ "$web_server" == "yes" ]]; then
