@@ -1,0 +1,94 @@
+services:
+  broker1A:
+    image: bitnami/kafka:3.4
+    hostname: broker1A
+    container_name: broker1A
+    # volumes:
+    #   - ./data/broker1A:/bitnami/kafka/data
+    mem_limit: 1g
+    mem_reservation: 512m
+    ports:
+      - 9191:9092
+    environment:
+      # limit Kafka heap to 512 MB
+      KAFKA_HEAP_OPTS: "-Xms512m -Xmx512m"
+      # disable remote JMX if you’re not using it
+      KAFKA_JMX_PORT: ""
+      KAFKA_CFG_NODE_ID: 1
+      KAFKA_ENABLE_KRAFT: 1
+      KAFKA_CFG_PROCESS_ROLES: broker,controller
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: RAFT
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@broker1A:9094
+      KAFKA_CFG_ADVERTISED_LISTENERS: INSIDE://broker1A:9093,OUTSIDE://${LOCAL_IP}:9191
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,RAFT:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_CFG_LISTENERS: INSIDE://broker1A:9093,RAFT://broker1A:9094,OUTSIDE://0.0.0.0:9092
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: INSIDE
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_KRAFT_CLUSTER_ID: OTMwNzFhYTY1ODNiNGE5O1
+      KAFKA_CFG_KRAFT_REPLICATION_FACTOR: 1
+    networks:
+      - monitoring-net
+
+  # mirror-maker:
+  #   image: bitnami/kafka:3.4
+  #   hostname: mirror-maker
+  #   container_name: mirror-maker
+  #   volumes:
+  #     - ./mm2_config:/tmp/kafka/config
+  #   restart: always
+  #   depends_on:
+  #     - broker1A
+  #   command: ["/opt/bitnami/kafka/bin/connect-mirror-maker.sh", "/tmp/kafka/config/mm2.properties"]
+  #   networks:
+  #     - monitoring-net
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8080:8080
+    environment:
+      DYNAMIC_CONFIG_ENABLED: 'true'
+    volumes:
+      - ./kui/config.yml:/etc/kafkaui/dynamic_config.yaml
+    networks:
+      - monitoring-net
+
+  influxdb:
+    image: influxdb:2
+    container_name: mon-influxdb
+    restart: always
+    ports:
+      - "8087:8086"
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: "setup"
+      DOCKER_INFLUXDB_INIT_USERNAME: "desire6g"
+      DOCKER_INFLUXDB_INIT_PASSWORD: "desire6g2024;"
+      DOCKER_INFLUXDB_INIT_ORG: "desire6g"
+      DOCKER_INFLUXDB_INIT_BUCKET: "monitoring"
+      DOCKER_INFLUXDB_INIT_RETENTION: "1w"
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: "desire6g2024;"
+    networks:
+      - monitoring-net
+
+  grafana:
+    image: grafana/grafana:11.5.2
+    container_name: mon-grafana
+    restart: always
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: "desire6g"
+      GF_SECURITY_ADMIN_PASSWORD: "desire6g2024;"
+    volumes:
+      - ./grafana_config/datasources:/etc/grafana/provisioning/datasources 
+      - ./grafana_config/dashboards:/etc/grafana/provisioning/dashboards
+        #- ./grafana_data:/var/lib/grafana
+    networks:
+      - monitoring-net
+
+networks:
+ monitoring-net:
+    name: monitoring-net
+    ipam:
+      driver: default

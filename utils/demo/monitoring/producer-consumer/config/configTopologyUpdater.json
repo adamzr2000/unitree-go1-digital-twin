@@ -1,0 +1,8 @@
+{
+  "site_id": "SITEID1",
+  "topology_endpoint": "10.5.15.55:8002",
+  "iml_endpoint": "iml.siteid1.com",
+  "threshold": 5.0,
+  "interval": 5.0,
+  "disk_path": "/"
+}

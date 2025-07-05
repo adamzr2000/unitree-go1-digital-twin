@@ -49,7 +49,6 @@ RUN apt-get update && \
 RUN pip3 install --no-cache-dir --timeout=1000 \
     mediapipe \
     numpy==1.20 \
-    pyrealsense2 \
     Flask
 
 RUN pip3 install --upgrade numpy

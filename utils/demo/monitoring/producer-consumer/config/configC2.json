@@ -1,0 +1,8 @@
+{
+  "kafka": {
+    "kafkaIP": "10.5.1.21",
+    "kafkaPort": 9191,
+    "kafkaTopic": "network",
+    "kafkaID": 30
+  }
+}

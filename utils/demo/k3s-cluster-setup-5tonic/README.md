@@ -1,7 +1,5 @@
 # Cluster Configuration
 
-**Author:** Adam Zahir Rodriguez
-
 ## 1. Edge Server
 Delete the K3s node named `robot`:
 ```bash

@@ -31,7 +31,7 @@ spec:
         - name: TOPICS
           value: "/go1_controller/cmd_vel"
         - name: INFLUXDB_URL
-          value: "http://influxdb:8086"
+          value: "http://10.5.1.21:8088"
         - name: INFLUXDB_TOKEN
           value: "desire6g2024;"
         - name: INFLUXDB_ORG

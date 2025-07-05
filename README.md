@@ -61,7 +61,7 @@ The [Digital Twin service](./digital-twin-service/) is composed of the following
 | Module                | Description                                                                                                     | Status       |
 |------------------------|-----------------------------------------------------------------------------------------------------------------|--------------|
 | **ROS Master**         | Provides naming and registration services to ROS nodes ([details](./digital-twin-service/ros-master/))         | ✅ Available |
-| **Go1 Base**           | Interfaces with the robot using the proprietary SDK via ROS ([details](./digital-twin-service/go1-base/))       | ✅ Available |
+| **Go1 Base**           | Interfaces with the robot using the unitree_legged_sdk via ROS ([details](./digital-twin-service/go1-base/))       | ✅ Available |
 | **Gesture Control App**| Translates camera-based gestures into robot velocity commands ([details](./digital-twin-service/gesture-control-app/)) | ✅ Available |
 | **Digital Replica**    | Simulates the Unitree Go1 in NVIDIA Isaac Sim ([details](./digital-twin-service/digital-replica/))              | ✅ Available |
 | **Lidar Drivers**      | Drivers for the RPLIDAR A3 used in mapping and navigation ([details](./digital-twin-service/lidar-drivers/))    | ✅ Available |

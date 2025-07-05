@@ -32,7 +32,7 @@ spec:
           value: "/scan /joint_states /go1_controller/odom"
           # value: /scan /joint_states /go1_controller/odom /camera/color/image_raw /camera/depth/points
         - name: INFLUXDB_URL
-          value: "http://influxdb:8086"
+          value: "http://10.5.1.21:8088"
         - name: INFLUXDB_TOKEN
           value: "desire6g2024;"
         - name: INFLUXDB_ORG

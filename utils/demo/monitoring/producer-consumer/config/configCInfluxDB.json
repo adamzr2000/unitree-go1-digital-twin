@@ -1,0 +1,13 @@
+{
+  "kafka": {
+    "kafkaIP": "10.5.1.21",
+    "kafkaPort": 9191,
+    "kafkaID": 30
+  },
+  "influxdb": {
+    "influxdb_url": "http://10.5.1.21:8087",
+    "influxdb_token": "desire6g2024;",
+    "influxdb_org": "desire6g",
+    "influxdb_bucket": "monitoring"
+  }
+}

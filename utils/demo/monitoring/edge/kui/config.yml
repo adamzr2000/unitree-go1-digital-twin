@@ -1,0 +1,4 @@
+kafka:
+  clusters:
+    - name: D6Gsite1
+      bootstrapServers: broker1A:9093

@@ -18,6 +18,7 @@ docker run \
     --rm \
     --net host \
     --privileged \
+    --gpus all \
     --group-add video \
     -e SERVER_URL="$SERVER_URL" \
     video-sender:latest \

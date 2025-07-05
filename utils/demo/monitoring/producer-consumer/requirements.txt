@@ -1,0 +1,6 @@
+confluent-kafka==2.2.0
+ping3
+psutil
+influxdb-client
+docker
+kubernetes
