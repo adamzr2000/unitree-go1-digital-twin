@@ -1,82 +1,80 @@
-# Specify the ROS distribution as a build argument
 ARG ROS_DISTRO=noetic
+FROM osrf/ros:${ROS_DISTRO}-desktop-full
 
-# Use an official ROS base image 
-FROM osrf/ros:${ROS_DISTRO}-desktop
-
-# Label to indicate the maintainer of this Dockerfile
 LABEL maintainer="azahir@pa.uc3m.es"
 
-# Setup the working directory in the container
-WORKDIR /root
-
-# Create a new user 'go1' with sudo privileges and set a password
-RUN useradd -m go1 && \
-    echo "go1:go1" | chpasswd && adduser go1 sudo
-
-# Set an environment variable to noninteractive to avoid prompts during package installation
+ARG CARTOGRAPHER_VERSION=master
+ARG CARTOGRAPHER_SHA=LATEST
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Pre-configure debconf for keyboard layout
-RUN echo 'keyboard-configuration keyboard-configuration/layout select Spanish' | debconf-set-selections && \
-    echo 'keyboard-configuration keyboard-configuration/layoutcode select es' | debconf-set-selections
+# Create user and working directory
+RUN useradd -m go1 && echo "go1:go1" | chpasswd && adduser go1 sudo
+USER go1
+WORKDIR /home/go1
+
+# Install base dependencies
+USER root
+RUN apt-get update && apt-get install -y \
+    git wget libcairo2-dev
+
+USER go1
+
+# Prepare workspace and clone sources
+COPY cartographer_ros/cartographer_ros.rosinstall cartographer_ros/scripts/prepare_catkin_workspace.sh ./scripts/
+RUN CARTOGRAPHER_SHA=$CARTOGRAPHER_SHA \
+    CARTOGRAPHER_VERSION=$CARTOGRAPHER_VERSION \
+    ./scripts/prepare_catkin_workspace.sh && \
+    sed -i 's%<depend>libabsl-dev</depend>%<!-- <depend>libabsl-dev</depend> -->%' carto_ws/src/cartographer/package.xml
+
+# Copy updated package.xml files before rosdep
+COPY cartographer_ros/cartographer_ros/package.xml carto_ws/src/cartographer_ros/cartographer_ros/
+COPY cartographer_ros/cartographer_ros_msgs/package.xml carto_ws/src/cartographer_ros/cartographer_ros_msgs/
+COPY cartographer_ros/cartographer_rviz/package.xml carto_ws/src/cartographer_ros/cartographer_rviz/
+
+# Install ROS deps
+COPY cartographer_ros/scripts/install_debs.sh ./scripts/
+USER root
+RUN ./scripts/install_debs.sh
+
+# Install Abseil manually (as per official instructions)
+RUN carto_ws/src/cartographer/scripts/install_abseil.sh
+
+USER go1
+
+# Copy build scripts
+COPY cartographer_ros/scripts/install.sh \
+     cartographer_ros/scripts/catkin_test_results.sh \
+     cartographer_ros/scripts/ros_entrypoint.sh ./scripts/
+
+# Build cartographer core
+RUN ./scripts/install.sh --pkg cartographer && \
+    ./scripts/install.sh --pkg cartographer --make-args test
+
+# Build and test cartographer_ros_msgs
+COPY cartographer_ros/cartographer_ros_msgs carto_ws/src/cartographer_ros/cartographer_ros_msgs/
+RUN ./scripts/install.sh --pkg cartographer_ros_msgs && \
+    ./scripts/install.sh --pkg cartographer_ros_msgs --catkin-make-args run_tests && \
+    ./scripts/catkin_test_results.sh build_isolated/cartographer_ros_msgs
+
+# Build and test cartographer_ros
+COPY cartographer_ros/cartographer_ros carto_ws/src/cartographer_ros/cartographer_ros/
+RUN ./scripts/install.sh --pkg cartographer_ros && \
+    ./scripts/install.sh --pkg cartographer_ros --catkin-make-args run_tests && \
+    ./scripts/catkin_test_results.sh build_isolated/cartographer_ros
+
+# Build and test cartographer_rviz
+COPY cartographer_ros/cartographer_rviz carto_ws/src/cartographer_ros/cartographer_rviz/
+RUN ./scripts/install.sh --pkg cartographer_rviz && \
+    ./scripts/install.sh --pkg cartographer_rviz --catkin-make-args run_tests && \
+    ./scripts/catkin_test_results.sh build_isolated/cartographer_rviz
+
+# Environment setup on container start
+RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc && \
+    echo "source ~/carto_ws/install_isolated/setup.bash" >> ~/.bashrc
 
 
 # Use bash shell for subsequent commands
 SHELL [ "/bin/bash", "-c" ]
-
-USER root
-
-# Install essential tools and clean up after to reduce image size
-RUN apt-get update && apt-get install -y \
-    git \
-    wget \
-    python3-catkin-tools \
-    python3-pip \
-    python3-wstool \
-    python3-rosdep \
-    ninja-build stow 
-
-
-# Switch to the newly created user for better security (avoid using root)
-USER go1
-WORKDIR /home/go1
-
-# Clone the necessary ROS packages into the catkin workspace
-RUN mkdir -p ~/carto_ws/src && \
-    cd carto_ws && \
-    wstool init src && \
-    wstool merge -t src https://raw.githubusercontent.com/cartographer-project/cartographer_ros/master/cartographer_ros.rosinstall && \
-    wstool update -t src && \
-    sed -i -e "s%<depend>libabsl-dev</depend>%<\!--<depend>libabsl-dev</depend>-->%g" /home/go1/carto_ws/src/cartographer/package.xml
-
-USER root
-RUN apt-get update && apt-get install -y \
-    libceres-dev lua5.2-dev protobuf-compiler libcairo2-dev \
-    libpcl-dev libpcl-conversions-dev \
-    ros-pcl-msgs libgmock-dev \
-    ros-${ROS_DISTRO}-tf2-eigen \
-    ros-${ROS_DISTRO}-pcl-conversions
-
-RUN dpkg -s ros-${ROS_DISTRO}-abseil-cpp && apt-get remove -y ros-${ROS_DISTRO}-abseil-cpp || echo "ros-${ROS_DISTRO}-abseil-cpp not installed"
-
-RUN sed -i 's/make -j/make -j4/' /home/go1/carto_ws/src/cartographer/scripts/install_abseil.sh && \
-    cd /home/go1/carto_ws && source /opt/ros/${ROS_DISTRO}/setup.bash && \
-    rosdep update && \
-    rosdep install --from-paths src --ignore-src --rosdistro=${ROS_DISTRO} -y && \
-    cd src/cartographer/scripts && ./install_abseil.sh
-
-ENV CMAKE_ARGS="-DCATKIN_ENABLE_TESTING=OFF -DBUILD_TESTING=OFF"
-
-USER go1 
-
-# Build the catkin workspace
-RUN cd ~/carto_ws && source /opt/ros/${ROS_DISTRO}/setup.bash && \
-    catkin_make_isolated --install --use-ninja -DCMAKE_BUILD_TYPE=Release -j 4
-
-# Add ROS environment setup to bashrc 
-RUN echo "source ~/carto_ws/install_isolated/setup.bash" >> ~/.bashrc
-
 
 # Clone the necessary ROS packages into the catkin workspace
 RUN mkdir -p catkin_ws/src 
@@ -90,6 +88,12 @@ RUN cd /home/go1/catkin_ws && source /opt/ros/${ROS_DISTRO}/setup.bash && \
 
 RUN cd /home/go1/catkin_ws/src/qre_go1/ && source /opt/ros/${ROS_DISTRO}/setup.bash && \
     ./go1_install.bash
+
+# Install essential tools and clean up after to reduce image size
+RUN apt-get update && apt-get install -y \
+    python3-catkin-tools \
+    python3-pip && \
+    rm -rf /var/lib/apt/lists/*
 
 USER go1
 
