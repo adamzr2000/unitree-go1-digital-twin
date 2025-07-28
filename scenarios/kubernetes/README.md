@@ -18,21 +18,11 @@ docker save <docker-image-name> | sudo k3s ctr images import -
 
 ## Hosts configuration
 
-This is the multi-host setup: 
-
-- **Server Node (EDGE)**: 
-  - IP: `192.168.40.4`
-  - Pods/Services: `roscore-edge`, `digital-twin-app`, `gesture-control-app`, `go1-navigation`, `rviz-vnc`
-
-- **Agent Node (ROBOT)**: 
-  - IP: `192.168.40.70`
-  - Pods/Services: `lidar`, `camera`, `go1-base`
-
 Here is a diagram that represents visually the architecture of the scenario:
 
 ![E2E Scenario 5TONIC](../../images/e2e-scenario-kubernetes.png)
 
-To participate in the ROS network, ROS nodes need to know the IP address of the ROS Master. However,in Kubernetes, we don't know the IP address of the `roscore-edge` container until the application is deployed. To address this issue, a solution is implemented using a `Headless Service` so that application pods can DNS the hostname based on that service name, whose backend is corresponding application pods.
+> Note: To participate in the ROS network, nodes need to know the IP address of the ROS Master. However,in Kubernetes, we don't know the IP address of the `roscore-edge` container until the application is deployed. To address this issue, a solution is implemented using a `Headless Service` so that application pods can DNS the hostname based on that service name, whose backend is corresponding application pods.
 
 ### Cluster installation on the edge host as server
 
@@ -41,7 +31,7 @@ To effortlessly set up a fully-functional, single-node Kubernetes cluster, execu
 curl -sfL https://get.k3s.io | sh -
 ```
 
-> Note: The installation should be executed on the `edge` host. This single-node will function as a server, including all the `datastore`, `control-plane`, `kubelet`, and `container runtime` components necessary to host workload pods. 
+> Note: The installation should be executed on the `edge` host. This single-node will function as a k3s server, including all the `datastore`, `control-plane`, `kubelet`, and `container runtime` components necessary to host workload pods. 
 
 After installing k3s, use the `export KUBECONFIG="/etc/rancher/k3s/k3s.yaml"` environment variable to specify to `kubectl` the location of the [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) file required for cluster configuration.
 
@@ -52,13 +42,13 @@ echo 'export KUBECONFIG="/etc/rancher/k3s/k3s.yaml"' >> ~/.bashrc
 
 ### Adding the robot host to the cluster as agent
 
-To add the `robot` host as an additional agent node and include it in the cluster, run the installation script with the `K3S_URL` and `K3S_TOKEN` environment variables. 
+To add the `robot` host as an additional k3s agent and include it in the cluster, run the installation script with the `K3S_URL` and `K3S_TOKEN` environment variables. 
 
 ```bash
-curl -sfL https://get.k3s.io | K3S_URL=https://192.168.40.4:6443 K3S_TOKEN=mynodetoken sh -
+curl -sfL https://get.k3s.io | K3S_URL=https://10.11.7.4:6443 K3S_TOKEN=<token> sh -
 ```
 
-You can find the token value required for `K3S_TOKEN` at `/var/lib/rancher/k3s/server/node-token` on your server node.
+You can find the token value required for `K3S_TOKEN` at `/var/lib/rancher/k3s/server/node-token` on your k3s server node.
 
 Next, copy the `/etc/rancher/k3s/k3s.yaml` file from the server to the agent node. Ensure to update the IP address in the file to match the edge IP address as the server.
 
@@ -69,7 +59,7 @@ clusters:
 - cluster:
     certificate-authority-data: 
     ...
-    server: https://192.168.40.4:6443
+    server: https://10.11.7.4:6443
   name: default
 contexts:
 - context:
@@ -95,7 +85,7 @@ echo 'export KUBECONFIG="/etc/rancher/k3s/k3s.yaml"' >> ~/.bashrc
 
 ### Applying labels to cluster nodes
 
-To label nodes, execute the following commands from the server. 
+To label nodes, execute the following commands from the k3s server. 
 ```bash
 # Show the hostnames of the nodes
 kubectl get nodes --show-labels
@@ -105,14 +95,14 @@ kubectl label nodes <server-node-hostname> nodetype=edge
 kubectl label nodes <agent-node-hostname> nodetype=robot
 ```
 
-You can use the following command to eliminate labels from nodes:
+You can use the following command to eliminate labels from k3s agents:
 ```bash
 kubectl label node <node-hostname> nodetype-
 ```
 
 ## Deployment
 
-Run this command in the `edge` node: 
+Run this command in the k3s server: 
 ```bash
 kubectl apply -f digital-twin-service.yml
 ```

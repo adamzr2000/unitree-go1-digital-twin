@@ -2,7 +2,7 @@
 ARG ROS_DISTRO=noetic
 
 # Use an official ROS base image 
-FROM osrf/ros:${ROS_DISTRO}-desktop
+FROM osrf/ros:${ROS_DISTRO}-desktop-full
 
 # Label to indicate the maintainer of this Dockerfile
 LABEL maintainer="azahir@pa.uc3m.es"
@@ -33,7 +33,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     python3-catkin-tools \
     python3-pip \
-    python3-wstool \
+    python3-vcstool \
     python3-rosdep \
     ninja-build stow 
 
@@ -45,34 +45,34 @@ WORKDIR /home/go1
 # Clone the necessary ROS packages into the catkin workspace
 RUN mkdir -p ~/carto_ws/src && \
     cd carto_ws && \
-    wstool init src && \
-    wstool merge -t src https://raw.githubusercontent.com/cartographer-project/cartographer_ros/master/cartographer_ros.rosinstall && \
-    wstool update -t src && \
+    vcs import src --input https://raw.githubusercontent.com/cartographer-project/cartographer_ros/master/cartographer_ros.rosinstall && \
     sed -i -e "s%<depend>libabsl-dev</depend>%<\!--<depend>libabsl-dev</depend>-->%g" /home/go1/carto_ws/src/cartographer/package.xml
 
 USER root
+
+# Update rosdep
+RUN rosdep update
+
 RUN apt-get update && apt-get install -y \
-    libceres-dev lua5.2-dev protobuf-compiler libcairo2-dev \
-    libpcl-dev libpcl-conversions-dev \
-    ros-pcl-msgs libgmock-dev \
-    ros-${ROS_DISTRO}-tf2-eigen \
-    ros-${ROS_DISTRO}-pcl-conversions
+    libgflags-dev \
+    libgoogle-glog-dev \
+    libprotobuf-dev \
+    protobuf-compiler \
+    libprotoc-dev \
+    python3-sphinx \
+    libcairo2-dev \
+    libceres-dev \
+    liblua5.2-dev 
 
-RUN dpkg -s ros-${ROS_DISTRO}-abseil-cpp && apt-get remove -y ros-${ROS_DISTRO}-abseil-cpp || echo "ros-${ROS_DISTRO}-abseil-cpp not installed"
-
-RUN sed -i 's/make -j/make -j4/' /home/go1/carto_ws/src/cartographer/scripts/install_abseil.sh && \
-    cd /home/go1/carto_ws && source /opt/ros/${ROS_DISTRO}/setup.bash && \
-    rosdep update && \
-    rosdep install --from-paths src --ignore-src --rosdistro=${ROS_DISTRO} -y && \
-    cd src/cartographer/scripts && ./install_abseil.sh
-
-ENV CMAKE_ARGS="-DCATKIN_ENABLE_TESTING=OFF -DBUILD_TESTING=OFF"
+RUN cd /home/go1/carto_ws && source /opt/ros/${ROS_DISTRO}/setup.bash && \
+    rosdep install --from-paths src --ignore-src -r -y && \
+    src/cartographer/scripts/install_abseil.sh
 
 USER go1 
 
 # Build the catkin workspace
 RUN cd ~/carto_ws && source /opt/ros/${ROS_DISTRO}/setup.bash && \
-    catkin_make_isolated --install --use-ninja -DCMAKE_BUILD_TYPE=Release -j 4
+	catkin_make_isolated --install --use-ninja -j4 -l2
 
 # Add ROS environment setup to bashrc 
 RUN echo "source ~/carto_ws/install_isolated/setup.bash" >> ~/.bashrc
