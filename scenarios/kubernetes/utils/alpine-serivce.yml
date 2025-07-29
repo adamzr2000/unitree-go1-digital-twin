@@ -1,0 +1,116 @@
+##################
+### alpine1 ###
+##################
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: alpine1
+  labels:
+    app: alpine-service
+    node: alpine1
+spec:
+  containers:
+    - name: alpine1
+      image: alpine:latest
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/sh", "-c", "while true; do echo 'pod 1 alive'; sleep 30; done"]
+  nodeSelector:
+    nodetype: edge
+
+---
+
+### Headless service declaration.
+### This is required to map to app "alpine1" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: alpine1
+  labels:
+    app: alpine-service
+    node: alpine1
+spec:
+  clusterIP: None
+  selector:
+    node: alpine1
+
+---
+
+##################
+### alpine2 ###
+##################
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: alpine2
+  labels:
+    app: alpine-service
+    node: alpine2
+spec:
+  containers:
+    - name: alpine2
+      image: alpine:latest
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/sh", "-c", "while true; do echo 'pod 2 alive'; sleep 30; done"]
+  nodeSelector:
+    nodetype: edge
+
+
+---
+
+### Headless service declaration.
+### This is required to map to app "alpine2" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: alpine2
+  labels:
+    app: alpine-service
+    node: alpine2
+spec:
+  clusterIP: None
+  selector:
+    node: alpine2
+
+---
+
+
+##################
+### alpine3 ###
+##################
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: alpine3
+  labels:
+    app: alpine-service
+    node: alpine3
+spec:
+  containers:
+    - name: alpine3
+      image: alpine:latest
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/sh", "-c", "while true; do echo 'pod 3 alive'; sleep 30; done"]
+  nodeSelector:
+    nodetype: edge
+
+
+---
+
+### Headless service declaration.
+### This is required to map to app "alpine3" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: alpine3
+  labels:
+    app: alpine-service
+    node: alpine3
+spec:
+  clusterIP: None
+  selector:
+    node: alpine3
+
+---

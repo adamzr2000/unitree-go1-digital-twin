@@ -47,8 +47,8 @@ COPY cartographer_ros/scripts/install.sh \
      cartographer_ros/scripts/ros_entrypoint.sh ./scripts/
 
 # Build cartographer core
-RUN ./scripts/install.sh --pkg cartographer && \
-    ./scripts/install.sh --pkg cartographer --make-args test
+RUN ./scripts/install.sh --pkg cartographer --make-args "-j2" && \
+    ./scripts/install.sh --pkg cartographer --make-args "test -j2"
 
 # Build and test cartographer_ros_msgs
 COPY cartographer_ros/cartographer_ros_msgs carto_ws/src/cartographer_ros/cartographer_ros_msgs/
@@ -58,12 +58,15 @@ RUN ./scripts/install.sh --pkg cartographer_ros_msgs && \
 
 # Build and test cartographer_ros
 COPY cartographer_ros/cartographer_ros carto_ws/src/cartographer_ros/cartographer_ros/
-RUN ./scripts/install.sh --pkg cartographer_ros && \
-    ./scripts/install.sh --pkg cartographer_ros --catkin-make-args run_tests && \
+RUN ./scripts/install.sh --pkg cartographer_ros --make-args "-j2" && \
+    ./scripts/install.sh --pkg cartographer_ros --catkin-make-args "run_tests -j2" && \
     ./scripts/catkin_test_results.sh build_isolated/cartographer_ros
 
 # Build and test cartographer_rviz
 COPY cartographer_ros/cartographer_rviz carto_ws/src/cartographer_ros/cartographer_rviz/
+
+RUN cd carto_ws && ./install_isolated/env.sh ninja -j2 -C build_isolated/cartographer_ros -v
+
 RUN ./scripts/install.sh --pkg cartographer_rviz && \
     ./scripts/install.sh --pkg cartographer_rviz --catkin-make-args run_tests && \
     ./scripts/catkin_test_results.sh build_isolated/cartographer_rviz
