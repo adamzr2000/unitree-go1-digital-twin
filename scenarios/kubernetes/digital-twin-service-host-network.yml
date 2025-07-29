@@ -26,9 +26,9 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
-          value: "http://192.168.40.4:11311"
+          value: "http://10.11.7.4:11311"
         - name: ROS_IP
-          value: "192.168.40.4"
+          value: "10.11.7.4"
         - name: ENABLE_STATISTICS
           value: "false"
       hostNetwork: true
@@ -71,9 +71,9 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
-          value: "http://192.168.40.4:11311"
+          value: "http://10.11.7.4:11311"
         - name: ROS_IP
-          value: "192.168.40.70"
+          value: "10.11.15.132"
         - name: TARGET_IP
           value: "192.168.123.161"
         securityContext:
@@ -111,9 +111,9 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
-          value: "http://192.168.40.4:11311"
+          value: "http://10.11.7.4:11311"
         - name: ROS_IP
-          value: "192.168.40.4"
+          value: "10.11.7.4"
         - name: CAMERA_TYPE
           value: "webcam_ip"
         - name: WEB_SERVER
@@ -166,9 +166,9 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
-          value: "http://192.168.40.4:11311"
+          value: "http://10.11.7.4:11311"
         - name: ROS_IP
-          value: "192.168.40.70"
+          value: "10.11.15.132"
         volumeMounts:
           - name: rplidar
             mountPath: /dev/rplidar
@@ -211,9 +211,9 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
-          value: "http://192.168.40.4:11311"
+          value: "http://10.11.7.4:11311"
         - name: ROS_IP
-          value: "192.168.40.4"
+          value: "10.11.7.4"
       hostNetwork: true      
       nodeSelector:
         nodetype: edge
@@ -254,9 +254,9 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
-          value: "http://192.168.40.4:11311"
+          value: "http://10.11.7.4:11311"
         - name: ROS_IP
-          value: "192.168.40.4"
+          value: "10.11.7.4"
         ports:
         - containerPort: 80
         securityContext:
@@ -332,9 +332,9 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
-          value: "http://192.168.40.4:11311"
+          value: "http://10.11.7.4:11311"
         - name: ROS_IP
-          value: "192.168.40.4"
+          value: "10.11.7.4"
         - name: ACCEPT_EULA
           value: "Y"
         - name: PRIVACY_CONSENT
