@@ -1,0 +1,36 @@
+<div id="{uniqueID}_modal" class="modal_outer noselect">
+	<div class="modal_inner noselect">
+		<h3>Battery Info</h3>
+		
+		<p id="{uniqueID}_status" class="status">Status: Ok.</p>
+
+		<hr class="dark_hr"/>
+
+		<label for="{uniqueID}_topic">Topic:</label>
+		<select id="{uniqueID}_topic" name="topic">
+			<!-- add topics here-->
+		</select>
+
+		<div class="live_data_display">
+			<p id="{uniqueID}_pecentage">Percentage: ?</p>
+			<p id="{uniqueID}_voltage">Voltage: ?</p>
+			<p id="{uniqueID}_cell_voltage">Cell Voltages: ?</p>
+	
+			<p id="{uniqueID}_current">Current draw: ?</p>
+			<p id="{uniqueID}_charge">Charge: ?</p>
+	
+			<p id="{uniqueID}_charging_status" style="color: lightgray;">Status: ?</p>
+			<p id="{uniqueID}_health" style="color: lightgray;">Health: ?</p>
+			<p id="{uniqueID}_chemistry" style="color: lightgray;">Type: ?</p>
+		</div>
+
+		<p>Read and display battery data from sensor_msgs/BatteryState messages.</p>
+
+		<div class="spacer"></div>
+
+		<hr class="dark_hr"/>
+
+		<button id="{uniqueID}_remove" class="delete_button" onclick="removeWidget('{uniqueID}')">Remove Widget</button>
+
+	</div>
+</div>

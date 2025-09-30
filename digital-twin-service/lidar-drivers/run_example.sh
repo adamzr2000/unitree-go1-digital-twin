@@ -5,6 +5,7 @@ ros_master_uri="http://localhost:11311"
 ros_ip="127.0.0.1"
 rf2o_odometry="false"
 odom_topic="/odom"
+container_image="rplidar-lidar"
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -67,7 +68,7 @@ host_catkin_ws_dir="$(pwd)/catkin_ws/src"
 
 docker run \
     -it \
-    --name lidar \
+    --name $container_image \
     --rm \
     --net host \
     -e ROS_MASTER_URI="$ros_master_uri" \
@@ -75,4 +76,4 @@ docker run \
     -e RF2O_LASER_ODOMETRY="$rf2o_odometry" \
     -e ODOM_TOPIC="$odom_topic" \
     --device=/dev/rplidar \
-    rplidar-lidar:latest
+    $container_image:latest

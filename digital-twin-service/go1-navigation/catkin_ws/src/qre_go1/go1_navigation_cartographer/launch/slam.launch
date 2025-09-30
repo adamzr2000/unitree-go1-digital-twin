@@ -3,8 +3,10 @@
     <arg name="robot_name" default="/"/>
     <arg name="rviz"       default="true"/>
     <arg name="use_odom"   default="false"/>
+    <arg name="use_imu"   default="false"/>
 
     <env name="CARTOGRAPHER_USE_ODOM" value="$(arg use_odom)" />
+    <env name="CARTOGRAPHER_USE_IMU" value="$(arg use_imu)" />
 
     <arg if="$(eval arg('robot_name') == '/')"  name="frame_prefix" value="" />
     <arg unless="$(eval arg('robot_name') == '/')" name="frame_prefix" value="$(arg robot_name)/" />
@@ -15,13 +17,16 @@
                 -configuration_directory $(find go1_navigation_cartographer)/config/cartographer
                 -configuration_basename slam.lua"
             output="screen"> 
-            <!-- <remap from="odom" to="go1_controller/odom" /> -->
-            <!-- <remap from="odom" to="/odometry/filtered" /> -->
+            <!-- Only remap if odometry is being used -->
+            <remap if="$(arg use_odom)" from="odom" to="/odometry/filtered" />
+            <!-- Only remap if imu is being used -->
+            <remap if="$(arg use_imu)" from="imu" to="/phidgets/imu/data" />
         </node>
 
         <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
             type="cartographer_occupancy_grid_node" args="-resolution 0.05" />
 
+        <!-- Calls navigation stack -->
         <include file="$(find go1_navigation_cartographer)/launch/include/move_base.launch.xml">
             <arg name="frame_prefix" value="$(arg frame_prefix)"/>
             <arg name="robot_name"   value="$(arg robot_name)"/>

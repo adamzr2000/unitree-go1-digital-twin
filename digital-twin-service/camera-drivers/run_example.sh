@@ -3,6 +3,7 @@
 # Default values
 ros_master_uri="http://localhost:11311"
 ros_ip="127.0.0.1"
+container_image="astra-camera"
 
 # Function to validate IP address format
 validate_ip() {
@@ -47,18 +48,18 @@ echo "ROS_IP: $ros_ip"
 echo "==============================="
 
 # Run docker container
-echo "Running astra-camera docker image."
+echo "Running $container_image docker image."
 
 # Directory on host to map to the container's catkin_ws directory
 host_catkin_ws_dir="$(pwd)/catkin_ws/src"
 
 docker run \
     -it \
-    --name astra-camera \
+    --name $container_image \
     --rm \
     --net host \
     --privileged \
     -e ROS_MASTER_URI="$ros_master_uri" \
     -e ROS_IP="$ros_ip" \
     --device=/dev/astra \
-    astra-camera:latest
+    $container_image:latest

@@ -8,7 +8,7 @@ The ROS Master provides naming and registration services to the rest of the node
 
 ## What does this container do?
 
-This container runs `roscore`.
+This container runs [roscore](https://wiki.ros.org/roscore)
 
 ## Run it?
 
@@ -23,7 +23,7 @@ In order to do that, run the following script:
 ./build.sh
 ```
 
-### This will build the `go1-roscore` docker image. 
+### This will build the `ros-master` docker image. 
 
 Verify that the image is present by running:
 ```bash
@@ -43,4 +43,4 @@ Verify that the container is up and running:
 docker ps
 ```
 
-In the output you should be able to see the `roscore-edge` container up and running.
+In the output you should be able to see the `ros-master` container up and running.

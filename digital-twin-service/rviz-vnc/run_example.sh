@@ -1,50 +1,71 @@
 #!/bin/bash
 
-# Directory on host to map to the container's ros_bags directory
-host_ros_bags_dir="$(pwd)/ros_bags"
-
-# Directory on host to map to the container's rviz directory
-rviz_dir="$(pwd)/scripts"
-
-# Function to display the menu
-display_menu() {
-    echo "==========================="
-    echo "   Select ROS MASTER IP    "
-    echo "==========================="
-    echo "  1 -> localhost"
-    echo "  2 -> edge (10.5.1.21)"
-    echo "  3 -> custom"
-    echo "==========================="
-}
-
-# Function to get user choice
-get_choice() {
-    read -p "Enter your choice (1/2/3): " choice
-    case $choice in
-        1) ros_master_ip="127.0.0.1"; return;;
-        2) ros_master_ip="10.5.1.21"; return;;
-        3) read -p "Enter custom ROS MASTER IP: " custom_ip; ros_master_ip="$custom_ip"; return;;
-        *) echo "Invalid choice. Please enter 1, 2, or 3."; get_choice;;
-    esac
-}
-
-# Prompt the user to select ROS MASTER IP
-display_menu
-get_choice
-
-# Construct ROS MASTER URI
-ros_master_uri="http://${ros_master_ip}:11311"
+# Default values
+ros_master_uri="http://localhost:11311"
 ros_ip="127.0.0.1"
+container_image="rviz-vnc"
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+        --ros-master-uri)
+            ros_master_uri="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --ros-ip)
+            ros_ip="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Usage: $0 [--ros-master-uri <ROS_MASTER_URI>] [--ros-ip <ROS_IP>]"
+            exit 1
+            ;;
+    esac
+done
+
+# Validate inputs
+validate_ip() {
+    local ip=$1
+    if [[ ! $ip =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "Invalid IP address format: $ip"
+        exit 1
+    fi
+}
+
+# Validate ROS_IP
+validate_ip "$ros_ip"
+
+# Display parameters in use
+echo "==============================="
+echo " Parameters in Use             "
+echo "==============================="
+echo "ROS_MASTER_URI: $ros_master_uri"
+echo "ROS_IP: $ros_ip"
+echo "==============================="
+
+# Run docker container
+echo "Running $container_image docker image."
+
+host_ros_bags_dir="$(pwd)/ros_bags"
+rviz_dir="$(pwd)/scripts"
+catkin_ws_dir="$(pwd)/catkin_ws/src"
 
 docker run \
-    --name rviz-vnc \
+    --name $container_image \
     --rm \
     -p 6080:80 \
     -e ROS_MASTER_URI="$ros_master_uri" \
     -e ROS_IP="$ros_ip" \
-    -v ${host_ros_bags_dir}:/home/ubuntu/ros_bags \
-    -v ${rviz_dir}:/home/ubuntu/scripts \
-    go1-rviz-vnc:latest \
+    -e DISABLE_ROS1_EOL_WARNINGS=1 \
+    -v ${catkin_ws_dir}:/home/ubuntu/Desktop/catkin_ws/src \
+    -v ${host_ros_bags_dir}:/home/ubuntu/Desktop/ros_bags \
+    -v ${rviz_dir}:/home/ubuntu/Desktop/scripts \
+    --privileged \
+    --runtime=nvidia \
+    $container_image:latest \
 
 echo "Done."
 

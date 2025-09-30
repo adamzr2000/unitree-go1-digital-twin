@@ -1,5 +1,6 @@
 #!/bin/bash
 
-#Assemble docker image. 
-echo 'Building go1-vizanti docker image.'
-sudo docker build . -t go1-vizanti
+container_image="vizanti"
+
+echo "Building $container_image docker image."
+sudo docker build . -t $container_image

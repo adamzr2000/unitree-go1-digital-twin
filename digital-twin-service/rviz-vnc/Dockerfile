@@ -33,26 +33,21 @@ RUN apt-get update && apt-get install -y \
 
 # Clone the necessary ROS packages into the catkin workspace
 RUN mkdir -p catkin_ws/src 
-COPY catkin_ws/src /home/ubuntu/catkin_ws/src
+COPY catkin_ws/src /home/ubuntu/Desktop/catkin_ws/src
 
 # Build the catkin workspace
-RUN cd /home/ubuntu/catkin_ws && source /opt/ros/noetic/setup.bash && catkin_make 
+RUN cd /home/ubuntu/Desktop/catkin_ws && source /opt/ros/noetic/setup.bash && catkin_make 
 
 # Add ROS environment setup to bashrc
-RUN echo "source ~/catkin_ws/devel/setup.bash" >> /home/ubuntu/.bashrc
+RUN echo "source ~/catkin_ws/devel/setup.bash" >> /home/ubuntu/Desktop/.bashrc
 
-RUN mkdir -p /home/ubuntu/scripts
-COPY scripts/* /home/ubuntu/scripts/
-RUN chmod +755 /home/ubuntu/scripts/*.sh
+RUN mkdir -p /home/ubuntu/Desktop/scripts
+COPY scripts/* /home/ubuntu/Desktop/scripts/
+RUN chmod +755 /home/ubuntu/Desktop/scripts/*.sh
 
-RUN sed -i '/ROS_IP/d' /home/ubuntu/.bashrc
-RUN sed -i '/ROS_MASTER_URI/d' /home/ubuntu/.bashrc
-
-# Set the working directory to where your scripts are
-WORKDIR /home/ubuntu/scripts/
+RUN sed -i '/ROS_IP/d' /home/ubuntu/Desktop/.bashrc
+RUN sed -i '/ROS_MASTER_URI/d' /home/ubuntu/Desktop/.bashrc
+RUN sed -i '/DISABLE_ROS1_EOL_WARNINGS/d' /home/ubuntu/Desktop/.bashrc
 
 # Indicate completion of Dockerfile setup
 RUN echo "ALL Done"
-
-# Use ENTRYPOINT to specify the executable script
-# ENTRYPOINT ["./wait-for-ros-nodes.sh"]

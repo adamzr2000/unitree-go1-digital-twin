@@ -1,0 +1,63 @@
+<div id="{uniqueID}_modal" class="modal_outer noselect">
+	<div class="modal_inner noselect">
+		<h3>Grid Renderer</h3>
+		<p id="{uniqueID}_status" class="status">Status: Ok.</p>
+		<hr class="dark_hr"/>
+
+		<div class="spacer"></div>
+
+		<label for="{uniqueID}_autoscale">Autoscale</label>
+		<!-- <input type="checkbox" checked id="{uniqueID}_autoscale"> -->
+		<select id="{uniqueID}_autoscale">
+			<option value="Off" selected>Off</option>
+			<option value="Rough">Rough</option>
+			<option value="Coarse">Coarse</option>
+			<option value="Fine">Fine</option>
+			<option value="Very Fine">Very Fine</option>
+		</select>
+
+		<p class="comment">If autoscale is off, the fixed size grid will stop rendering when the line density gets too high (to prevent lag).</p>
+
+		<hr class="dark_hr"/>
+
+		<h4>Style and Size</h4>
+
+		<p class="comment">Renders a grid relative to the fixed frame.</p>
+
+		<label for="{uniqueID}_step">Step (meter):</label>
+		<input type="number" value="1.0" step="0.01" min="0.01" max="10000" id="{uniqueID}_step">
+
+		<div class="spacer"></div>
+
+		<label for="{uniqueID}_thickness">Line thickness (px):</label>
+		<input type="number" value="1" step="1" min="1" max="20" id="{uniqueID}_thickness">
+
+		<div class="spacer"></div>
+
+		<label for="{uniqueID}_colorpicker">Color:</label>
+		<input type="color" value="#3e556a" id="{uniqueID}_colorpicker">
+
+		<div class="spacer"></div>
+
+		<hr class="dark_hr"/>
+
+		<h4>Subdivison Style</h4>
+
+		<p class="comment">Each step can be divided further.</p>
+
+		<label for="{uniqueID}_subdivisions">Number of subcells per cell:</label>
+		<input type="number" value="2" step="1" min="1" max="20" id="{uniqueID}_subdivisions">
+
+		<div class="spacer"></div>
+
+		<label for="{uniqueID}_colorpicker">Color:</label>
+		<input type="color" value="#3e556a" id="{uniqueID}_colorpicker_sub">
+
+		<div class="spacer"></div>
+
+		<hr class="dark_hr"/>
+
+		<button id="{uniqueID}_remove" class="delete_button" onclick="removeWidget('{uniqueID}')">Remove Widget</button>
+
+	</div>
+</div>

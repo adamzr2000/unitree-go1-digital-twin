@@ -2,6 +2,7 @@
 
 # Default values
 ros_master_ip="127.0.0.1"
+container_image="ros-master"
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -29,7 +30,6 @@ fi
 # Construct ROS_MASTER_URI
 ros_master_uri="http://${ros_master_ip}:11311"
 
-# Display the selected parameters
 echo "==========================="
 echo " Parameters in Use"
 echo "==========================="
@@ -37,17 +37,15 @@ echo "ROS_MASTER_IP: $ros_master_ip"
 echo "ROS_MASTER_URI: $ros_master_uri"
 echo "==========================="
 
-# Run docker container with selected ROS_MASTER_URI and ROS_IP
-echo 'Running go1-robot docker image.'
+echo "Running $container_image docker image."
 
 docker run \
     -itd \
-    --name roscore-edge \
+    --name $container_image \
     --rm \
     --net host \
     -e ROS_MASTER_URI="$ros_master_uri" \
     -e ROS_IP="$ros_master_ip" \
-    -v ./scripts:/home/go1/scripts \
-    go1-roscore:latest
+    $container_image:latest
 
 echo "Done."

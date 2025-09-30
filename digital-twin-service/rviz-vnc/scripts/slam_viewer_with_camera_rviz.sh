@@ -6,6 +6,6 @@ echo "Using ROS_IP: ${ROS_IP}"
 
 # Source ROS and workspace setup scripts
 source /opt/ros/noetic/setup.bash
-source ~/catkin_ws/devel/setup.bash 
+source ~/Desktop/catkin_ws/devel/setup.bash 
 
 rosrun rviz rviz -d /home/ubuntu/scripts/slam_with_camera.rviz

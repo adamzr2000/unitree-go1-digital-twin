@@ -27,6 +27,7 @@ RUN apt-get update && apt-get install -y \
     screen \
     ros-$ROS_DISTRO-teleop-twist-keyboard \
     ros-$ROS_DISTRO-teleop-twist-joy \
+    -v ./scripts:/home/go1/scripts \
     && rm -rf /var/lib/apt/lists/*
 
 # Switch to the newly created user for better security (avoid using root)
@@ -34,14 +35,5 @@ USER go1
 WORKDIR /home/go1
 
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
-
-RUN mkdir -p /home/go1/scripts
-COPY scripts/* /home/go1/scripts/
-WORKDIR /home/go1/scripts/
-
-USER root
-RUN chmod +755 *.sh
-
-USER go1
 
 CMD bash -c "source /opt/ros/noetic/setup.bash && roscore"

@@ -39,6 +39,30 @@
         </visual>
     </link>
 
+    <!-- Phidgets IMU mounted to the base frame -->
+    <joint name="phidgets_imu_joint" type="fixed">
+        <parent link="base"/>                 
+        <child link="phidgets_imu_link"/>
+        <!-- Set these to the IMU’s position/orientation relative to base -->
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <link name="phidgets_imu_link">
+        <inertial>
+            <mass value="0.001"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="1e-4" ixy="0" ixz="0" iyy="1e-4" iyz="0" izz="1e-4"/>
+        </inertial>
+        <visual>
+            <geometry><box size="0.001 0.001 0.001"/></geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <geometry><box size="0.001 0.001 0.001"/></geometry>
+        </collision>
+    </link>
+
+
     <joint name="floating_base" type="fixed">
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <parent link="base"/>

@@ -22,7 +22,7 @@ In order to do that, run the following script:
 ./build.sh
 ```
 
-### This will build the `go1-rviz-vnc` docker image. 
+### This will build the `rviz-vnc` docker image. 
 
 Verify that the image is present by running:
 ```bash

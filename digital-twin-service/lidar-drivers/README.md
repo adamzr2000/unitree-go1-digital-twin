@@ -61,5 +61,5 @@ Verify that the container is up and running:
 docker ps
 ```
 
-In the output you should be able to see the `lidar` container up and running.
+In the output you should be able to see the `rplidar-lidar` container up and running.
 

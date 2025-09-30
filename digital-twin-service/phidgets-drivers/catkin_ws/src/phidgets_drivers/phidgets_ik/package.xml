@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>phidgets_ik</name>
+  <version>1.0.10</version>
+  <description>Driver for the Phidgets InterfaceKit devices</description>
+
+  <license>BSD</license>
+
+  <maintainer email="martin.guenther@dfki.de">Martin Günther</maintainer>
+  <maintainer email="clalancette@openrobotics.org">Chris Lalancette</maintainer>
+
+  <!--
+  <url type="website">http://ros.org/wiki/phidgets_ik</url>
+  -->
+
+  <author>James Sarrett</author>
+  <author email="russel@appliedinvention.com">Russel Howe</author>
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roslaunch</depend>
+
+  <exec_depend>nodelet</exec_depend>
+  <exec_depend>phidgets_analog_inputs</exec_depend>
+  <exec_depend>phidgets_digital_inputs</exec_depend>
+  <exec_depend>phidgets_digital_outputs</exec_depend>
+
+</package>

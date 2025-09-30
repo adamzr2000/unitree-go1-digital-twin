@@ -1,5 +1,6 @@
 #!/bin/bash
 
-# Assemble docker image. 
-echo 'Building rplidar-lidar docker image.'
-sudo docker build . -t rplidar-lidar
+container_image="rplidar-lidar"
+
+echo "Building $container_image docker image."
+sudo docker build . -t $container_image
