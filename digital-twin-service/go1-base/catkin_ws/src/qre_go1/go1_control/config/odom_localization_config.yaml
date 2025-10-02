@@ -17,31 +17,19 @@ world_frame: odom
 # X'', Y'', Z''
 
 odom0: /go1_controller/odom
-odom0_config: [true, true, false,     # x, y
-               true, true, true,      # yaw only (no roll/pitch)
-               false, false, false,   # no linear vel
-               false, false, false,   # no angular vel
-               false, false, false]   # no linear acc
+odom0_config: [false, false, false,
+               false, false, false,
+               true, false, false,
+               false, false, false,
+               false, false, false]      
 odom0_differential: false
 odom0_queue_size: 10
 
-# -------------------------------------------------------------------- #
-# # phidgets test
-# odom0: /go1_controller/odom
-# odom0_config: [true, true,  false,   # x, y, (no z)
-#                false, false, false,  # NO roll, pitch, yaw from odom
-#                false, false, false,  # no linear velocities
-#                false, false, false,  # no angular velocities
-#                false, false, false]  # no linear accelerations
-# odom0_differential: false
-# odom0_queue_size: 10
-
-# imu0: /phidgets/imu/data
-# imu0_config: [false, false, false,
-#               false, false, true,
-#               false, false, false,
-#               false, false, true,     # ωz
-#               true,  true,  false]    # ax, ay
-# imu0_differential: false
-# imu0_queue_size: 10
-# imu0_remove_gravitational_acceleration: true
+imu0: /go1_controller/imu/data
+imu0_config: [false, false, false,
+              false, false, true,
+              false, false, false,
+              false, false, true,     # ωz
+              true,  false, false]    # ax, ay
+imu0_differential: false
+imu0_queue_size: 10
