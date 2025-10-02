@@ -7,7 +7,7 @@ container_image="go1-navigation"
 container_name="go1-navigation"
 use_odom="true"
 use_imu="false"
-slam_algorithm="hector" # cartographer, hector, gmapping
+slam_algorithm="cartographer" # cartographer, hector, gmapping
 
 usage() {
   cat <<EOF

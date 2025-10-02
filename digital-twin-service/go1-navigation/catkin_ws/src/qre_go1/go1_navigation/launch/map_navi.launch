@@ -1,7 +1,7 @@
 <launch>
 	<param name="use_sim_time" value="false" />
 
-	<arg name="map_file" default="maps/empty_map.yaml" />
+	<arg name="map_file" default="maps/5tonic-map.yaml" />
 
 	<!-- Run the ekf for map to odom config -->
 	<!-- <include file="$(find go1_control)/launch/ekf_localization.launch" /> -->
