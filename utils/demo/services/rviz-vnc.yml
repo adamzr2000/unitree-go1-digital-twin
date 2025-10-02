@@ -21,11 +21,11 @@ spec:
     spec:
       containers:
       - name: rviz-vnc
-        image: go1-rviz-vnc
+        image: rviz-vnc
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
-          value: "http://roscore-edge:11311"
+          value: "http://ros-master:11311"
         - name: ROS_HOSTNAME
           value: "rviz-vnc"
         ports:

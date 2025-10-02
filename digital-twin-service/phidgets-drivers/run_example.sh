@@ -4,6 +4,7 @@
 ros_master_uri="http://localhost:11311"
 ros_ip="127.0.0.1"
 container_image="phidgets-imu:latest"
+
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     key="$1"

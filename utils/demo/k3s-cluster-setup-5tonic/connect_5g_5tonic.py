@@ -81,7 +81,7 @@ def send_at_command(command, serial_conn):
 
 def main():
     parser = argparse.ArgumentParser(description="5G modem connection script")
-    parser.add_argument("--apn", type=str, default="Internet", help="Access Point Name (APN)")
+    parser.add_argument("--apn", type=str, default="5tonic-flamingo", help="Access Point Name (APN)")
     args = parser.parse_args()
     apn = args.apn
 
@@ -95,7 +95,7 @@ def main():
             
             # List of AT commands to send
             at_commands = [
-                'AT+CGDCONT=1,"IP",""',
+                f'AT+CGDCONT=1,"IP","{apn}"',
                 'AT+CNBP=0x7FFFFFFFFFFFFFFF,0x00000000000000000000000000000000,0x000000000000003F,0x00000000003FFE63000601E2090808D7,0x00000000003FFE63000601E2090808D7',
                 'AT+CNMP=71',
                 'AT+COPS=2',

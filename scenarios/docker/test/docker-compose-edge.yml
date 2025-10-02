@@ -1,0 +1,33 @@
+version: '3.8'
+
+networks:
+  digital-twin-service:
+    name: digital-twin-service
+    driver: overlay
+    attachable: true
+
+services:
+  ros-master:
+    image: ros-master:latest
+    container_name: ros-master
+    hostname: ros-master
+    volumes:
+      - ~/unitree-go1-digital-twin/digital-twin-service/ros-master/scripts:/home/go1/scripts
+    environment: 
+      - ROS_MASTER_URI=http://ros-master:11311
+      - ROS_HOSTNAME=ros-master
+    privileged: true
+    networks:
+      - digital-twin-service
+
+  # go1-navigation:
+  #   image: go1-navigation:latest
+  #   container_name: go1-navigation
+  #   hostname: go1-navigation
+  #   environment: 
+  #     - ROS_MASTER_URI=http://ros-master:11311
+  #     - USE_ODOM=false
+  #     - USE_IMU=true
+  #     - SLAM_ALGORITHM=cartographer
+  #   networks:
+  #     - digital-twin-service 

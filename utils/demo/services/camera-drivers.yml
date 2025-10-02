@@ -25,7 +25,7 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
-          value: "http://roscore-edge:11311"
+          value: "http://ros-master:11311"
         - name: ROS_HOSTNAME
           value: "camera"
         volumeMounts:

@@ -92,7 +92,7 @@ def main():
     parser = argparse.ArgumentParser(description="Connect to 5G and configure NAT/IPTABLES.")
     parser.add_argument("--robot-ip", required=True, help="IP address of the robot.")
     parser.add_argument("--ports", default="1:65535", help="Port range to forward (default: all ports).")
-    parser.add_argument("--apn", type=str, default="Internet", help="Access Point Name (APN)")
+    parser.add_argument("--apn", type=str, default="5tonic-flamingo", help="Access Point Name (APN)")
     args = parser.parse_args()
     apn = args.apn
     
@@ -103,7 +103,7 @@ def main():
             print(f"Connected to {SERIAL_PORT} at {BAUD_RATE} baud.")
             
             at_commands = [
-                'AT+CGDCONT=1,"IP",""',
+                f'AT+CGDCONT=1,"IP","{apn}"',
                 'AT+CNBP=0x7FFFFFFFFFFFFFFF,0x00000000000000000000000000000000,0x000000000000003F,0x00000000003FFE63000601E2090808D7,0x00000000003FFE63000601E2090808D7',
                 'AT+CNMP=71',
                 'AT+COPS=2',

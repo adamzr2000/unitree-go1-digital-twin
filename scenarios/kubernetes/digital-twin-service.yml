@@ -5,24 +5,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: roscore-edge-deployment
+  name: ros-master-deployment
   labels:
     app: digital-twin-service
-    node: roscore-edge
+    node: ros-master
 spec:
   replicas: 1
   selector:
     matchLabels:
-      node: roscore-edge
+      node: ros-master
   template:
     metadata:
       labels:
-        node: roscore-edge
+        node: ros-master
     spec:
       containers:
-      - name: roscore-edge
+      - name: ros-master
         tty: true
-        image: go1-roscore
+        image: ros-master
         imagePullPolicy: IfNotPresent
         env:
         - name: ENABLE_STATISTICS
@@ -43,18 +43,18 @@ spec:
 ---
 
 ### Headless service declaration.
-### This is required to map to app "roscore-edge" so that other pods can DNS its IP address dynamically.
+### This is required to map to app "ros-master" so that other pods can DNS its IP address dynamically.
 apiVersion: v1
 kind: Service
 metadata:
-  name: roscore-edge
+  name: ros-master
   labels:
     app: digital-twin-service
-    node: roscore-edge
+    node: ros-master
 spec:
   clusterIP: None
   selector:
-    node: roscore-edge
+    node: ros-master
 
 ---
 
@@ -85,7 +85,7 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
-          value: "http://roscore-edge:11311"
+          value: "http://ros-master:11311"
         - name: ROS_HOSTNAME
           value: "go1-base"
         - name: TARGET_IP
@@ -182,7 +182,7 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
-          value: "http://roscore-edge:11311"
+          value: "http://ros-master:11311"
         - name: ROS_HOSTNAME
           value: "gesture-control-app"
         - name: CAMERA_TYPE
@@ -274,7 +274,7 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
-          value: "http://roscore-edge:11311"
+          value: "http://ros-master:11311"
         - name: ROS_HOSTNAME
           value: "lidar"          
         volumeMounts:
@@ -334,7 +334,7 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
-          value: "http://roscore-edge:11311"
+          value: "http://ros-master:11311"
         - name: ROS_HOSTNAME
           value: "camera"
         volumeMounts:
@@ -394,7 +394,7 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
-          value: "http://roscore-edge:11311"
+          value: "http://ros-master:11311"
         - name: ROS_HOSTNAME
           value: "go1-navigation"
       nodeSelector:
@@ -448,11 +448,11 @@ spec:
     spec:
       containers:
       - name: rviz-vnc
-        image: go1-rviz-vnc
+        image: rviz-vnc
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
-          value: "http://roscore-edge:11311"
+          value: "http://ros-master:11311"
         - name: ROS_HOSTNAME
           value: "rviz-vnc"
         ports:
@@ -527,7 +527,7 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
-          value: "http://roscore-edge:11311"
+          value: "http://ros-master:11311"
         - name: ROS_HOSTNAME
           value: "digital-twin-app"
         - name: ACCEPT_EULA

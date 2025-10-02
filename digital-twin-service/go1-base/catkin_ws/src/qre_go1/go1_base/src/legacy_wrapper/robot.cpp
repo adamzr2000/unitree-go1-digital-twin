@@ -98,10 +98,16 @@ sensor_msgs::Imu Robot::extractImuMessage() {
     imu.linear_acceleration.y = base_high_state.imu.accelerometer[1];
     imu.linear_acceleration.z = base_high_state.imu.accelerometer[2];
 
-    imu.orientation.x = base_high_state.imu.quaternion[1];
-    imu.orientation.y = base_high_state.imu.quaternion[2];
-    imu.orientation.z = base_high_state.imu.quaternion[3];
-    imu.orientation.w = base_high_state.imu.quaternion[0];    
+    // version1
+    // imu.orientation.x = base_high_state.imu.quaternion[1];
+    // imu.orientation.y = base_high_state.imu.quaternion[2];
+    // imu.orientation.z = base_high_state.imu.quaternion[3];
+    // imu.orientation.w = base_high_state.imu.quaternion[0];  
+
+    imu.orientation.x = base_high_state.imu.quaternion[0];
+    imu.orientation.y = base_high_state.imu.quaternion[1];
+    imu.orientation.z = base_high_state.imu.quaternion[2];
+    imu.orientation.w = base_high_state.imu.quaternion[3];    
     return imu;
 }
 
@@ -134,10 +140,17 @@ std::tuple<nav_msgs::Odometry, geometry_msgs::TransformStamped> Robot::extractOd
     int zeros[sizeof(base_high_state.imu.quaternion)];
     if(memcmp(&base_high_state.imu.quaternion, zeros, sizeof(base_high_state.imu.quaternion))==0)
         base_high_state.imu.quaternion[0] = 1.0;
-    quaternion.x = base_high_state.imu.quaternion[1];
-    quaternion.y = base_high_state.imu.quaternion[2];
-    quaternion.z = base_high_state.imu.quaternion[3];
-    quaternion.w = base_high_state.imu.quaternion[0];    
+    // version1
+    // quaternion.x = base_high_state.imu.quaternion[1];
+    // quaternion.y = base_high_state.imu.quaternion[2];
+    // quaternion.z = base_high_state.imu.quaternion[3];
+    // quaternion.w = base_high_state.imu.quaternion[0];   
+    
+    quaternion.x = base_high_state.imu.quaternion[0];
+    quaternion.y = base_high_state.imu.quaternion[1];
+    quaternion.z = base_high_state.imu.quaternion[2];
+    quaternion.w = base_high_state.imu.quaternion[3];   
+
     odometry_transform.header.stamp = ros::Time::now();
     odometry_transform.header.frame_id = "odom";
     odometry_transform.child_frame_id  = "base";

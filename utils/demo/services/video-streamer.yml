@@ -1,0 +1,28 @@
+### video-streamer
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-streamer-deployment
+  labels:
+    app: video-streamer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: video-streamer
+  template:
+    metadata:
+      labels:
+        app: video-streamer
+    spec:
+      containers:
+      - name: video-streamer
+        image: video-streamer
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: streamer-config
+        securityContext:
+          privileged: true
+      nodeSelector:
+        nodetype: robot

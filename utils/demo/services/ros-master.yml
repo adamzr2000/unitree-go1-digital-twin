@@ -5,32 +5,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: roscore-edge-deployment
+  name: ros-master-deployment
   labels:
     app: digital-twin-service
-    node: roscore-edge
+    node: ros-master
 spec:
   replicas: 1
   selector:
     matchLabels:
-      node: roscore-edge
+      node: ros-master
   template:
     metadata:
       labels:
-        node: roscore-edge
+        node: ros-master
     spec:
       containers:
-      - name: roscore-edge
+      - name: ros-master
         tty: true
-        image: go1-roscore
+        image: ros-master
         imagePullPolicy: IfNotPresent
         # env:
         # - name: ENABLE_STATISTICS
         #   value: "false"
         # - name: ROS_MASTER_URI
-        #   value: "http://roscore-edge:11311"
+        #   value: "http://ros-master:11311"
         # - name: ROS_HOSTNAME
-        #   value: "roscore-edge"
+        #   value: "ros-master"
         ports:
         - containerPort: 11311
           name: roscore-port
@@ -47,17 +47,17 @@ spec:
 ---
 
 ### Headless service declaration.
-### This is required to map to app "roscore-edge" so that other pods can DNS its IP address dynamically.
+### This is required to map to app "ros-master" so that other pods can DNS its IP address dynamically.
 apiVersion: v1
 kind: Service
 metadata:
-  name: roscore-edge
+  name: ros-master
   labels:
     app: digital-twin-service
-    node: roscore-edge
+    node: ros-master
 spec:
   clusterIP: None
   selector:
-    node: roscore-edge
+    node: ros-master
 
 ---

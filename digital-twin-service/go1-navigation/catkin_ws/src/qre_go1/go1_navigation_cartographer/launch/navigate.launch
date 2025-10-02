@@ -3,7 +3,6 @@
     <arg name="robot_name" default="/"/>
     <arg name="rviz"       default="true"/>
     <arg name="use_odom"   default="false"/>
-    <arg name="odom_topic" default="odom_rf2o"/>
 
     <env name="CARTOGRAPHER_USE_ODOM" value="$(arg use_odom)" />
 
@@ -24,8 +23,8 @@
         -configuration_basename nav.lua
         -load_state_filename $(arg pbstream_file)"
         output="screen">
-        <!-- <remap from="odom" to="$(arg odom_topic)" /> -->
-    </node>
+        <!-- Only remap if odometry is being used -->
+        <remap if="$(arg use_odom)" from="odom" to="/odometry/filtered" />
 
     <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
         type="cartographer_occupancy_grid_node" args="-resolution 0.05" />

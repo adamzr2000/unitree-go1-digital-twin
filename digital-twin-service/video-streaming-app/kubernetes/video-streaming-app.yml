@@ -1,0 +1,170 @@
+### mediamtx
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mediamtx-deployment
+  labels:
+    app: mediamtx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mediamtx
+  template:
+    metadata:
+      labels:
+        app: mediamtx
+    spec:
+      containers:
+      - name: mediamtx
+        tty: true
+        image: bluenviron/mediamtx:1.11.3
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: MTX_WEBRTCADDITIONALHOSTS
+          value: "10.5.1.21"
+        ports:
+        - containerPort: 8890
+          protocol: UDP
+          name: srt
+        - containerPort: 8189
+          protocol: UDP
+          name: webrtc-signal
+        - containerPort: 8889
+          name: webrtc-media
+      nodeSelector:
+        nodetype: edge
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mediamtx
+  labels:
+    app: mediamtx
+spec:
+  clusterIP: None
+  selector:
+    app: mediamtx
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mediamtx-frontend
+  labels:
+    app: mediamtx
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8890
+    targetPort: 8890
+    protocol: UDP
+    name: srt
+  - port: 8189
+    targetPort: 8189
+    protocol: UDP
+    name: webrtc-signal
+  - port: 8889
+    targetPort: 8889
+    name: webrtc-media
+  selector:
+    app: mediamtx
+
+---
+
+### video-receiver-transcoder
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-receiver-transcoder-deployment
+  labels:
+    app: receiver-transcoder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: receiver-transcoder
+  template:
+    metadata:
+      labels:
+        app: receiver-transcoder
+    spec:
+      containers:
+      - name: video-receiver-transcoder
+        tty: true
+        image: video-receiver-transcoder
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: receiver-config        
+        ports:
+        - containerPort: 5554
+          protocol: UDP
+          name: transcoder
+      nodeSelector:
+        nodetype: edge
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: video-receiver-transcoder
+  labels:
+    app: receiver-transcoder
+spec:
+  clusterIP: None
+  selector:
+    app: receiver-transcoder
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: receiver-transcoder-lb
+  labels:
+    app: receiver-transcoder
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 5554
+    protocol: UDP
+    targetPort: 5554
+    name: transcoder
+  selector:
+    app: receiver-transcoder
+
+---
+
+### video-streamer
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-streamer-deployment
+  labels:
+    app: video-streamer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: video-streamer
+  template:
+    metadata:
+      labels:
+        app: video-streamer
+    spec:
+      containers:
+      - name: video-streamer
+        image: video-streamer
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: streamer-config
+        securityContext:
+          privileged: true
+      nodeSelector:
+        nodetype: robot

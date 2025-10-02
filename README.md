@@ -58,7 +58,7 @@ The use case involves the [Unitree Go1](https://unitree-docs.readthedocs.io/en/l
 
 The [Digital Twin service](./digital-twin-service/) is composed of the following main components:
 
-| Module                | Description                                                                                                     | Status       |
+| Module                 | Description                                                                                                     | Status       |
 |------------------------|-----------------------------------------------------------------------------------------------------------------|--------------|
 | **ROS Master**         | Provides naming and registration services to ROS nodes ([details](./digital-twin-service/ros-master/))         | ✅ Available |
 | **Go1 Base**           | Interfaces with the robot using the unitree_legged_sdk via ROS ([details](./digital-twin-service/go1-base/))       | ✅ Available |
@@ -67,7 +67,7 @@ The [Digital Twin service](./digital-twin-service/) is composed of the following
 | **Lidar Drivers**      | Drivers for the RPLIDAR A3 used in mapping and navigation ([details](./digital-twin-service/lidar-drivers/))    | ✅ Available |
 | **Camera Drivers**     | Drivers for the Orbbec Astra S depth camera ([details](./digital-twin-service/camera-drivers/))                 | ✅ Available |
 | **Go1 Navigation**     | SLAM-based algorithms for indoor mapping ([details](./digital-twin-service/go1-navigation/))                          | ✅ Available |
-| **RViz VNC**           | Provides RViz access through VNC for visualizing mapping and sensor streams ([details](./digital-twin-service/rviz-vnc/))                  | ✅ Available |
+| **Vizanti**            | Provides web visualizer for mapping and sensor streams ([details](./digital-twin-service/vizanti/))                  | ✅ Available |
 
 ---
  

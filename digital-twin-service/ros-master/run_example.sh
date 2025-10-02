@@ -44,6 +44,7 @@ docker run \
     --name $container_image \
     --rm \
     --net host \
+    -v ./scripts:/home/go1/scripts \
     -e ROS_MASTER_URI="$ros_master_uri" \
     -e ROS_IP="$ros_master_ip" \
     $container_image:latest

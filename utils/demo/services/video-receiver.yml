@@ -1,0 +1,68 @@
+### video-receiver-transcoder
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-receiver-transcoder-deployment
+  labels:
+    app: receiver-transcoder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: receiver-transcoder
+  template:
+    metadata:
+      labels:
+        app: receiver-transcoder
+    spec:
+      initContainers:
+      - name: wait-for-mediamtx
+        image: curlimages/curl:latest
+        command: ['sh', '-c', 'until nslookup mediamtx.default.svc.cluster.local; do echo waiting for mediamtx; sleep 2; done']
+      containers:
+      - name: video-receiver-transcoder
+        tty: true
+        image: video-receiver-transcoder
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: receiver-config        
+        ports:
+        - containerPort: 5554
+          protocol: UDP
+          name: transcoder
+      nodeSelector:
+        nodetype: edge
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: video-receiver-transcoder
+  labels:
+    app: receiver-transcoder
+spec:
+  clusterIP: None
+  selector:
+    app: receiver-transcoder
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: receiver-transcoder-lb
+  labels:
+    app: receiver-transcoder
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 5554
+    protocol: UDP
+    targetPort: 5554
+    name: transcoder
+  selector:
+    app: receiver-transcoder
+
+---
