@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package>
+  <name>go1_control</name>
+  <version>0.5.0</version>
+  <description>QRE Go1 configurations</description>
+
+  <author email="tahir.mehmood@mybotshop.de">Tahir Mehmood</author>
+
+  <maintainer email="tahir.mehmood@mybotshop.de">Tahir Mehmood</maintainer>
+
+  <license>PROPRIETARY</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roslaunch</build_depend>
+
+  <run_depend>go1_description</run_depend>
+  <run_depend>interactive_marker_twist_server</run_depend>
+  <run_depend>joy</run_depend>
+  <!-- <run_depend>multimaster_launch</run_depend> -->
+  <run_depend>robot_localization</run_depend>
+  <run_depend>rostopic</run_depend>
+  <run_depend>robot_state_publisher</run_depend>
+  <run_depend>controller_manager</run_depend>
+  <run_depend>teleop_twist_joy</run_depend>
+  <run_depend>twist_mux</run_depend>
+
+  <export>
+  </export>
+</package>

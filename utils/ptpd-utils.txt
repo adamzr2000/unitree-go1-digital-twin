@@ -10,3 +10,11 @@ Robot node (Slave)
 sudo ptpd --slaveonly --interface <wireless-interface> -C <master-ip> -V
 ----------------------------------------------------------------------
 sudo ptpd --slaveonly --interface wlan0 -C 192.168.40.4 -V
+
+
+
+# 5G ROBOT
+sudo ptpd --slaveonly --interface ue0 --unicast --unicast-destinations 10.5.98.250 -V
+
+# 5G EDGE
+sudo ptpd --masteronly --interface enp8s0 --unicast --unicast-destinations 10.3.202.67 -V

@@ -31,7 +31,7 @@ if ! validate_ip "$target_ip"; then
 fi
 
 # Read the EKF odometry usage flag from an environment variable
-use_ekf_odom=${USE_EKF_ODOM:-"true"} # Default to true if USE_EKF_ODOM is not set
+use_ekf_odom=${USE_EKF_ODOM:-"false"} # Default to true if USE_EKF_ODOM is not set
 
 # Validate the EKF odometry flag
 if [[ "$use_ekf_odom" != "true" && "$use_ekf_odom" != "false" ]]; then

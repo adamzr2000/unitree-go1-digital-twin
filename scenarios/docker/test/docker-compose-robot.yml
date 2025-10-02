@@ -20,6 +20,7 @@ services:
       - STATE_LOOP_RATE=100
       - UDP_SEND_DT=0.01
       - UDP_RECEIVE_DT=0.01
+      - USE_EKF_ODOM=false
     network_mode: digital-twin-service
 
   lidar:
