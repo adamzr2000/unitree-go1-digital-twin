@@ -28,7 +28,7 @@ namespace qre{
         ros::Publisher battery_state_publisher;
         ros::Publisher motor_state_publisher;
         ros::Publisher odom_publisher;
-        tf::TransformBroadcaster odom_broadcaster;
+        // tf::TransformBroadcaster odom_broadcaster;
         ros::ServiceServer set_mode;    
         ros::ServiceServer set_control;    
 

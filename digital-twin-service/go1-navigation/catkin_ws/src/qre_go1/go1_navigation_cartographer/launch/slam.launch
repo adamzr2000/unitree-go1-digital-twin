@@ -18,8 +18,8 @@
                 -configuration_basename slam.lua"
             output="screen"> 
             <!-- Only remap if odometry is being used -->
-            <!-- <remap if="$(arg use_odom)" from="odom" to="/odometry/filtered" /> -->
-            <remap if="$(arg use_odom)" from="odom" to="/go1_controller/odom" />
+            <remap if="$(arg use_odom)" from="odom" to="/odometry/filtered" />
+            <!-- <remap if="$(arg use_odom)" from="odom" to="/go1_controller/odom" /> -->
             <!-- Only remap if imu is being used -->
             <remap if="$(arg use_imu)" from="imu" to="/phidgets/imu/data" />
         </node>

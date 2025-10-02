@@ -86,7 +86,7 @@ void Base::publishStateMessages() {
         auto state_msg = extractHighStateMessage();
         auto joint_state_msg = getJointStates();
         auto [odom, odom_transform] = extractOdometryMessage();
-        odom_broadcaster.sendTransform(odom_transform);
+        // odom_broadcaster.sendTransform(odom_transform);
         odom_publisher.publish(odom);
         joint_state_publisher.publish(joint_state_msg);
         state_publisher.publish(state_msg);

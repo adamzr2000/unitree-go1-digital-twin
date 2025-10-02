@@ -98,16 +98,16 @@ sensor_msgs::Imu Robot::extractImuMessage() {
     imu.linear_acceleration.y = base_high_state.imu.accelerometer[1];
     imu.linear_acceleration.z = base_high_state.imu.accelerometer[2];
 
-    // version1
-    imu.orientation.x = base_high_state.imu.quaternion[1];
-    imu.orientation.y = base_high_state.imu.quaternion[2];
-    imu.orientation.z = base_high_state.imu.quaternion[3];
-    imu.orientation.w = base_high_state.imu.quaternion[0];  
+    // old version - bad
+    // imu.orientation.x = base_high_state.imu.quaternion[1];
+    // imu.orientation.y = base_high_state.imu.quaternion[2];
+    // imu.orientation.z = base_high_state.imu.quaternion[3];
+    // imu.orientation.w = base_high_state.imu.quaternion[0];  
 
-    // imu.orientation.x = base_high_state.imu.quaternion[0];
-    // imu.orientation.y = base_high_state.imu.quaternion[1];
-    // imu.orientation.z = base_high_state.imu.quaternion[2];
-    // imu.orientation.w = base_high_state.imu.quaternion[3];    
+    imu.orientation.x = base_high_state.imu.quaternion[0];
+    imu.orientation.y = base_high_state.imu.quaternion[1];
+    imu.orientation.z = base_high_state.imu.quaternion[2];
+    imu.orientation.w = base_high_state.imu.quaternion[3];    
     return imu;
 }
 
@@ -133,70 +133,6 @@ sensor_msgs::BatteryState Robot::extractBatteryStateMessage() {
     return battery_state;
 }
 
-// std::tuple<nav_msgs::Odometry, geometry_msgs::TransformStamped>
-// Robot::extractOdometryMessage() {
-//     nav_msgs::Odometry odometry;
-//     geometry_msgs::TransformStamped odometry_transform;
-
-//     // Single timestamp for consistency
-//     const ros::Time stamp = ros::Time::now();
-
-//     // --- Normalize/sanitize quaternion ---
-//     double qx = base_high_state.imu.quaternion[0];
-//     double qy = base_high_state.imu.quaternion[1];
-//     double qz = base_high_state.imu.quaternion[2];
-//     double qw = base_high_state.imu.quaternion[3];
-
-//     geometry_msgs::Quaternion quaternion;
-//     bool bad = !std::isfinite(qx) || !std::isfinite(qy) ||
-//                !std::isfinite(qz) || !std::isfinite(qw);
-//     if (bad) {
-//         quaternion.x = quaternion.y = quaternion.z = 0.0;
-//         quaternion.w = 1.0;
-//     } else {
-//         double n = std::sqrt(qx*qx + qy*qy + qz*qz + qw*qw);
-//         if (n < 1e-6) {
-//             quaternion.x = quaternion.y = quaternion.z = 0.0;
-//             quaternion.w = 1.0;
-//         } else {
-//             // If vendor provides [w,x,y,z], swap before normalization.
-//             quaternion.x = qx / n;
-//             quaternion.y = qy / n;
-//             quaternion.z = qz / n;
-//             quaternion.w = qw / n;
-//         }
-//     }
-
-//     // --- Transform (odom -> base) ---
-//     odometry_transform.header.stamp = stamp;
-//     odometry_transform.header.frame_id = "odom";
-//     odometry_transform.child_frame_id  = "base";
-//     odometry_transform.transform.translation.x = base_high_state.position[0];
-//     odometry_transform.transform.translation.y = base_high_state.position[1];
-//     odometry_transform.transform.translation.z = 0.0;  // planar
-//     odometry_transform.transform.rotation = quaternion;
-
-//     // --- Odometry message ---
-//     odometry.header.stamp = stamp;
-//     odometry.header.frame_id = "odom";
-//     odometry.child_frame_id  = "base";
-
-//     odometry.pose.pose.position.x = base_high_state.position[0];
-//     odometry.pose.pose.position.y = base_high_state.position[1];
-//     odometry.pose.pose.position.z = base_high_state.bodyHeight;
-//     odometry.pose.pose.orientation = quaternion;
-
-//     odometry.twist.twist.linear.x  = base_high_state.velocity[0];
-//     odometry.twist.twist.linear.y  = base_high_state.velocity[1];
-//     odometry.twist.twist.linear.z  = 0.0;
-//     odometry.twist.twist.angular.x = 0.0;
-//     odometry.twist.twist.angular.y = 0.0;
-//     odometry.twist.twist.angular.z = base_high_state.bodyHeight;
-
-//     return {odometry, odometry_transform};
-// }
-
-
 std::tuple<nav_msgs::Odometry, geometry_msgs::TransformStamped> Robot::extractOdometryMessage() {
     nav_msgs::Odometry odometry;
     geometry_msgs::TransformStamped odometry_transform;
@@ -205,22 +141,16 @@ std::tuple<nav_msgs::Odometry, geometry_msgs::TransformStamped> Robot::extractOd
     if(memcmp(&base_high_state.imu.quaternion, zeros, sizeof(base_high_state.imu.quaternion))==0)
         base_high_state.imu.quaternion[0] = 1.0;
 
-    // quaternion.x = base_high_state.imu.quaternion[0];
-    // quaternion.y = base_high_state.imu.quaternion[1];
-    // quaternion.z = base_high_state.imu.quaternion[2];
-    // quaternion.w = base_high_state.imu.quaternion[3];   
-
-    quaternion.x = base_high_state.imu.quaternion[1];
-    quaternion.y = base_high_state.imu.quaternion[2];
-    quaternion.z = base_high_state.imu.quaternion[3];
-    quaternion.w = base_high_state.imu.quaternion[0]; 
+    quaternion.x = base_high_state.imu.quaternion[0];
+    quaternion.y = base_high_state.imu.quaternion[1];
+    quaternion.z = base_high_state.imu.quaternion[2];
+    quaternion.w = base_high_state.imu.quaternion[3]; 
 
     odometry_transform.header.stamp = ros::Time::now();
     odometry_transform.header.frame_id = "odom";
     odometry_transform.child_frame_id  = "base";
     odometry_transform.transform.translation.x = base_high_state.position[0];
     odometry_transform.transform.translation.y = base_high_state.position[1];
-    // odometry_transform.transform.translation.z = base_high_state.position[2];
     odometry_transform.transform.translation.z = base_high_state.bodyHeight;
     odometry_transform.transform.rotation = quaternion;
 
@@ -228,7 +158,6 @@ std::tuple<nav_msgs::Odometry, geometry_msgs::TransformStamped> Robot::extractOd
     odometry.header.frame_id = "odom";
     odometry.pose.pose.position.x = base_high_state.position[0];
     odometry.pose.pose.position.y = base_high_state.position[1];
-    // odometry.pose.pose.position.z = base_high_state.position[2];
     odometry.pose.pose.position.z = base_high_state.bodyHeight;
     odometry.pose.pose.orientation = quaternion;
     odometry.child_frame_id = "base";
