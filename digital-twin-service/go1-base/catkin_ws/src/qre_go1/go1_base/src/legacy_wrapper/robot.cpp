@@ -156,14 +156,16 @@ std::tuple<nav_msgs::Odometry, geometry_msgs::TransformStamped> Robot::extractOd
     odometry_transform.child_frame_id  = "base";
     odometry_transform.transform.translation.x = base_high_state.position[0];
     odometry_transform.transform.translation.y = base_high_state.position[1];
-    odometry_transform.transform.translation.z = base_high_state.bodyHeight;
+    odometry_transform.transform.translation.z = base_high_state.position[2];
+    // odometry_transform.transform.translation.z = base_high_state.bodyHeight;
     odometry_transform.transform.rotation = quaternion;
 
     odometry.header.stamp = ros::Time::now();
     odometry.header.frame_id = "odom";
     odometry.pose.pose.position.x = base_high_state.position[0];
     odometry.pose.pose.position.y = base_high_state.position[1];
-    odometry.pose.pose.position.z = base_high_state.bodyHeight;
+    odometry.pose.pose.position.z = base_high_state.position[2];
+    // odometry.pose.pose.position.z = base_high_state.bodyHeight;
     odometry.pose.pose.orientation = quaternion;
     odometry.child_frame_id = "base";
     odometry.twist.twist.linear.x  = base_high_state.velocity[0];
