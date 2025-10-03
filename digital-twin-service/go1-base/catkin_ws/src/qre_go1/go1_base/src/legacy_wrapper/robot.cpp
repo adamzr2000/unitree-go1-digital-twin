@@ -134,89 +134,89 @@ sensor_msgs::BatteryState Robot::extractBatteryStateMessage() {
 }
 
 
-// std::tuple<nav_msgs::Odometry, geometry_msgs::TransformStamped>
-// Robot::extractOdometryMessage() {
-//     nav_msgs::Odometry odometry;
-//     geometry_msgs::TransformStamped odometry_transform;
-
-//     // Timestamp once for consistency
-//     const ros::Time stamp = ros::Time::now();
-
-//     // Build quaternion safely (SDK order: [x,y,z,w])
-//     const float* q = base_high_state.imu.quaternion;
-//     const bool all_zero = (q[0] == 0.f && q[1] == 0.f && q[2] == 0.f && q[3] == 0.f);
-
-//     geometry_msgs::Quaternion quat;
-//     if (all_zero) {
-//         quat.x = 0.f; quat.y = 0.f; quat.z = 0.f; quat.w = 1.f;  // identity
-//     } else {
-//         // Optional: normalize to guard against drift/non-unit input
-//         const double nx = q[0], ny = q[1], nz = q[2], nw = q[3];
-//         const double norm = std::sqrt(nx*nx + ny*ny + nz*nz + nw*nw);
-//         if (norm > 1e-9) {
-//             quat.x = nx / norm; quat.y = ny / norm; quat.z = nz / norm; quat.w = nw / norm;
-//         } else {
-//             quat.x = 0.f; quat.y = 0.f; quat.z = 0.f; quat.w = 1.f;
-//         }
-//     }
-
-//     // Transform (you said TF is published elsewhere; we still fill it for completeness)
-//     odometry_transform.header.stamp = stamp;
-//     odometry_transform.header.frame_id = "odom";
-//     odometry_transform.child_frame_id  = "base";   // keep your current name
-//     odometry_transform.transform.translation.x = base_high_state.position[0];
-//     odometry_transform.transform.translation.y = base_high_state.position[1];
-//     odometry_transform.transform.translation.z = base_high_state.position[2];
-//     odometry_transform.transform.rotation = quat;
-
-//     // Odometry message
-//     odometry.header.stamp = stamp;
-//     odometry.header.frame_id = "odom";
-//     odometry.child_frame_id  = "base";             // keep your current name
-//     odometry.pose.pose.position.x = base_high_state.position[0];
-//     odometry.pose.pose.position.y = base_high_state.position[1];
-//     odometry.pose.pose.position.z = base_high_state.position[2];
-//     odometry.pose.pose.orientation = quat;
-
-//     // Body-frame velocities (OK since child is the base frame)
-//     odometry.twist.twist.linear.x  = base_high_state.velocity[0];
-//     odometry.twist.twist.linear.y  = base_high_state.velocity[1];
-//     odometry.twist.twist.angular.z = base_high_state.yawSpeed;  // <- correct source
-
-//     return {odometry, odometry_transform};
-// }
-
-
-std::tuple<nav_msgs::Odometry, geometry_msgs::TransformStamped> Robot::extractOdometryMessage() {
+std::tuple<nav_msgs::Odometry, geometry_msgs::TransformStamped>
+Robot::extractOdometryMessage() {
     nav_msgs::Odometry odometry;
     geometry_msgs::TransformStamped odometry_transform;
-    geometry_msgs::Quaternion quaternion;
-    int zeros[sizeof(base_high_state.imu.quaternion)];
-    if(memcmp(&base_high_state.imu.quaternion, zeros, sizeof(base_high_state.imu.quaternion))==0)
-        base_high_state.imu.quaternion[3] = 1.0;
 
-    quaternion.x = base_high_state.imu.quaternion[0];
-    quaternion.y = base_high_state.imu.quaternion[1];
-    quaternion.z = base_high_state.imu.quaternion[2];
-    quaternion.w = base_high_state.imu.quaternion[3]; 
+    // Timestamp once for consistency
+    const ros::Time stamp = ros::Time::now();
 
-    odometry_transform.header.stamp = ros::Time::now();
+    // Build quaternion safely (SDK order: [x,y,z,w])
+    const float* q = base_high_state.imu.quaternion;
+    const bool all_zero = (q[0] == 0.f && q[1] == 0.f && q[2] == 0.f && q[3] == 0.f);
+
+    geometry_msgs::Quaternion quat;
+    if (all_zero) {
+        quat.x = 0.f; quat.y = 0.f; quat.z = 0.f; quat.w = 1.f;  // identity
+    } else {
+        // Optional: normalize to guard against drift/non-unit input
+        const double nx = q[0], ny = q[1], nz = q[2], nw = q[3];
+        const double norm = std::sqrt(nx*nx + ny*ny + nz*nz + nw*nw);
+        if (norm > 1e-9) {
+            quat.x = nx / norm; quat.y = ny / norm; quat.z = nz / norm; quat.w = nw / norm;
+        } else {
+            quat.x = 0.f; quat.y = 0.f; quat.z = 0.f; quat.w = 1.f;
+        }
+    }
+
+    // Transform (you said TF is published elsewhere; we still fill it for completeness)
+    odometry_transform.header.stamp = stamp;
     odometry_transform.header.frame_id = "odom";
-    odometry_transform.child_frame_id  = "base";
+    odometry_transform.child_frame_id  = "base";   // keep your current name
     odometry_transform.transform.translation.x = base_high_state.position[0];
     odometry_transform.transform.translation.y = base_high_state.position[1];
     odometry_transform.transform.translation.z = base_high_state.position[2];
-    odometry_transform.transform.rotation = quaternion;
+    odometry_transform.transform.rotation = quat;
 
-    odometry.header.stamp = ros::Time::now();
+    // Odometry message
+    odometry.header.stamp = stamp;
     odometry.header.frame_id = "odom";
+    odometry.child_frame_id  = "base";             // keep your current name
     odometry.pose.pose.position.x = base_high_state.position[0];
     odometry.pose.pose.position.y = base_high_state.position[1];
     odometry.pose.pose.position.z = base_high_state.position[2];
-    odometry.pose.pose.orientation = quaternion;
-    odometry.child_frame_id = "base";
+    odometry.pose.pose.orientation = quat;
+
+    // Body-frame velocities (OK since child is the base frame)
     odometry.twist.twist.linear.x  = base_high_state.velocity[0];
     odometry.twist.twist.linear.y  = base_high_state.velocity[1];
-    odometry.twist.twist.angular.z = base_high_state.yawSpeed;
+    odometry.twist.twist.angular.z = base_high_state.yawSpeed;  // <- correct source
+
     return {odometry, odometry_transform};
 }
+
+
+// std::tuple<nav_msgs::Odometry, geometry_msgs::TransformStamped> Robot::extractOdometryMessage() {
+//     nav_msgs::Odometry odometry;
+//     geometry_msgs::TransformStamped odometry_transform;
+//     geometry_msgs::Quaternion quaternion;
+//     int zeros[sizeof(base_high_state.imu.quaternion)];
+//     if(memcmp(&base_high_state.imu.quaternion, zeros, sizeof(base_high_state.imu.quaternion))==0)
+//         base_high_state.imu.quaternion[3] = 1.0;
+
+//     quaternion.x = base_high_state.imu.quaternion[0];
+//     quaternion.y = base_high_state.imu.quaternion[1];
+//     quaternion.z = base_high_state.imu.quaternion[2];
+//     quaternion.w = base_high_state.imu.quaternion[3]; 
+
+//     odometry_transform.header.stamp = ros::Time::now();
+//     odometry_transform.header.frame_id = "odom";
+//     odometry_transform.child_frame_id  = "base";
+//     odometry_transform.transform.translation.x = base_high_state.position[0];
+//     odometry_transform.transform.translation.y = base_high_state.position[1];
+//     odometry_transform.transform.translation.z = base_high_state.position[2];
+//     odometry_transform.transform.rotation = quaternion;
+
+//     odometry.header.stamp = ros::Time::now();
+//     odometry.header.frame_id = "odom";
+//     odometry.pose.pose.position.x = base_high_state.position[0];
+//     odometry.pose.pose.position.y = base_high_state.position[1];
+//     odometry.pose.pose.position.z = base_high_state.position[2];
+//     odometry.pose.pose.orientation = quaternion;
+//     odometry.child_frame_id = "base";
+//     odometry.twist.twist.linear.x  = base_high_state.velocity[0];
+//     odometry.twist.twist.linear.y  = base_high_state.velocity[1];
+//     odometry.twist.twist.angular.z = base_high_state.yawSpeed;
+//     return {odometry, odometry_transform};
+// }
