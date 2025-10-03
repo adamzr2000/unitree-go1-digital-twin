@@ -10,7 +10,7 @@
   <param name="scan_mode"           type="string" value="Sensitivity"/>
   </node>
   
-  <node pkg="tf" type="static_transform_publisher" name="lidar_to_robot" args="0.05 0.0 0.8 0.0 0.0 0.0 /base /laser_link 100" />
-  <!-- <node pkg="tf" type="static_transform_publisher" name="lidar_to_robot" args="0.05 0.0 0.8 3.141592653589793 0.0 0.0 /base /laser_link 100" /> -->
+  <node pkg="tf" type="static_transform_publisher" name="lidar_to_robot" args="0.05 0.0 0.08 0.0 0.0 0.0 /base /laser_link 100" />
+  <!-- <node pkg="tf" type="static_transform_publisher" name="lidar_to_robot" args="0.05 0.0 0.08 3.141592653589793 0.0 0.0 /base /laser_link 100" /> -->
 
 </launch>
