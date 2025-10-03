@@ -19,6 +19,7 @@
 
     <!-- Rollover Protection mode will add an additional stick on the top, use "true" or "false" to switch it. -->
     <xacro:property name="rolloverProtection" value="false"/>
+    <xacro:property name="body_yaw_correction" value="3.141592653589793"/>  <!-- π -->
 
     <!-- Debug mode will hung up the robot, use "true" or "false" to switch it. -->
     <xacro:if value="$(arg DEBUG)">
@@ -32,7 +33,7 @@
 
     <link name="base">
         <visual>
-            <origin rpy="0 0 0" xyz="0 0 3.141592653589793"/>
+            <origin rpy="0 0 ${body_yaw_correction}" xyz="0 0 0"/>
             <geometry>
                 <box size="0.001 0.001 0.001"/>
             </geometry>
