@@ -1,0 +1,54 @@
+###########################
+### gesture-control-app ###
+###########################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gesture-control-app-deployment
+  labels:
+    app: digital-twin-service
+    node: gesture-control-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: gesture-control-app
+  template:
+    metadata:
+      labels:
+        node: gesture-control-app
+    spec:
+      containers:
+      - name: gesture-control-app
+        image: go1-gesture-control
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://10.11.7.4:11311"
+        - name: ROS_IP
+          value: "10.11.7.4"
+        - name: CAMERA_TYPE
+          value: "webcam_ip"
+        - name: WEB_SERVER
+          value: "yes"
+        - name: CONTROL_LOOP_RATE
+          value: "100"
+        - name: CMD_VEL
+          value: "go1_controller/cmd_vel"
+        - name: STAMPED
+          value: "true"
+        volumeMounts:
+          - name: webcam
+            mountPath: /dev/video0
+        securityContext:
+          privileged: true
+      volumes:
+        - name: webcam
+          hostPath:
+            path: /dev/video0
+      hostNetwork: true
+      nodeSelector:
+        nodetype: edge
+
+---

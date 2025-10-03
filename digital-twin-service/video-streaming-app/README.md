@@ -21,55 +21,9 @@ A real-time, low-latency video streaming system designed for edge-to-cloud robot
 ```bash
 docker compose up -d
 ```
-🔗 **Access Stream:** [http://127.0.0.1:8889/test_stream](http://127.0.0.1:8889/test_stream)  
+🔗 **Access Stream:** [http://127.0.0.1:8889/go1_camera](http://127.0.0.1:8889/go1_camera)  
 
 ### **Stop the System**
 ```bash
 docker compose down
-```
-
----
-
-## **Usage (5TONIC Setup)**  
-
-### **Using MJPEG Encoding**  
-#### **Edge Server (Receiver-Transcoder)**
-```bash
-./run_example_edge.sh --stream-name go1_camera --enable-monitoring --export-to-influxdb --webrtc-additional-hosts 10.5.1.21
-```
-**Stop the process:**
-```bash
-./stop_example_edge.sh
-```
-
-#### **Robot (Streamer)**
-```bash
-cd streamer
-./run_example.sh --width 640 --height 480 --framerate 30 --receiver-ip 10.11.7.4 --receiver-port 5554 --use-d435i
-```
-**Stop the streamer:**
-```bash
-docker kill video-streamer
-```
-
----
-
-### **Using H.264 Encoding**  
-#### **Edge Server (Receiver-Transcoder)**
-```bash
-./run_example_edge.sh --stream-name go1_camera --enable-monitoring --webrtc-additional-hosts 10.5.1.21 --use-h264
-```
-**Stop the process:**
-```bash
-./stop_example_edge.sh
-```
-
-#### **Robot (Streamer)**
-```bash
-cd streamer
-./run_example.sh --width 1280 --height 720 --framerate 30 --receiver-ip 10.11.7.4 --receiver-port 5554 --use-d435i --use-h264 --bitrate 5000
-```
-**Stop the streamer:**
-```bash
-docker kill video-streamer
 ```

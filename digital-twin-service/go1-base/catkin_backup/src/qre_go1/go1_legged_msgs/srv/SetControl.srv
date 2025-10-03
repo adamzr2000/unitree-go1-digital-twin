@@ -1,4 +1,0 @@
-string control # Position, Velocity, Torque
----
-bool success
-string message

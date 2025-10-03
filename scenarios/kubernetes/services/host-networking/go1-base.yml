@@ -1,0 +1,39 @@
+################
+### go1-base ###
+################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go1-base-deployment
+  labels:
+    app: digital-twin-service
+    node: go1-base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: go1-base
+  template:
+    metadata:
+      labels:
+        node: go1-base
+    spec:
+      containers:
+      - name: go1-base
+        image: go1-base
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://10.11.7.4:11311"
+        - name: ROS_IP
+          value: "10.11.15.132"
+        - name: TARGET_IP
+          value: "192.168.123.161"
+        securityContext:
+            privileged: true
+      hostNetwork: true
+      nodeSelector:
+        nodetype: robot
+
+---

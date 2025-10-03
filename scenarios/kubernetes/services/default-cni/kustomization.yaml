@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - config.yml
+  - ros-master.yml
+  - go1-base.yml
+  - gesture-control.yml
+  - lidar-drivers.yml
+  - go1-navigation.yml
+  - vizanti.yml
+  - digital-replica.yml
+  # - video-streamer.yml
+  # - video-receiver.yml
+  # - mediamtx.yml
+  # - go1-monitoring-robot.yml
+  # - go1-monitoring-edge.yml

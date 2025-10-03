@@ -1,0 +1,76 @@
+### mediamtx
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mediamtx-deployment
+  labels:
+    app: mediamtx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mediamtx
+  template:
+    metadata:
+      labels:
+        app: mediamtx
+    spec:
+      containers:
+      - name: mediamtx
+        tty: true
+        image: bluenviron/mediamtx:1.11.3
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: MTX_WEBRTCADDITIONALHOSTS
+          value: "10.5.1.21"
+        ports:
+        - containerPort: 8890
+          protocol: UDP
+          name: srt
+        - containerPort: 8189
+          protocol: UDP
+          name: webrtc-signal
+        - containerPort: 8889
+          name: webrtc-media
+      nodeSelector:
+        nodetype: edge
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mediamtx
+  labels:
+    app: mediamtx
+spec:
+  clusterIP: None
+  selector:
+    app: mediamtx
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mediamtx-frontend
+  labels:
+    app: mediamtx
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8890
+    targetPort: 8890
+    protocol: UDP
+    name: srt
+  - port: 8189
+    targetPort: 8189
+    protocol: UDP
+    name: webrtc-signal
+  - port: 8889
+    targetPort: 8889
+    name: webrtc-media
+  selector:
+    app: mediamtx
+
+---

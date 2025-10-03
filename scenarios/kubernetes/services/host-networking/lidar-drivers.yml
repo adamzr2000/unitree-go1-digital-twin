@@ -1,0 +1,44 @@
+#####################
+### lidar-drivers ###
+#####################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lidar-deployment
+  labels:
+    app: digital-twin-service
+    node: lidar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: lidar
+  template:
+    metadata:
+      labels:
+        node: lidar
+    spec:
+      containers:
+      - name: lidar
+        image: rplidar-lidar
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://10.11.7.4:11311"
+        - name: ROS_IP
+          value: "10.11.15.132"
+        volumeMounts:
+          - name: rplidar
+            mountPath: /dev/rplidar
+        securityContext:
+          privileged: true
+      volumes:
+        - name: rplidar
+          hostPath:
+            path: /dev/rplidar
+      hostNetwork: true
+      nodeSelector:
+        nodetype: robot
+
+---

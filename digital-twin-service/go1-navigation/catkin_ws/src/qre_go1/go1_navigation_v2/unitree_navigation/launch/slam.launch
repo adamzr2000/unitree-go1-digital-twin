@@ -22,10 +22,10 @@
         </include>
 
         <!-- Calls navigation stack packages -->
-        <!-- <include file="$(find unitree_navigation)/launch/navigation/move_base.launch">
-            <arg name="frame_prefix" value="$(arg frame_prefix)"/> -->
+        <include file="$(find unitree_navigation)/launch/navigation/move_base.launch">
+            <arg name="frame_prefix" value="$(arg frame_prefix)"/>
             <!-- NO <arg name="rname"   value="$(arg rname)"/> -->
-        <!-- </include> -->
+        </include>
     </group>
 
     <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" 

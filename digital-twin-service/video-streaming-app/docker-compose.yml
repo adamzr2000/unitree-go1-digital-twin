@@ -9,8 +9,7 @@ services:
       - WIDTH=1920
       - HEIGHT=1080
       - FRAMERATE=30
-      # - RECEIVER_IP=receiver-transcoder
-      - RECEIVER_IP=10.5.98.250
+      - RECEIVER_IP=receiver-transcoder
       - RECEIVER_PORT=5554
       - DEVICE=/dev/video0
       - USE_D435I=false
@@ -45,12 +44,12 @@ services:
       - STREAM_NAME=go1_camera
       - ENABLE_MONITORING=true
       - EXPORT_TO_INFLUXDB=false
-      - INFLUXDB_URL=http://10.5.98.250:8086
+      - INFLUXDB_URL=http://influxdb:8086
       - INFLUXDB_TOKEN=desire6g2024;
       - INFLUXDB_ORG=desire6g
       - INFLUXDB_BUCKET=infrastructure-monitoring
     volumes:
-      - ./receiver-transcoder/app/video_receiver_transcoder.py:/app/video_receiver_transcoder.py    
+      - ./receiver-transcoder/app:/app    
     depends_on:
       - mediamtx
     restart: always

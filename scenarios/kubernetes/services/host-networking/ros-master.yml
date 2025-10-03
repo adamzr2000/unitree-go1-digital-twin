@@ -1,0 +1,45 @@
+##################
+### ros-master ###
+##################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ros-master-deployment
+  labels:
+    app: digital-twin-service
+    node: ros-master
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: ros-master
+  template:
+    metadata:
+      labels:
+        node: ros-master
+    spec:
+      containers:
+      - name: ros-master
+        tty: true
+        image: ros-master
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://10.11.7.4:11311"
+        - name: ROS_IP
+          value: "10.11.7.4"
+        - name: ENABLE_STATISTICS
+          value: "false"
+      hostNetwork: true
+      nodeSelector:
+        nodetype: edge
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+
+---

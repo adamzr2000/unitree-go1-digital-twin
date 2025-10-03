@@ -9,6 +9,7 @@ container_name="go1-navigation"
 use_odom="false"
 use_imu="false"
 slam_algorithm="cartographer"
+navigate="false" 
 
 usage() {
   cat <<EOF
@@ -19,6 +20,7 @@ Options:
   --ros-ip <IP>            ROS_IP of this host (default: ${ros_ip})
   --use-odom               Enable odometry input for Cartographer (sets CARTOGRAPHER_USE_ODOM=true)
   --use-imu                Enable IMU input for Cartographer (sets CARTOGRAPHER_USE_IMU=true)
+  --navigate               Run navigation instead of SLAM (sets NAVIGATE=true)
   --container-name <name>  Docker container name (default: ${container_name})
   --image <name>           Docker image name (default: ${container_image})
   -h, --help               Show this help
@@ -45,6 +47,8 @@ while [[ $# -gt 0 ]]; do
       use_odom="true"; shift ;;
     --use-imu)
       use_imu="true"; shift ;;
+    --navigate)
+      navigate="true"; shift ;;
     --container-name)
       container_name="$2"; shift 2 ;;
     --image)
@@ -73,6 +77,8 @@ echo "ROS_MASTER_URI:           $ros_master_uri"
 echo "ROS_IP:                   $ros_ip"
 echo "USE_ODOM:                 $use_odom"
 echo "USE_IMU:                  $use_imu"
+echo "NAVIGATE:                 $navigate"
+echo "SLAM_ALGORITHM:           $slam_algorithm"
 echo "==============================="
 
 # Run
@@ -88,6 +94,7 @@ docker run \
   -e USE_ODOM="$use_odom" \
   -e USE_IMU="$use_imu" \
   -e SLAM_ALGORITHM="$slam_algorithm" \
+  -e NAVIGATE="$navigate" \
   -v "${host_catkin_ws_dir}:/home/go1/catkin_ws/src" \
   -v "${host_utils_dir}:/home/go1/scripts" \
   -v "${host_maps_dir}:/home/go1/maps" \

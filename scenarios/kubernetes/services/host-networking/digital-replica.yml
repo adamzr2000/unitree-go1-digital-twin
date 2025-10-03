@@ -1,0 +1,90 @@
+#######################
+### digital-replica ###
+#######################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: digital-twin-app-deployment
+  labels:
+    app: digital-twin-service
+    node: digital-twin-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: digital-twin-app
+  template:
+    metadata:
+      labels:
+        node: digital-twin-app
+    spec:
+      containers:
+      - name: digital-twin-app
+        image: isaac-sim:2023.1.0-ubuntu22.04
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://10.11.7.4:11311"
+        - name: ROS_IP
+          value: "10.11.7.4"
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: PRIVACY_CONSENT
+          value: "Y"
+        volumeMounts:
+        - name: cache-kit
+          mountPath: /isaac-sim/kit/cache
+        - name: cache-ov
+          mountPath: /root/.cache/ov
+        - name: cache-pip
+          mountPath: /root/.cache/pip
+        - name: cache-glcache
+          mountPath: /root/.cache/nvidia/GLCache
+        - name: cache-computecache
+          mountPath: /root/.nv/ComputeCache
+        - name: logs
+          mountPath: /root/.nvidia-omniverse/logs
+        - name: data
+          mountPath: /root/.local/share/ov/data
+        - name: documents
+          mountPath: /root/Documents
+        - name: my-environments
+          mountPath: /isaac-sim/my-environments
+        command: ["bash", "-c", "./runheadless.native.sh -v"]
+        securityContext:
+            privileged: true
+      runtimeClassName: nvidia
+      volumes:
+      - name: cache-kit
+        hostPath:
+          path: /home/desire6g/docker/isaac-sim/cache/kit
+      - name: cache-ov
+        hostPath:
+          path: /home/desire6g/docker/isaac-sim/cache/ov
+      - name: cache-pip
+        hostPath:
+          path: /home/desire6g/docker/isaac-sim/cache/pip
+      - name: cache-glcache
+        hostPath:
+          path: /home/desire6g/docker/isaac-sim/cache/glcache
+      - name: cache-computecache
+        hostPath:
+          path: /home/desire6g/isaac-sim/cache/computecache
+      - name: logs
+        hostPath:
+          path: /home/desire6g/docker/isaac-sim/logs
+      - name: data
+        hostPath:
+          path: /home/desire6g/docker/isaac-sim/data
+      - name: documents
+        hostPath:
+          path: /home/desire6g/docker/isaac-sim/documents
+      - name: my-environments
+        hostPath:
+          path: /home/desire6g/unitree-go1-digital-twin/digital-twin-service/digital-replica/my-environments
+      hostNetwork: true
+      nodeSelector:
+        nodetype: edge
+
+---

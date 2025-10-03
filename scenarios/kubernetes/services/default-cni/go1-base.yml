@@ -1,0 +1,96 @@
+################
+### go1-base ###
+################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go1-base-deployment
+  labels:
+    app: digital-twin-service
+    node: go1-base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: go1-base
+  template:
+    metadata:
+      labels:
+        node: go1-base
+    spec:
+      containers:
+      - name: go1-base
+        image: go1-base
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ROS_MASTER_URI
+          value: "http://ros-master:11311"
+        - name: ROS_HOSTNAME
+          value: "go1-base"
+        - name: TARGET_IP
+          value: "192.168.123.161"
+        - name: STATE_LOOP_RATE
+          value: "100"
+        - name: UDP_SEND_DT
+          value: "0.01"
+        - name: UDP_RECV_DT
+          value: "0.01"
+        ports:
+        - containerPort: 8082
+          protocol: UDP
+        - containerPort: 8007
+          protocol: UDP
+        - containerPort: 8090
+          protocol: UDP
+        securityContext:
+            privileged: true
+      nodeSelector:
+        nodetype: robot
+
+---
+
+### Headless service declaration.
+### This is required to map to app "go1-base" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: go1-base
+  labels:
+    app: digital-twin-service
+    node: go1-base
+spec:
+  clusterIP: None
+  selector:
+    node: go1-base
+
+---
+
+### LoadBalancer service declaration.
+### This is required to expose the ports that enable communication from outside the cluster to the internal computers of the robot.
+apiVersion: v1
+kind: Service
+metadata:
+  name: go1-base-robot-communication
+  labels:
+    app: digital-twin-service
+    node: go1-base
+spec:
+  type: LoadBalancer
+  ports:
+  - name: high-level-pc
+    protocol: UDP
+    port: 8082
+    targetPort: 8082
+  - name: low-level-pc
+    protocol: UDP
+    port: 8007
+    targetPort: 8007
+  - name: go1-base-local
+    protocol: UDP
+    port: 8090
+    targetPort: 8090
+  selector:
+    node: go1-base
+
+---

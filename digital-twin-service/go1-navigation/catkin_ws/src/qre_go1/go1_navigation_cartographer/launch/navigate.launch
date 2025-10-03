@@ -11,6 +11,7 @@
 
     <!-- Map server -->
     <arg name="map_file" default="$(find go1_navigation_cartographer)/maps/map.yaml"/>
+    
     <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)" >
         <param name="frame_id" value="$(arg frame_prefix)map" />
     </node>
