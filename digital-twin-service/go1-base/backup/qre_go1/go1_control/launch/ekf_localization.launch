@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+	<!-- Run the ekf for map to odom config -->
+	<arg name="gps_odom" default="$(optenv GO1_GPS_ODOM false)" />
+	<group ns="global_ekf" if="$(arg gps_odom)">
+		<node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization_with_gps" >
+			<rosparam command="load" file="$(find go1_control)/config/gps_localization_config.yaml" />
+		</node>
+	</group>
+	<!-- Run the ekf for odom to base config if not already available -->
+	<group ns="local_ekf">
+		<node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization_with_odom" >
+			<rosparam command="load" file="$(find go1_control)/config/odom_localization_config.yaml" />
+			<remap from="odometry/filtered" to="/odometry/filtered"/>
+		</node>
+	</group>
+</launch>

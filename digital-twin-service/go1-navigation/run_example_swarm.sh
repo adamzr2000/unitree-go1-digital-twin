@@ -5,7 +5,7 @@ set -euo pipefail
 ros_master_uri="http://ros-master:11311"
 container_image="go1-navigation"
 container_name="go1-navigation"
-use_odom="true"
+use_odom="false"
 use_imu="false"
 slam_algorithm="cartographer" # cartographer, hector, gmapping
 navigate="false" 

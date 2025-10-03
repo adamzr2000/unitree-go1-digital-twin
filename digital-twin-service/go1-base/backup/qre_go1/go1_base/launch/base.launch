@@ -1,0 +1,19 @@
+<launch>
+    <arg name="target_ip"    default="192.168.123.161" /> <!-- High Level Mode: 192.168.12.1 for WLAN and 192.168.123.161 for LAN -->
+                                                          <!-- Low  Level Mode: 192.168.123.10 for LAN -->
+    <arg name="target_port"  default="8082" />            <!-- Target Port for high level mode: 8082, low level mode: 8007 --> 
+    <arg name="local_port"   default="8090" />            <!-- Local  Port for high level mode: 8090, low level mode: 8090 --> 
+    <arg name="working_mode" default="high_level" />      <!-- Only supported: high_level, low_level-->
+    <arg name="state_loop_rate" default="50"/>            <!-- Default value is set to 50Hz ~ 20ms -->
+    <arg name="udp_send_dt" default="0.002"/>        <!-- Default value is set to 2ms -->
+    <arg name="udp_recv_dt" default="0.002"/>        <!-- Default value is set to 2ms -->
+
+    <node pkg="go1_base" type="base_node" name="go1_controller" args="$(arg working_mode)" output="screen" >
+        <param name="target_ip"   type="str" value="$(arg target_ip)" />
+        <param name="target_port" type="int" value="$(arg target_port)" />
+        <param name="local_port"  type="int" value="$(arg local_port)" /> 
+        <param name="state_loop_rate" value="$(arg state_loop_rate)"/>
+        <param name="udp_send_dt" value="$(arg udp_send_dt)"/>
+        <param name="udp_recv_dt" value="$(arg udp_recv_dt)"/> 
+    </node>
+</launch>
