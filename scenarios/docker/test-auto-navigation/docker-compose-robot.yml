@@ -34,6 +34,8 @@ services:
     hostname: lidar
     volumes:
       - "/dev/rplidar:/dev/rplidar"
+      - ~/navigation-dev/unitree-go1-digital-twin/digital-twin-service/lidar-drivers/catkin_ws/src:/home/lidar/catkin_ws/src
+
     network_mode: digital-twin-service
     privileged: true
 
