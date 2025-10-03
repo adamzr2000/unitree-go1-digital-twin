@@ -20,5 +20,7 @@
         <param name="local_costmap/robot_base_frame"                value="$(arg frame_prefix)base"/>
         <param name="local_costmap/2d_obstacles_layer/scan/topic"   value="$(arg robot_name)scan"/>
         <!-- <param name="local_costmap/3d_obstacles_layer/depth/topic"  value="$(arg robot_name)camera/depth/points"/> -->
+        <!-- Remap the default output -->
+        <remap from="cmd_vel" to="/go1_controller/cmd_vel"/>
     </node>
 </launch>

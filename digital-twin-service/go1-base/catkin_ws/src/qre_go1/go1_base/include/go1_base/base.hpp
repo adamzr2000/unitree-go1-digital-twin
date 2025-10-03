@@ -5,7 +5,8 @@
 #include <iostream>
 #include <unistd.h>
 #include <string.h>
-#include <geometry_msgs/TwistStamped.h>
+// #include <geometry_msgs/TwistStamped.h>
+#include <geometry_msgs/Twist.h>
 #include <tf/transform_broadcaster.h>
 #include <sensor_msgs/Imu.h>
 #include "unitree_legged_sdk/unitree_legged_sdk.h"
@@ -47,7 +48,8 @@ namespace qre{
         void LowLevelControl();
         void packetReceive();
         void packetSend();
-        void cmdVelCallback(geometry_msgs::TwistStamped msg);
+        // void cmdVelCallback(geometry_msgs::TwistStamped msg);
+        void cmdVelCallback(geometry_msgs::Twist msg);
         void jointCommandCallback(go1_legged_msgs::JointCmd msg);
         void publishStateMessages();
         bool setModeCallback(go1_legged_msgs::SetMode::Request &req, go1_legged_msgs::SetMode::Response &res);

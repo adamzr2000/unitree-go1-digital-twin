@@ -127,7 +127,7 @@ bool Base::setControlCallback(go1_legged_msgs::SetControl::Request &req, go1_leg
     }   
 }
 
-void Base::cmdVelCallback(geometry_msgs::TwistStamped msg) {
+void Base::cmdVelCallback(geometry_msgs::Twist msg) {
     robot_high_cmd.velocity = {0.0};
     robot_high_cmd.yawSpeed = 0.0;  
   

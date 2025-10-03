@@ -66,8 +66,8 @@ The [Digital Twin service](./digital-twin-service/) is composed of the following
 | **Digital Replica**    | Simulates the Unitree Go1 in NVIDIA Isaac Sim ([details](./digital-twin-service/digital-replica/))              | ✅ Available |
 | **Lidar Drivers**      | Drivers for the RPLIDAR A3 used in mapping and navigation ([details](./digital-twin-service/lidar-drivers/))    | ✅ Available |
 | **Camera Drivers**     | Drivers for the Orbbec Astra S depth camera ([details](./digital-twin-service/camera-drivers/))                 | ✅ Available |
-| **Go1 Navigation**     | SLAM-based algorithms for indoor mapping ([details](./digital-twin-service/go1-navigation/))                          | ✅ Available |
-| **Vizanti**            | Provides web visualizer for mapping and sensor streams ([details](./digital-twin-service/vizanti/))                  | ✅ Available |
+| **Go1 Navigation**     | Autonomous navigation stack ([details](./digital-twin-service/go1-navigation/))                                 | ✅ Available |
+| **Vizanti**            | Provides web visualizer for mapping and sensor streams ([details](./digital-twin-service/vizanti/))             | ✅ Available |
 
 ---
  
