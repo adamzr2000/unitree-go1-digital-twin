@@ -1,4 +1,5 @@
 #include "go1_base/legacy_wrapper/robot.hpp"
+#include <cmath>
 
 using namespace qre;
 
@@ -139,18 +140,17 @@ Robot::extractOdometryMessage() {
     nav_msgs::Odometry odometry;
     geometry_msgs::TransformStamped odometry_transform;
 
-    // Timestamp once for consistency
     const ros::Time stamp = ros::Time::now();
 
-    // Build quaternion safely (SDK order: [x,y,z,w])
-    const float* q = base_high_state.imu.quaternion;
+    // SDK order: [x, y, z, w] in a std::array<float,4>
+    const auto& q = base_high_state.imu.quaternion;   // q[0]=x, q[1]=y, q[2]=z, q[3]=w
     const bool all_zero = (q[0] == 0.f && q[1] == 0.f && q[2] == 0.f && q[3] == 0.f);
 
     geometry_msgs::Quaternion quat;
     if (all_zero) {
         quat.x = 0.f; quat.y = 0.f; quat.z = 0.f; quat.w = 1.f;  // identity
     } else {
-        // Optional: normalize to guard against drift/non-unit input
+        // Optional: normalize to ensure unit quaternion
         const double nx = q[0], ny = q[1], nz = q[2], nw = q[3];
         const double norm = std::sqrt(nx*nx + ny*ny + nz*nz + nw*nw);
         if (norm > 1e-9) {
@@ -160,10 +160,10 @@ Robot::extractOdometryMessage() {
         }
     }
 
-    // Transform (you said TF is published elsewhere; we still fill it for completeness)
+    // Fill transform (even if TF is published elsewhere)
     odometry_transform.header.stamp = stamp;
     odometry_transform.header.frame_id = "odom";
-    odometry_transform.child_frame_id  = "base";   // keep your current name
+    odometry_transform.child_frame_id  = "base";
     odometry_transform.transform.translation.x = base_high_state.position[0];
     odometry_transform.transform.translation.y = base_high_state.position[1];
     odometry_transform.transform.translation.z = base_high_state.position[2];
@@ -172,16 +172,16 @@ Robot::extractOdometryMessage() {
     // Odometry message
     odometry.header.stamp = stamp;
     odometry.header.frame_id = "odom";
-    odometry.child_frame_id  = "base";             // keep your current name
+    odometry.child_frame_id  = "base";
     odometry.pose.pose.position.x = base_high_state.position[0];
     odometry.pose.pose.position.y = base_high_state.position[1];
     odometry.pose.pose.position.z = base_high_state.position[2];
     odometry.pose.pose.orientation = quat;
 
-    // Body-frame velocities (OK since child is the base frame)
+    // Body-frame velocities
     odometry.twist.twist.linear.x  = base_high_state.velocity[0];
     odometry.twist.twist.linear.y  = base_high_state.velocity[1];
-    odometry.twist.twist.angular.z = base_high_state.yawSpeed;  // <- correct source
+    odometry.twist.twist.angular.z = base_high_state.yawSpeed;
 
     return {odometry, odometry_transform};
 }
