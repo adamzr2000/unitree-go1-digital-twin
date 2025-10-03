@@ -39,9 +39,6 @@ echo "==========================="
 
 echo "Running $container_image docker image."
 
-host_ros_bags_dir="$(pwd)/ros_bags"
-rviz_dir="$(pwd)/scripts"
-
 docker run \
     -it \
     --name $container_image \

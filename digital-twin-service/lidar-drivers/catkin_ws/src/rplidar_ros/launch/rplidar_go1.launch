@@ -10,6 +10,6 @@
   <param name="scan_mode"           type="string" value="Sensitivity"/>
   </node>
   
-  <node pkg="tf" type="static_transform_publisher" name="base_to_laser_broadcaster" args="0.1 0.0 0.0 3.141592653589793 0.0 0.0 /base /laser_link 100" />
+  <node pkg="tf" type="static_transform_publisher" name="base_to_laser_broadcaster" args="0.1 0.0 0.0 0 0.0 0.0 /base /laser_link 100" />
  
 </launch>
