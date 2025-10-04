@@ -6,7 +6,7 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--cluster-cidr=10.42.0.0/16 --s
 ```
 > Note: This single-node will function as a server, including all the `datastore`, `control-plane`, `kubelet`, and `container runtime` components necessary to host workload pods. 
 
-After installing k3s, run `./utils/k3s_setup_kubeconfig.sh` to set up the `KUBECONFIG` environment, allowing the user to manage the Kubernetes cluster with `kubectl` without requiring `sudo`, with proper ownership and permissions.
+After installing k3s, run `./k3s_setup_kubeconfig.sh` to set up the `KUBECONFIG` environment, allowing the user to manage the Kubernetes cluster with `kubectl` without requiring `sudo`, with proper ownership and permissions.
 
 To check the CIDR allocations for pods and services in the cluster, run:
 ```bash
@@ -70,7 +70,7 @@ helm repo update
 
 2. Install Multus CNI using Helm in the `kube-system` namespace:
 ```bash
-helm install multus rke2-charts/rke2-multus -n kube-system --kubeconfig ~/.kube/config --values ./utils/multus-values.yaml
+helm install multus rke2-charts/rke2-multus -n kube-system --kubeconfig ~/.kube/config --values multus-values.yaml
 ```
 
 3. Verify that Multus is running:
@@ -93,6 +93,26 @@ sudo ls /var/lib/rancher/k3s/agent/etc/cni/net.d/
 You should see:
 ```
 00-multus.conf
+```
+
+## Remove Multus
+
+```bash
+# Uninstall the release
+helm uninstall multus -n kube-system
+
+# Remove the CRD that Multus added (if it still exists)
+kubectl delete crd network-attachment-definitions.k8s.cni.cncf.io 2>/dev/null || true
+
+# Optionally remove the repo entry you added
+helm repo remove rke2-charts
+
+# Multus autoconfig & kubeconfig (only if they exist)
+sudo rm -rf /var/lib/rancher/k3s/agent/etc/cni/net.d/multus.d
+sudo rm -f  /var/lib/rancher/k3s/agent/etc/cni/net.d/*multus*.conf
+
+# (Optional) If you created a custom binDir for Multus plugins, remove it
+sudo rm -rf /var/lib/rancher/k3s/data/cni/ 2>/dev/null || true
 ```
 
 ---
