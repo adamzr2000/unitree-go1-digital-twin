@@ -28,7 +28,7 @@ metadata:
   annotations:
     k8s.v1.cni.cncf.io/networks: '[{ 
       "name": "test-net-macvlan", 
-      "ips": ["10.10.10.10/24"],
+      "ips": ["172.20.50.10/24"],
       "mac": "00:50:56:AA:BB:CC"
     }]'
 spec:
@@ -50,7 +50,7 @@ metadata:
   annotations:
     k8s.v1.cni.cncf.io/networks: '[{ 
       "name": "test-net-macvlan", 
-      "ips": ["10.10.10.11/24"],
+      "ips": ["172.20.50.11/24"],
       "mac": "00:50:57:AA:BB:CC"
     }]'
 spec:

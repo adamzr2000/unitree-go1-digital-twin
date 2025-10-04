@@ -1,3 +1,21 @@
+# Build a K8S cluster
+
+To effortlessly set up a fully-functional, single-node Kubernetes cluster, execute the following command:
+```bash
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--cluster-cidr=10.42.0.0/16 --service-cidr=10.43.0.0/16 --" sh -s -
+```
+> Note: This single-node will function as a server, including all the `datastore`, `control-plane`, `kubelet`, and `container runtime` components necessary to host workload pods. 
+
+After installing k3s, run `./utils/k3s_setup_kubeconfig.sh` to set up the `KUBECONFIG` environment, allowing the user to manage the Kubernetes cluster with `kubectl` without requiring `sudo`, with proper ownership and permissions.
+
+To check the CIDR allocations for pods and services in the cluster, run:
+```bash
+kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{" - "}{.spec.podCIDR}{"\n"}{end}'
+kubectl get svc -A -o wide
+```
+
+---
+
 ## K3s Management Commands
 
 ### Start/Stop Servers
@@ -35,6 +53,10 @@ docker save <docker-image-name> | sudo k3s ctr images import -
 ```
 
 ---
+
+## Install Helm CLI
+
+You can install Helm, the Kubernetes package manager, following this [tutorial](https://helm.sh/docs/intro/install/)
 
 ## Install Multus
 
@@ -78,9 +100,14 @@ You should see:
 # VXLAN Setup Script
 
 ```sh
-sudo ./vxlan_setup_multi_hosts.sh -l 10.5.1.21 -r 10.3.202.67 -i br10 -v 200 -p 8473 -a 10.10.10.1/24
+sudo ./vxlan_setup_multi_hosts.sh -l 10.5.1.21 -r 10.3.202.67 -i br10 -v 200 -p 4747 -a 172.20.50.1/24
 
-sudo ./vxlan_setup_multi_hosts.sh -l 10.3.202.67 -r 10.5.1.21 -i ue0 -v 200 -p 8473 -a 10.10.10.2/24
+sudo ./vxlan_setup_multi_hosts.sh -l 10.3.202.67 -r 10.5.1.21 -i ue0 -v 200 -p 4747 -a 172.20.50.2/24
+```
+
+## Capture VXLAN Traffic with TShark
+```bash
+sudo tshark -i br10 -f "udp port 4747" -d udp.port==4747,vxlan -V --color
 ```
 
 ```sh
