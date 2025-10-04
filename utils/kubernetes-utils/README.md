@@ -138,10 +138,15 @@ sudo rm -rf /var/lib/rancher/k3s/data/cni/ 2>/dev/null || true
 # VXLAN Setup Script
 
 ```sh
-sudo ./vxlan_setup_multi_hosts.sh -l 10.5.1.21 -r 10.3.202.67 -i br10 -v 200 -p 4747 -a 172.20.50.1/24
+sudo ./vxlan_setup_multi_hosts.sh -r 10.3.202.68 -i br10 -v 200 -p 4747 -a 172.20.50.1/24
 
-sudo ./vxlan_setup_multi_hosts.sh -l 10.3.202.67 -r 10.5.1.21 -i ue0 -v 200 -p 4747 -a 172.20.50.2/24
+sudo ./vxlan_setup_multi_hosts.sh -r 10.5.1.21 -i ue0 -v 200 -p 4747 -a 172.20.50.2/24
 ```
+
+```sh
+sudo ./add_vxlan_peers.sh -d vxlan200 -r 10.5.99.30
+```
+
 
 ## Capture VXLAN Traffic with TShark
 ```bash
