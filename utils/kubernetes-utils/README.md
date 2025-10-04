@@ -22,7 +22,7 @@ sudo systemctl start k3s-agent
 sudo chmod 644 /etc/rancher/k3s/k3s.yaml
 ```
 
-### Manage K3s Docker Images
+### Manage Container Registry
 
 List images:
 ```bash
@@ -78,9 +78,9 @@ You should see:
 # VXLAN Setup Script
 
 ```sh
-sudo ./vxlan_setup_multi_hosts.sh -l 10.3.202.67 -r 10.5.1.21 -i ue0 -v 200 -p 4747 -a 10.10.10.1/24
+sudo ./vxlan_setup_multi_hosts.sh -l 10.5.1.21 -r 10.3.202.67 -i br10 -v 200 -p 8473 -a 10.10.10.1/24
 
-sudo ./vxlan_setup_multi_hosts.sh -l 10.5.1.21 -r 10.3.202.67 -i br10 -v 200 -p 4747 -a 10.10.10.2/24
+sudo ./vxlan_setup_multi_hosts.sh -l 10.3.202.67 -r 10.5.1.21 -i ue0 -v 200 -p 8473 -a 10.10.10.2/24
 ```
 
 ```sh
