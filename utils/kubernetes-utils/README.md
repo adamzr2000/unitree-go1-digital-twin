@@ -70,7 +70,7 @@ helm repo update
 
 2. Install Multus CNI using Helm in the `kube-system` namespace:
 ```bash
-helm install multus rke2-charts/rke2-multus -n kube-system --kubeconfig ~/.kube/config --values multus-values.yaml
+helm install multus rke2-charts/rke2-multus --version 4.1.001 -n kube-system --kubeconfig ~/.kube/config --values multus-values.yaml
 ```
 
 3. Verify that Multus is running:
