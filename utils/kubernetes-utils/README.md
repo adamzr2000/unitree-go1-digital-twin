@@ -53,12 +53,21 @@ kubectl delete -k services/
 
 List images:
 ```bash
-sudo k3s ctr images list | grep docker.io   
+sudo k3s ctr images list | grep docker.io/library   
 ```
 
 Import images:
 ```bash
-docker save <docker-image-name> | sudo k3s ctr images import - 
+docker save <image> | sudo k3s ctr images import - 
+```
+
+Import images (alternative):
+```bash
+# from your Docker host
+docker save -o <image> .tar <image> 
+
+# into k3s' containerd
+sudo k3s ctr images import <image> .tar
 ```
 
 ---

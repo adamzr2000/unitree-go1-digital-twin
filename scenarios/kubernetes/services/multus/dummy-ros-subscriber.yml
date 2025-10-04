@@ -1,3 +1,21 @@
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: ros-network
+spec:
+  config: |
+    {
+      "cniVersion": "0.3.1",
+      "type": "ipvlan",
+      "master": "vxlan200",
+      "mode": "l2",
+      "ipam": {
+        "type": "static"
+      }
+    }
+
+---
+
 #####################
 ### ros-subscriber ###
 #####################
@@ -23,7 +41,7 @@ spec:
         - name: ROS_MASTER_URI
           value: "http://172.20.50.10:11311"
         - name: ROS_IP
-          value: "172.20.50.90"
+          value: "172.20.50.91"
         - name: ROS_ROLE
           value: "subscriber"
         - name: ROS_TOPIC
