@@ -6,6 +6,7 @@ ros_ip="127.0.0.1"
 topic="chatter"
 rate="1.0"
 message="Hello from publisher!"
+container_image="dummy-ros-app"
 
 # Parse options
 while [[ "$#" -gt 0 ]]; do
@@ -50,7 +51,7 @@ echo "==============================="
 
 # Run the container
 docker run \
-    -d \
+    -it \
     --name ros-publisher \
     --rm \
     --net host \
@@ -60,4 +61,4 @@ docker run \
     -e ROS_TOPIC="$topic" \
     -e ROS_RATE="$rate" \
     -e ROS_MESSAGE="$message" \
-    ros-app:latest
+    $container_image:latest

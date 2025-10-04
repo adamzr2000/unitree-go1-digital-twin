@@ -1,0 +1,41 @@
+#####################
+### ros-subscriber ###
+#####################
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ros-subscriber
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      { "name": "ros-network", "ips": ["172.20.50.90/24"] }
+    ]'
+  labels:
+    app: digital-twin-service
+    node: ros-subscriber
+spec:
+  containers:
+    - name: ros-subscriber
+      tty: true
+      image: dummy-ros-app
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: ROS_MASTER_URI
+          value: "http://172.20.50.10:11311"
+        - name: ROS_IP
+          value: "172.20.50.90"
+        - name: ROS_ROLE
+          value: "subscriber"
+        - name: ROS_TOPIC
+          value: "chatter"
+  nodeSelector:
+    nodetype: edge
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+
+---

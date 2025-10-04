@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Assemble docker image. 
-echo 'Building ros-app docker image.'
+container_image="dummy-ros-app"
 
-docker build -t ros-app .
+echo "Building $container_image docker image."
+
+docker build -t $container_image .
 

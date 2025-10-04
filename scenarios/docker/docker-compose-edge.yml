@@ -7,13 +7,13 @@ networks:
     attachable: true
 
 x-ros-config: &ros-config
-  - ROS_MASTER_URI=http://roscore-edge:11311
+  - ROS_MASTER_URI=http://ros-master:11311
 
 services:
-  roscore-edge:
-    image: go1-roscore:latest
-    container_name: roscore-edge
-    hostname: roscore-edge
+  ros-master:
+    image: ros-master:latest
+    container_name: ros-master
+    hostname: ros-master
     environment: *ros-config
     privileged: true
     networks:
@@ -26,14 +26,14 @@ services:
     ports:       
       - "8888:8888/tcp"
     environment:
-      ROS_MASTER_URI: "http://roscore-edge:11311"
+      ROS_MASTER_URI: "http://ros-master:11311"
       CAMERA_TYPE: "webcam"
       WEB_SERVER: "yes"
       CONTROL_LOOP_RATE: "100"
       CMD_VEL: "go1_controller/cmd_vel"
       STAMPED: "true"
     depends_on:
-      - roscore-edge
+      - ros-master
     privileged: true
     group_add:
       - video
@@ -41,7 +41,7 @@ services:
       - digital-twin-service 
 
   rviz-vnc:
-    image: go1-rviz-vnc:latest
+    image: rviz-vnc:latest
     container_name: rviz-vnc
     hostname: rviz-vnc
     ports:
@@ -69,7 +69,7 @@ services:
     environment:
       ACCEPT_EULA: "Y"
       PRIVACY_CONSENT: "Y"
-      ROS_MASTER_URI: "http://roscore-edge:11311"  
+      ROS_MASTER_URI: "http://ros-master:11311"  
     volumes:
       - ~/docker/isaac-sim/cache/kit:/isaac-sim/kit/cache:rw
       - ~/docker/isaac-sim/cache/ov:/root/.cache/ov:rw

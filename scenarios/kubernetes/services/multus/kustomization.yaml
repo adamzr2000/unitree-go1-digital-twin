@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - ros-network.yml
   - ros-master.yml
+  - dummy-ros-publisher.yml

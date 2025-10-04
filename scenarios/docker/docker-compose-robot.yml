@@ -1,7 +1,7 @@
 version: '3.8'
 
 x-ros-config: &ros-config
-  - ROS_MASTER_URI=http://roscore-edge:11311
+  - ROS_MASTER_URI=http://ros-master:11311
 
 services:
 
@@ -19,7 +19,7 @@ services:
       - "8007:8007/tcp"
       - "8007:8007/udp"
     environment:
-      ROS_MASTER_URI: "http://roscore-edge:11311"
+      ROS_MASTER_URI: "http://ros-master:11311"
       TARGET_IP: "192.168.123.161"
     network_mode: digital-twin-service
 
@@ -42,5 +42,3 @@ services:
   #     - "/dev/astra:/dev/astra"
   #   network_mode: digital-twin-service
   #   privileged: true
-
-

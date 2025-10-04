@@ -1,0 +1,45 @@
+#####################
+### ros-publisher ###
+#####################
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ros-publisher
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      { "name": "ros-network", "ips": ["172.20.50.90/24"] }
+    ]'
+  labels:
+    app: digital-twin-service
+    node: ros-publisher
+spec:
+  containers:
+    - name: ros-publisher
+      tty: true
+      image: dummy-ros-app
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: ROS_MASTER_URI
+          value: "http://172.20.50.10:11311"
+        - name: ROS_IP
+          value: "172.20.50.90"
+        - name: ROS_ROLE
+          value: "publisher"
+        - name: ROS_TOPIC
+          value: "chatter"
+        - name: ROS_RATE
+          value: "1.0"
+        - name: ROS_MESSAGE
+          value: "Hello from publisher!"
+  nodeSelector:
+    nodetype: edge
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+
+---

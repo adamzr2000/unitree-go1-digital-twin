@@ -4,6 +4,7 @@
 ros_master_uri="http://localhost:11311"
 ros_ip="127.0.0.1"
 topic="chatter"
+container_image="dummy-ros-app"
 
 # Parse options
 while [[ "$#" -gt 0 ]]; do
@@ -38,7 +39,7 @@ echo "==============================="
 
 # Run the container
 docker run \
-    -d \
+    -it \
     --name ros-subscriber \
     --rm \
     --net host \
@@ -46,4 +47,4 @@ docker run \
     -e ROS_IP="$ros_ip" \
     -e ROS_ROLE="subscriber" \
     -e ROS_TOPIC="$topic" \
-    ros-app:latest 
+    $container_image:latest 
