@@ -40,6 +40,15 @@ sudo systemctl start k3s-agent
 sudo chmod 644 /etc/rancher/k3s/k3s.yaml
 ```
 
+### Kustomization files 
+```bash
+kubectl apply -k services/
+
+kubectl delete -k services/
+```
+
+[Documentation](https://kubectl.docs.kubernetes.io/references/kustomize/glossary/#kustomization)
+
 ### Manage Container Registry
 
 List images:
@@ -129,6 +138,19 @@ sudo ./vxlan_setup_multi_hosts.sh -l 10.3.202.67 -r 10.5.1.21 -i ue0 -v 200 -p 4
 ```bash
 sudo tshark -i br10 -f "udp port 4747" -d udp.port==4747,vxlan -V --color
 ```
+
+## Test multus
+```bash
+kubectl apply -f test-multus-pods-ipvlan-1.yaml
+kubectl exec -it pod-1 -- sh
+```
+
+```bash
+kubectl apply -f test-multus-pods-ipvlan-2.yaml
+kubectl exec -it pod-4 -- sh
+```
+
+## Remove VXLAN Setup
 
 ```sh
 sudo ./remove_vxlan_setup_hosts.sh -v 200

@@ -29,8 +29,7 @@ spec:
         - name: ROS_HOSTNAME
           value: "monitoring-edge"
         - name: TOPICS
-          value: "/scan /joint_states /go1_controller/odom"
-          # value: /scan /joint_states /go1_controller/odom /camera/color/image_raw /camera/depth/points
+          value: "/scan /joint_states /odometry/filtered"
         - name: INFLUXDB_URL
           value: "http://10.5.1.21:8088"
         - name: INFLUXDB_TOKEN

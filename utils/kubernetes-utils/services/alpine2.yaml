@@ -1,0 +1,44 @@
+##################
+### alpine2 ###
+##################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alpine2-deployment
+  labels:
+    app: alpine-service
+    node: alpine2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      node: alpine2
+  template:
+    metadata:
+      labels:
+        node: alpine2
+    spec:
+      containers:
+      - name: alpine2
+        image: alpine
+        imagePullPolicy: IfNotPresent
+        command: ["sh", "-c", "while true; do sleep 3600; done"]
+
+---
+
+### Headless service declaration.
+### This is required to map to app "alpine2" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: alpine2
+  labels:
+    app: alpine-service
+    node: alpine2
+spec:
+  clusterIP: None
+  selector:
+    node: alpine2
+
+---

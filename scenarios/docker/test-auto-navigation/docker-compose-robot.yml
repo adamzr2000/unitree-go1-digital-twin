@@ -12,7 +12,7 @@ services:
       - "8090:8090/udp"
       - "8007:8007/udp"
     volumes:
-      - ~/navigation-dev/unitree-go1-digital-twin/digital-twin-service/go1-base/catkin_ws/src:/home/go1/catkin_ws/src
+      - ~/unitree-go1-digital-twin/digital-twin-service/go1-base/catkin_ws/src:/home/go1/catkin_ws/src
     environment:
       - ROS_MASTER_URI=http://ros-master:11311
       - ROS_HOSTNAME=go1-base
@@ -34,7 +34,7 @@ services:
     hostname: lidar
     volumes:
       - "/dev/rplidar:/dev/rplidar"
-      - ~/navigation-dev/unitree-go1-digital-twin/digital-twin-service/lidar-drivers/catkin_ws/src:/home/lidar/catkin_ws/src
+      - ~/unitree-go1-digital-twin/digital-twin-service/lidar-drivers/catkin_ws/src:/home/lidar/catkin_ws/src
 
     network_mode: digital-twin-service
     privileged: true

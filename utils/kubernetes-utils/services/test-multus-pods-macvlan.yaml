@@ -24,7 +24,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: multus-pod-1
+  name: pod-1
   annotations:
     k8s.v1.cni.cncf.io/networks: '[{ 
       "name": "test-net", 
@@ -46,7 +46,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: multus-pod-2
+  name: pod-2
   annotations:
     k8s.v1.cni.cncf.io/networks: '[{ 
       "name": "test-net", 

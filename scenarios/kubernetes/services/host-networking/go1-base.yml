@@ -30,6 +30,8 @@ spec:
           value: "10.11.15.132"
         - name: TARGET_IP
           value: "192.168.123.161"
+        - name: USE_EKF_ODOM
+          value: "true"
         securityContext:
             privileged: true
       hostNetwork: true

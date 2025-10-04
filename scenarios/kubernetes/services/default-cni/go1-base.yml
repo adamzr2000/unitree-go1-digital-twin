@@ -36,6 +36,8 @@ spec:
           value: "0.01"
         - name: UDP_RECV_DT
           value: "0.01"
+        - name: USE_EKF_ODOM
+          value: "true"
         ports:
         - containerPort: 8082
           protocol: UDP
