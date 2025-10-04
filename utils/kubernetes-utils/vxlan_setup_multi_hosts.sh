@@ -53,7 +53,8 @@ if ip link show "$vxlan_iface" &>/dev/null; then
 fi
 
 # Create VXLAN interface
-ip link add "$vxlan_iface" type vxlan id "$vni" dstport "$port" dev "$iface" local "$local_ip"
+# ip link add "$vxlan_iface" type vxlan id "$vni" dstport "$port" dev "$iface" local "$local_ip"
+ip link add "$vxlan_iface" type vxlan id "$vni" dstport "$port" dev "$iface"
 
 # Add FDB entries
 echo "[*] Adding FDB entries for remote peers"

@@ -26,7 +26,6 @@ kind: Pod
 metadata:
   name: pod-1
   annotations:
-    k8s.v1.cni.cncf.io/no-default-network: "true"
     k8s.v1.cni.cncf.io/networks: '[{ 
       "name": "test-net", 
       "ips": ["172.20.50.10/24"],
