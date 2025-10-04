@@ -26,6 +26,7 @@ kind: Pod
 metadata:
   name: pod-1
   annotations:
+    k8s.v1.cni.cncf.io/no-default-network: "true"
     k8s.v1.cni.cncf.io/networks: '[{ 
       "name": "test-net", 
       "ips": ["172.20.50.10/24"],
@@ -41,24 +42,24 @@ spec:
           add:
             - NET_ADMIN
 
----
+# ---
 
-apiVersion: v1
-kind: Pod
-metadata:
-  name: pod-2
-  annotations:
-    k8s.v1.cni.cncf.io/networks: '[{ 
-      "name": "test-net", 
-      "ips": ["172.20.50.11/24"],
-      "mac": "00:50:11:aa:bb:cc"
-    }]'
-spec:
-  containers:
-    - name: busybox
-      image: busybox
-      command: ["sh", "-c", "trap : TERM INT; sleep infinity & wait"]
-      securityContext:
-        capabilities:
-          add:
-            - NET_ADMIN
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: pod-2
+#   annotations:
+#     k8s.v1.cni.cncf.io/networks: '[{ 
+#       "name": "test-net", 
+#       "ips": ["172.20.50.11/24"],
+#       "mac": "00:50:11:aa:bb:cc"
+#     }]'
+# spec:
+#   containers:
+#     - name: busybox
+#       image: busybox
+#       command: ["sh", "-c", "trap : TERM INT; sleep infinity & wait"]
+#       securityContext:
+#         capabilities:
+#           add:
+#             - NET_ADMIN

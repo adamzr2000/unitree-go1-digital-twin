@@ -8,7 +8,7 @@ IFACE="vxlan200"
 NODES=(
   "172.20.50.1:xtreme"
   "172.20.50.2:robot"
-  # "172.20.50.3:edge2"
+  "172.20.50.10:ros-master"
   # "172.20.50.4:sensor1"
 )
 
