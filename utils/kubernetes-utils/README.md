@@ -2,7 +2,7 @@
 
 To effortlessly set up a fully-functional, single-node Kubernetes cluster, execute the following command:
 ```bash
-curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--cluster-cidr=10.42.0.0/16 --service-cidr=10.43.0.0/16 --" sh -s -
+curl -sfL https://get.k3s.io | sh -
 ```
 > Note: This single-node will function as a server, including all the `datastore`, `control-plane`, `kubelet`, and `container runtime` components necessary to host workload pods. 
 

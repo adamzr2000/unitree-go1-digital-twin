@@ -1,7 +1,7 @@
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
 metadata:
-  name: test-net-macvlan
+  name: test-net
 spec:
   config: '{
     "cniVersion": "0.3.1",
@@ -27,9 +27,9 @@ metadata:
   name: multus-pod-1
   annotations:
     k8s.v1.cni.cncf.io/networks: '[{ 
-      "name": "test-net-macvlan", 
+      "name": "test-net", 
       "ips": ["172.20.50.10/24"],
-      "mac": "20:50:10:AA:BB:CC"
+      "mac": "00:50:10:aa:bb:cc"
     }]'
 spec:
   containers:
@@ -49,9 +49,9 @@ metadata:
   name: multus-pod-2
   annotations:
     k8s.v1.cni.cncf.io/networks: '[{ 
-      "name": "test-net-macvlan", 
+      "name": "test-net", 
       "ips": ["172.20.50.11/24"],
-      "mac": "20:50:11:AA:BB:CC"
+      "mac": "00:50:11:aa:bb:cc"
     }]'
 spec:
   containers:
