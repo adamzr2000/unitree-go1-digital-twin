@@ -46,8 +46,8 @@ spec:
           value: "subscriber"
         - name: ROS_TOPIC
           value: "chatter"
-  nodeSelector:
-    nodetype: edge
+  # nodeSelector:
+  #   nodetype: edge
   tolerations:
     - key: node-role.kubernetes.io/master
       operator: Exists
