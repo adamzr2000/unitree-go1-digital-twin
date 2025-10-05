@@ -42,7 +42,7 @@ echo "Executing local script: ./delete_k3s_node.sh robot"
 echo "Executing remote commands on $ROBOT_IP..."
 
 sshpass -p ${PASSWORD} ssh -T "${REMOTE_USER}@${ROBOT_IP}" << EOF
-cd /home/${REMOTE_USER}/d6g-demo-k3s-cluster-setup-5tonic
+cd /home/${REMOTE_USER}/unitree-go1-digital-twin/utils/demo/k3s-cluster-setup-5tonic
 echo "${PASSWORD}" | sudo -S ./update_k3s_agent_service.sh --k3s-interface ${FLANNEL_INTERFACE} --k3s-ip ${ROBOT_IP}
 EOF
 

@@ -37,7 +37,7 @@ spec:
         - name: CMD_VEL
           value: "go1_controller/cmd_vel"
         - name: STAMPED
-          value: "true"
+          value: "false"
         volumeMounts:
           - name: webcam
             mountPath: /dev/video0

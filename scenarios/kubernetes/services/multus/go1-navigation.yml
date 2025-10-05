@@ -1,0 +1,44 @@
+######################
+### go1-navigation ###
+######################
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: go1-navigation
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      { "name": "ros-network", "ips": ["172.20.50.11/24"] }
+    ]'
+  labels:
+    app: digital-twin-service
+    node: go1-navigation
+spec:
+  containers:
+  - name: go1-navigation
+    image: go1-navigation
+    imagePullPolicy: IfNotPresent
+    env:
+    - name: ROS_MASTER_URI
+      value: "http://172.20.50.10:11311"
+    - name: ROS_IP
+      value: "172.20.50.11"
+    - name: USE_ODOM
+      value: "true"
+    - name: USE_IMU
+      value: "false"
+    - name: NAVIGATE
+      value: "false"
+    - name: SLAM_ALGORITHM
+      value: "cartographer" # cartographer, hector, gmapping
+  nodeSelector:
+    nodetype: edge
+  tolerations:
+  - key: node-role.kubernetes.io/master
+    operator: Exists
+    effect: NoSchedule
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+
+---

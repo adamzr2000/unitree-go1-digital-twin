@@ -1,0 +1,61 @@
+################
+### vizanti ###
+################
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vizanti
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      { "name": "ros-network", "ips": ["172.20.50.16/24"] }
+    ]'
+  labels:
+    app: digital-twin-service
+    node: vizanti
+spec:
+  containers:
+  - name: vizanti
+    image: vizanti
+    imagePullPolicy: IfNotPresent
+    env:
+    - name: ROS_MASTER_URI
+      value: "http://172.20.50.10:11311"
+    - name: ROS_IP
+      value: "172.20.50.16"
+    - name: IP_ADDRESS_ROSBRIDGE
+      value: "0.0.0.0"
+    ports:
+    - containerPort: 5000
+    - containerPort: 5001
+    securityContext:
+        privileged: true
+  nodeSelector:
+    nodetype: edge
+
+---
+
+### LoadBalancer service declaration.
+### This is required to expose the ports that enable web access to the vizanti container
+apiVersion: v1
+kind: Service
+metadata:
+  name: vizanti-frontend
+  labels:
+    app: digital-twin-service
+    node: vizanti
+spec:
+  type: LoadBalancer
+  ports:
+  - name: port-5000
+    protocol: TCP
+    port: 5000
+    targetPort: 5000
+  - name: port-5001
+    protocol: TCP
+    port: 5001
+    targetPort: 5001
+  selector:
+    node: vizanti
+
+---

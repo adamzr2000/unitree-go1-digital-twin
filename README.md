@@ -60,14 +60,14 @@ The [Digital Twin service](./digital-twin-service/) is composed of the following
 
 | Module                 | Description                                                                                                     | Status       |
 |------------------------|-----------------------------------------------------------------------------------------------------------------|--------------|
-| **ROS Master**         | Provides naming and registration services to ROS nodes ([details](./digital-twin-service/ros-master/))         | ✅ Available |
-| **Go1 Base**           | Interfaces with the robot using the unitree_legged_sdk via ROS ([details](./digital-twin-service/go1-base/))       | ✅ Available |
-| **Gesture Control App**| Translates camera-based gestures into robot velocity commands ([details](./digital-twin-service/gesture-control-app/)) | ✅ Available |
-| **Digital Replica**    | Simulates the Unitree Go1 in NVIDIA Isaac Sim ([details](./digital-twin-service/digital-replica/))              | ✅ Available |
-| **Lidar Drivers**      | Drivers for the RPLIDAR A3 used in mapping and navigation ([details](./digital-twin-service/lidar-drivers/))    | ✅ Available |
-| **Camera Drivers**     | Drivers for the Orbbec Astra S depth camera ([details](./digital-twin-service/camera-drivers/))                 | ✅ Available |
-| **Go1 Navigation**     | Autonomous navigation stack ([details](./digital-twin-service/go1-navigation/))                                 | ✅ Available |
-| **Vizanti**            | Provides web visualizer for mapping and sensor streams ([details](./digital-twin-service/vizanti/))             | ✅ Available |
+| **ROS Master**         | Provides naming and registration services to ROS nodes ([details](./digital-twin-service/ros-master/))               | ✅ Available |
+| **Go1 Base**           | ROS wrapper for the Unitree Go1 ([details](./digital-twin-service/go1-base/))                                        | ✅ Available |
+| **Gesture Control App**| Translates camera-based gestures into ROS velocity commands ([details](./digital-twin-service/gesture-control-app/)) | ✅ Available |
+| **Digital Replica**    | Simulates the Unitree Go1 in NVIDIA Isaac Sim ([details](./digital-twin-service/digital-replica/))                   | ✅ Available |
+| **Lidar Drivers**      | ROS drivers for the RPLIDAR A3 used in mapping and navigation ([details](./digital-twin-service/lidar-drivers/))     | ✅ Available |
+| **Camera Drivers**     | ROS drivers for the Orbbec Astra S depth camera ([details](./digital-twin-service/camera-drivers/))                  | ✅ Available |
+| **Go1 Navigation**     | ROS autonomous navigation stack for the Unitree Go1 ([details](./digital-twin-service/go1-navigation/))              | ✅ Available |
+| **Vizanti**            | ROS web visualizer & mission planner ([details](./digital-twin-service/vizanti/))                                    | ✅ Available |
 
 ---
  

@@ -28,6 +28,8 @@ spec:
           value: "http://10.11.7.4:11311"
         - name: ROS_IP
           value: "10.11.7.4"
+        - name: USE_ODOM
+          value: "true"
       hostNetwork: true      
       nodeSelector:
         nodetype: edge

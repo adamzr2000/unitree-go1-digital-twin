@@ -15,23 +15,23 @@ metadata:
     node: ros-master
 spec:
   containers:
-    - name: ros-master
-      tty: true
-      image: ros-master
-      imagePullPolicy: IfNotPresent
-      env:
-        - name: ROS_MASTER_URI
-          value: "http://172.20.50.10:11311"
-        - name: ROS_IP
-          value: "172.20.50.10"
+  - name: ros-master
+    tty: true
+    image: ros-master
+    imagePullPolicy: IfNotPresent
+    env:
+    - name: ROS_MASTER_URI
+      value: "http://172.20.50.10:11311"
+    - name: ROS_IP
+      value: "172.20.50.10"
   nodeSelector:
     nodetype: edge
   tolerations:
-    - key: node-role.kubernetes.io/master
-      operator: Exists
-      effect: NoSchedule
-    - key: node-role.kubernetes.io/control-plane
-      operator: Exists
-      effect: NoSchedule
+  - key: node-role.kubernetes.io/master
+    operator: Exists
+    effect: NoSchedule
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
 
 ---

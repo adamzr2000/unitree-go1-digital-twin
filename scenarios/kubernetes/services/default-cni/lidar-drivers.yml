@@ -29,9 +29,7 @@ spec:
         - name: ROS_HOSTNAME
           value: "lidar"
         - name: RF2O_LASER_ODOMETRY
-          value: "false"
-        - name: ODOM_TOPIC
-          value: "/odom"                    
+          value: "false"               
         volumeMounts:
           - name: rplidar
             mountPath: /dev/rplidar

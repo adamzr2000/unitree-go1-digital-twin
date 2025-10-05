@@ -1,0 +1,77 @@
+### video-receiver-transcoder
+apiVersion: v1
+kind: Pod
+metadata:
+  name: video-receiver-transcoder
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      { "name": "ros-network", "ips": ["172.20.50.14/24"] }
+    ]'
+  labels:
+    app: receiver-transcoder
+
+spec:
+  # initContainers:
+  # - name: wait-for-mediamtx
+  #   image: curlimages/curl:latest
+  #   command: ['sh', '-c', 'until nslookup mediamtx.default.svc.cluster.local; do echo waiting for mediamtx; sleep 2; done']
+  containers:
+  - name: video-receiver-transcoder
+    tty: true
+    image: video-receiver-transcoder
+    imagePullPolicy: IfNotPresent
+    env:
+    - name: WIDTH
+      value: "1920"
+    - name: HEIGHT
+      value: "1080"
+    - name: SRT_IP
+      value: "172.20.50.15"
+    - name: SRT_PORT
+      value: "8890"
+    - name: SPEED_PRESET
+      value: "ultrafast"
+    - name: STREAM_NAME
+      value: "go1_camera"
+    - name: ENABLE_MONITORING
+      value: "true"
+    - name: USE_H264
+      value: "false"
+    - name: BITRATE
+      value: "4000"
+    - name: EXPORT_TO_INFLUXDB
+      value: "false"
+    - name: INFLUXDB_URL
+      value: "http://10.5.1.21:8088"
+    - name: INFLUXDB_TOKEN
+      value: "desire6g2024;"
+    - name: INFLUXDB_ORG
+      value: "desire6g"
+    - name: INFLUXDB_BUCKET
+      value: "infrastructure-monitoring"  
+    ports:
+    - containerPort: 5554
+      protocol: UDP
+      name: transcoder
+  nodeSelector:
+    nodetype: edge
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: receiver-transcoder-lb
+  labels:
+    app: receiver-transcoder
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 5554
+    protocol: UDP
+    targetPort: 5554
+    name: transcoder
+  selector:
+    app: receiver-transcoder
+
+---

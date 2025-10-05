@@ -1,0 +1,58 @@
+### mediamtx
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mediamtx
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      { "name": "ros-network", "ips": ["172.20.50.15/24"] }
+    ]'
+  labels:
+    app: mediamtx
+spec:
+  containers:
+  - name: mediamtx
+    tty: true
+    image: bluenviron/mediamtx:1.11.3
+    imagePullPolicy: IfNotPresent
+    env:
+    - name: MTX_WEBRTCADDITIONALHOSTS
+      value: "10.5.1.21"
+    ports:
+    - containerPort: 8890
+      protocol: UDP
+      name: srt
+    - containerPort: 8189
+      protocol: UDP
+      name: webrtc-signal
+    - containerPort: 8889
+      name: webrtc-media
+  nodeSelector:
+    nodetype: edge
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mediamtx-frontend
+  labels:
+    app: mediamtx
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8890
+    targetPort: 8890
+    protocol: UDP
+    name: srt
+  - port: 8189
+    targetPort: 8189
+    protocol: UDP
+    name: webrtc-signal
+  - port: 8889
+    targetPort: 8889
+    name: webrtc-media
+  selector:
+    app: mediamtx
+
+---

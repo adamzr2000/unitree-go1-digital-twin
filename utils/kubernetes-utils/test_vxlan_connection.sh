@@ -9,7 +9,11 @@ NODES=(
   "172.20.50.1:xtreme"
   "172.20.50.2:robot"
   "172.20.50.10:ros-master"
-  # "172.20.50.4:sensor1"
+  "172.20.50.7:go1-base"
+  "172.20.50.8:lidar"
+  "172.20.50.11:go1-navigation"
+  "172.20.50.12:gesture-control-app"
+  "172.20.50.13:digital-twin"
 )
 
 # Optional: show local IP for context

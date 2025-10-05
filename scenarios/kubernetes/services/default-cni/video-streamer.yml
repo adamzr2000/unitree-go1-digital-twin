@@ -19,9 +19,21 @@ spec:
       - name: video-streamer
         image: video-streamer
         imagePullPolicy: IfNotPresent
-        envFrom:
-        - configMapRef:
-            name: streamer-config
+        env:
+        - name: "WIDTH"
+          value: "1280"
+        - name: "HEIGHT"
+          value: "720"
+        - name: "RECEIVER_IP"
+          value: "video-receiver-transcoder"
+        - name: "RECEIVER_PORT"
+          value: "5554"
+        - name: "DEVICE"
+          value: "/dev/video0"
+        - name: "USE_H264"
+          value: "false"
+        - name: "FRAMERATE"
+          value: "30"
         securityContext:
           privileged: true
       nodeSelector:

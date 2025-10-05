@@ -1,0 +1,40 @@
+#####################
+### lidar-drivers ###
+#####################
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: lidar
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      { "name": "ros-network", "ips": ["172.20.50.8/24"] }
+    ]'
+  labels:
+    app: digital-twin-service
+    node: lidar
+spec:
+  containers:
+  - name: lidar
+    image: rplidar-lidar
+    imagePullPolicy: IfNotPresent
+    env:
+    - name: ROS_MASTER_URI
+      value: "http://172.20.50.10:11311"
+    - name: ROS_IP
+      value: "172.20.50.8"
+    - name: RF2O_LASER_ODOMETRY
+      value: "false"            
+    volumeMounts:
+      - name: rplidar
+        mountPath: /dev/rplidar
+    securityContext:
+      privileged: true
+  volumes:
+    - name: rplidar
+      hostPath:
+        path: /dev/rplidar
+  nodeSelector:
+    nodetype: robot
+
+---

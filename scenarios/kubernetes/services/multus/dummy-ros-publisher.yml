@@ -33,7 +33,7 @@ spec:
         - name: ROS_MESSAGE
           value: "Hello from publisher!"
   nodeSelector:
-    nodetype: edge
+    nodetype: robot
   tolerations:
     - key: node-role.kubernetes.io/master
       operator: Exists

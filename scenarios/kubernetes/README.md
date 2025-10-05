@@ -20,7 +20,7 @@ docker save <docker-image-name> | sudo k3s ctr images import -
 
 Here is a diagram that represents visually the architecture of the scenario:
 
-![E2E Scenario 5TONIC](../../images/e2e-scenario-kubernetes.png)
+![E2E Scenario 5TONIC](../../images/k3s-cluster-config.png)
 
 > Note: To participate in the ROS network, nodes need to know the IP address of the ROS Master. However,in Kubernetes, we don't know the IP address of the `roscore-edge` container until the application is deployed. To address this issue, a solution is implemented using a `Headless Service` so that application pods can DNS the hostname based on that service name, whose backend is corresponding application pods.
 
