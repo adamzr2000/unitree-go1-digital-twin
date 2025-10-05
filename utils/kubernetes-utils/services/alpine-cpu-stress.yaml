@@ -52,6 +52,7 @@ spec:
     imagePullPolicy: IfNotPresent
   - name: cpu-stress
     image: cpu-stress
+    imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 5000
 

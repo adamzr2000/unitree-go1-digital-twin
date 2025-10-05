@@ -29,14 +29,9 @@ SHELL [ "/bin/bash", "-c" ]
 # Install essential tools and ROS dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    libboost-all-dev \
-    git \
-    wget \
-    unzip \
     python3-pip \
     screen \
     ros-${ROS_DISTRO}-cv-bridge \
-    ros-${ROS_DISTRO}-turtlesim \
     libavcodec-dev \
     libavformat-dev \
     libswscale-dev \
@@ -71,14 +66,13 @@ RUN echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
 USER root
 
 # Change permissions to make scripts executable
-RUN chmod a+x /home/go1/catkin_ws/src/unitree_ros_to_real/unitree_legged_real/scripts/*
+RUN chmod a+x /home/go1/catkin_ws/src/go1_gesture_control/scripts/*
 
 # Switch back to user go1
 USER go1
 
-RUN mkdir -p /home/go1/app
-COPY app/ /home/go1/app/
 WORKDIR /home/go1/app/
+COPY app/ .
 
 USER root
 
@@ -92,7 +86,6 @@ RUN chown go1:go1 /home/go1/app/command.txt
 
 # Change permissions to allow user go1 to write to command.txt
 RUN chmod u+w /home/go1/app/command.txt
-
 
 # Indicate completion of Dockerfile setup
 RUN echo "ALL Done"

@@ -7,7 +7,8 @@ camera_type="webcam_ip"
 web_server="yes"
 control_loop_rate="500"
 cmd_vel="go1_controller/cmd_vel"
-stamped="true"
+stamped="false"
+container_image="go1-gesture-control"
 
 # Function to validate IP address format
 validate_ip() {
@@ -82,14 +83,14 @@ echo "STAMPED: $stamped"
 echo "==============================="
 
 # Run docker container
-echo "Running go1-gesture-control docker image."
+echo "Running $container_image docker image."
 
 # Directory on host to map to the container's app directory
 host_app_dir="$(pwd)/app"
 
 docker run \
     -it \
-    --name go1-gesture-control \
+    --name $container_image \
     -e ROS_MASTER_URI="$ros_master_uri" \
     -e ROS_IP="$ros_ip" \
     -e CAMERA_TYPE="$camera_type" \
@@ -102,6 +103,6 @@ docker run \
     --net host \
     --privileged \
     --group-add video \
-    go1-gesture-control:latest
+    $container_image:latest
 
 echo "Done."

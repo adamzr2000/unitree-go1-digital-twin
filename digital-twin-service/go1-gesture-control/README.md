@@ -67,7 +67,7 @@ In the output you should be able to see the `gesture-control-app` container up a
 
 Open the following link in your web browser to start controlling the robot using your gestures:
 ```
-http://127.0.0.1:8888/
+http://127.0.0.1:5000/
 ```
 
 ### Configuration Options

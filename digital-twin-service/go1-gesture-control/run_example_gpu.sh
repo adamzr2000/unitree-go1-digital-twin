@@ -5,11 +5,12 @@ XAUTH=/tmp/.docker.xauth
 # Default values
 ros_master_uri="http://localhost:11311"
 ros_ip="127.0.0.1"
-camera_type="webcam_ip"
+camera_type="webcam"
 web_server="yes"
 control_loop_rate="500"
 cmd_vel="go1_controller/cmd_vel"
-stamped="true"
+stamped="false"
+container_image="go1-gesture-control"
 
 # Function to validate IP address format
 validate_ip() {
@@ -84,14 +85,14 @@ echo "STAMPED: $stamped"
 echo "==============================="
 
 # Run docker container
-echo "Running go1-gesture-control docker image."
+echo "Running $container_image docker image."
 # Directory on host to map to the container's app directory
 host_app_dir="$(pwd)/app"
 
 docker run \
     -it \
-    --name gesture-control-app \
-    --hostname gesture-control-app \
+    --name $container_image \
+    --hostname $container_image \
     --env="DISPLAY=$DISPLAY" \
     --env="QT_X11_NO_MITSHM=1" \
     --env="QT_QPA_PLATFORM=xcb" \
@@ -111,6 +112,6 @@ docker run \
     --privileged \
     --runtime=nvidia \
     --group-add video \
-    go1-gesture-control:latest 
+    $container_image:latest 
 
 echo "Done."

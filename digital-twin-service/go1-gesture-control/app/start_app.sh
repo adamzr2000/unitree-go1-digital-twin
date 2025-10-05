@@ -15,7 +15,7 @@ cleanup() {
 camera_type="${CAMERA_TYPE,,}" 
 web_server="${WEB_SERVER,,}"
 control_loop_rate="${CONTROL_LOOP_RATE:-50}" 
-stamped="${STAMPED:-true}"
+stamped="${STAMPED:-false}"
 cmd_vel="${CMD_VEL:-go1_controller/cmd_vel}"
 
 
@@ -24,7 +24,7 @@ case "$camera_type" in
     "webcam")
         if [[ "$web_server" == "yes" ]]; then
             python_script="gesture_capture_webcam_web.py"
-            start_command="flask run --host=0.0.0.0 --port=8888"
+            start_command="flask run --host=0.0.0.0 --port=5000"
         else
             python_script="gesture_capture_webcam.py"
             start_command="python3 $python_script"
@@ -33,14 +33,14 @@ case "$camera_type" in
         ;;
     "webcam_ip")
         python_script="gesture_capture_webcam_web_ip.py"
-        start_command="flask run --host=0.0.0.0 --port=8888"
+        start_command="flask run --host=0.0.0.0 --port=5000"
         camera_type="Webcam"
         ;;
     *)
         echo "Invalid or no CAMERA_TYPE environment variable set, defaulting to 'Webcam'."
         if [[ "$web_server" == "yes" ]]; then
             python_script="gesture_capture_webcam_web.py"
-            start_command="flask run --host=0.0.0.0 --port=8888"
+            start_command="flask run --host=0.0.0.0 --port=5000"
         else
             python_script="gesture_capture_webcam.py"
             start_command="python3 $python_script"
@@ -59,9 +59,7 @@ source /opt/ros/$ROS_DISTRO/setup.bash
 source ~/catkin_ws/devel/setup.bash 
 
 # Launch the ROS node with the specified control loop rate
-screen -S ros-gesture-control-cmd -dm roslaunch unitree_legged_real gesture_control_cmd.launch control_loop_rate:=$control_loop_rate stamped:=$stamped cmd_vel:=$cmd_vel --wait
-
-# screen -S ros-gesture-control-cmd -dm roslaunch unitree_legged_real gesture_control_cmd.launch --wait
+screen -S ros-gesture-control-cmd -dm roslaunch go1_gesture_control gesture_control.launch control_loop_rate:=$control_loop_rate stamped:=$stamped cmd_vel:=$cmd_vel --wait
 
 sleep 2
 
