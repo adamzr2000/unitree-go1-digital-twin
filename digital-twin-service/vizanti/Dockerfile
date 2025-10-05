@@ -15,4 +15,7 @@ RUN rosdep update --include-eol-distros && \
 RUN source /opt/ros/noetic/setup.bash && catkin_make
 
 USER vizanti
-CMD source /home/vizanti/catkin_ws/devel/setup.bash && roslaunch vizanti server.launch
+
+ENV VIZ_DEFAULT_WIDGET_CONFIG=/home/vizanti/catkin_ws/src/vizanti/config/go1-auto-navigation.json
+
+CMD source /home/vizanti/catkin_ws/devel/setup.bash && roslaunch vizanti server.launch default_widget_config:=${VIZ_DEFAULT_WIDGET_CONFIG}

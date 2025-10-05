@@ -1,0 +1,94 @@
+##################
+### alpine1 ###
+##################
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: alpine1
+  labels:
+    app: alpine-service
+    node: alpine1
+spec:
+  containers:
+  - name: alpine1
+    image: alpine
+    imagePullPolicy: IfNotPresent
+    command: ["sh", "-c", "while true; do sleep 3600; done"]
+
+---
+
+### Headless service declaration.
+### This is required to map to app "alpine1" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: alpine1
+  labels:
+    app: alpine-service
+    node: alpine1
+spec:
+  clusterIP: None
+  selector:
+    node: alpine1
+
+---
+
+##################
+### alpine2 ###
+##################
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: alpine2
+  labels:
+    app: alpine-service
+    node: alpine2
+spec:
+  containers:
+  - name: alpine2
+    image: alpine
+    imagePullPolicy: IfNotPresent
+  - name: cpu-stress
+    image: cpu-stress
+    ports:
+    - containerPort: 5000
+
+---
+
+### Headless service declaration.
+### This is required to map to app "alpine2" so that other pods can DNS its IP address dynamically.
+apiVersion: v1
+kind: Service
+metadata:
+  name: alpine2
+  labels:
+    app: alpine-service
+    node: alpine2
+spec:
+  clusterIP: None
+  selector:
+    node: alpine2
+
+---
+
+### LoadBalancer service declaration.
+### This is required to expose the ports that enable web access to the cpu-stress container
+apiVersion: v1
+kind: Service
+metadata:
+  name: cpu-stress-lb
+  labels:
+    app: alpine-service
+    node: alpine2
+spec:
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 6667
+      targetPort: 5000
+  selector:
+    node: alpine2
+
+---

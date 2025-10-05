@@ -17,13 +17,13 @@ Update the K3s agent service with the correct network interface and IP:
 ```bash
 ./update_k3s_agent_service.sh --k3s-interface ue0 --k3s-ip 10.11.15.X
 ```
-
+---
 ## Quick-Start Guide
 
 ```bash
 ./ssh_k3s_cluster_config.sh --user netcom --host 10.11.15.X --flannel-interface ue0
 ```
-
+---
 # Utility Commands
 
 ## Verify Flannel Public IP Annotation

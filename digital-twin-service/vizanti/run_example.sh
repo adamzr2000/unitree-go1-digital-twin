@@ -41,8 +41,9 @@ echo "Running $container_image docker image."
 
 docker run \
     -it \
+    --net host \
     --name $container_image \
     --rm \
-    --net host \
     -e ROS_MASTER_URI="$ros_master_uri" \
+    -e IP_ADDRESS_ROSBRIDGE="0.0.0.0" \
     $container_image:latest
