@@ -18,7 +18,7 @@ This is the multi-host setup:
 
 - **Master Node (EDGE)**: 
   - IP: `192.168.40.4`
-  - Containers: `roscore-edge`, `digital-twin-app`, `gesture-control-app`, `go1-navigation`, `rviz-vnc`
+  - Containers: `roscore-edge`, `digital-twin-app`, `go1-gesture-control`, `go1-navigation`, `rviz-vnc`
 
 - **Worker Node (ROBOT)**: 
   - IP: `192.168.40.70`
@@ -45,7 +45,7 @@ From the master machine, you can see the nodes belonging to the Swarm using this
 
 ## Deployment
 
-> Note: we have two separate docker compose files because the native docker swarm command doesn't support deploying containers with `device`, `privileged`, and `group_add: - video` options. These options are necessary for the `lidar-drivers` and for enabling camera input for the `gesture-control-app`. For automated deployment across multiple docker hosts, please refer to the [utils/ros-orchestrator](./../../utils/ros-orchestrator) directory. This includes a simple Flask server with a REST API to orchestrate the different modules of the Digital Twin service across multiple hosts using the [Docker SDK for Python](https://docker-py.readthedocs.io/en/stable/).
+> Note: we have two separate docker compose files because the native docker swarm command doesn't support deploying containers with `device`, `privileged`, and `group_add: - video` options. These options are necessary for the `lidar-drivers` and for enabling camera input for the `go1-gesture-control`. For automated deployment across multiple docker hosts, please refer to the [utils/ros-orchestrator](./../../utils/ros-orchestrator) directory. This includes a simple Flask server with a REST API to orchestrate the different modules of the Digital Twin service across multiple hosts using the [Docker SDK for Python](https://docker-py.readthedocs.io/en/stable/).
 
 Run this command in the `edge` node: 
 ```bash

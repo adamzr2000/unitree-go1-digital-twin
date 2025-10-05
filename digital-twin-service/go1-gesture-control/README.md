@@ -61,7 +61,7 @@ Verify that the container is up and running:
 ```bash
 docker ps
 ```
-In the output you should be able to see the `gesture-control-app` container up and running. 
+In the output you should be able to see the `go1-gesture-control` container up and running. 
 
 ### How to use it?
 

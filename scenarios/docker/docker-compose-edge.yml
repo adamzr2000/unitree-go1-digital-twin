@@ -19,10 +19,10 @@ services:
     networks:
       - digital-twin-service
 
-  gesture-control-app:
+  go1-gesture-control:
     image: go1-gesture-control:latest
-    container_name: gesture-control-app
-    hostname: gesture-control-app
+    container_name: go1-gesture-control
+    hostname: go1-gesture-control
     ports:       
       - "8888:8888/tcp"
     environment:

@@ -50,6 +50,7 @@ spec:
   - name: alpine2
     image: alpine
     imagePullPolicy: IfNotPresent
+    command: ["sh", "-c", "while true; do sleep 3600; done"]
   - name: cpu-stress
     image: cpu-stress
     imagePullPolicy: IfNotPresent

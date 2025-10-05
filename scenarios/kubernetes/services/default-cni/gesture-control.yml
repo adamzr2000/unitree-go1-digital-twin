@@ -1,33 +1,33 @@
 ###########################
-### gesture-control-app ###
+### go1-gesture-control ###
 ###########################
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gesture-control-app-deployment
+  name: go1-gesture-control-deployment
   labels:
     app: digital-twin-service
-    node: gesture-control-app
+    node: go1-gesture-control
 spec:
   replicas: 1
   selector:
     matchLabels:
-      node: gesture-control-app
+      node: go1-gesture-control
   template:
     metadata:
       labels:
-        node: gesture-control-app
+        node: go1-gesture-control
     spec:
       containers:
-      - name: gesture-control-app
+      - name: go1-gesture-control
         image: go1-gesture-control
         imagePullPolicy: IfNotPresent
         env:
         - name: ROS_MASTER_URI
           value: "http://ros-master:11311"
         - name: ROS_HOSTNAME
-          value: "gesture-control-app"
+          value: "go1-gesture-control"
         - name: CAMERA_TYPE
           value: "webcam_ip"
         - name: WEB_SERVER
@@ -39,7 +39,7 @@ spec:
         - name: STAMPED
           value: "false"
         ports:
-        - containerPort: 8888
+        - containerPort: 5000
         volumeMounts:
           - name: webcam
             mountPath: /dev/video0
@@ -55,37 +55,37 @@ spec:
 ---
 
 ### Headless service declaration.
-### This is required to map to app "gesture-control-app" so that other pods can DNS its IP address dynamically.
+### This is required to map to app "go1-gesture-control" so that other pods can DNS its IP address dynamically.
 apiVersion: v1
 kind: Service
 metadata:
-  name: gesture-control-app
+  name: go1-gesture-control
   labels:
     app: digital-twin-service
-    node: gesture-control-app
+    node: go1-gesture-control
 spec:
   clusterIP: None
   selector:
-    node: gesture-control-app
+    node: go1-gesture-control
 
 ---
 
 ### LoadBalancer service declaration.
-### This is required to expose the ports that enable web access to the gesture-control-app container
+### This is required to expose the ports that enable web access to the go1-gesture-control container
 apiVersion: v1
 kind: Service
 metadata:
-  name: gesture-control-app-frontend
+  name: go1-gesture-control-frontend
   labels:
     app: digital-twin-service
-    node: gesture-control-app
+    node: go1-gesture-control
 spec:
   type: LoadBalancer
   ports:
     - protocol: TCP
       port: 8888
-      targetPort: 8888
+      targetPort: 5000
   selector:
-    node: gesture-control-app
+    node: go1-gesture-control
 
 ---

@@ -87,28 +87,28 @@ spec:
 ---
 
 ###########################
-### gesture-control-app ###
+### go1-gesture-control ###
 ###########################
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gesture-control-app-deployment
+  name: go1-gesture-control-deployment
   labels:
     app: digital-twin-service
-    node: gesture-control-app
+    node: go1-gesture-control
 spec:
   replicas: 1
   selector:
     matchLabels:
-      node: gesture-control-app
+      node: go1-gesture-control
   template:
     metadata:
       labels:
-        node: gesture-control-app
+        node: go1-gesture-control
     spec:
       containers:
-      - name: gesture-control-app
+      - name: go1-gesture-control
         image: go1-gesture-control
         imagePullPolicy: IfNotPresent
         env:

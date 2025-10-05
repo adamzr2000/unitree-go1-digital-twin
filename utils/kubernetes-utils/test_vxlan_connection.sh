@@ -12,7 +12,7 @@ NODES=(
   "172.20.50.7:go1-base"
   "172.20.50.8:lidar"
   "172.20.50.11:go1-navigation"
-  "172.20.50.12:gesture-control-app"
+  "172.20.50.12:go1-gesture-control"
   "172.20.50.13:digital-twin"
 )
 

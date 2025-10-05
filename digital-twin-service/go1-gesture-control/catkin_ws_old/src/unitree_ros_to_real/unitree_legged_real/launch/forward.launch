@@ -1,4 +1,0 @@
-<launch>
-    <node pkg="unitree_legged_real" type="twist_sub" name="node_twist_sub" output="screen"/>
-    <node pkg="unitree_legged_real" type="forward_walk" name="node_forward_walk" output="screen"/>
-</launch>

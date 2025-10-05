@@ -3,7 +3,7 @@
 # Define the mapping between ROS nodes and Kubernetes deployments
 declare -A NODE_DEPLOYMENT_MAP
 NODE_DEPLOYMENT_MAP["/rplidarNode"]="lidar-deployment"
-NODE_DEPLOYMENT_MAP["/node_gesture_control"]="gesture-control-app-deployment"
+NODE_DEPLOYMENT_MAP["/node_gesture_control"]="go1-gesture-control-deployment"
 NODE_DEPLOYMENT_MAP["/go1_controller"]="go1-base-deployment"
 NODE_DEPLOYMENT_MAP["/OmniIsaacRosBridge"]="digital-twin-app-deployment"
 NODE_DEPLOYMENT_MAP["/local_ekf/ekf_localization_with_odom"]="go1-base-deployment"
