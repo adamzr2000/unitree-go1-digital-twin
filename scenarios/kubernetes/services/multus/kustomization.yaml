@@ -3,8 +3,9 @@ kind: Kustomization
 resources:
   - ros-network.yml
   - ros-master.yml
+  - mediamtx.yml
+  - video-receiver.yml
   - gesture-control.yml
-  - digital-replica.yml  
+  - vizanti.yml
+  # - digital-replica.yml
   # - go1-navigation.yml
-  # - mediamtx.yml
-  # - video-receiver.yml
