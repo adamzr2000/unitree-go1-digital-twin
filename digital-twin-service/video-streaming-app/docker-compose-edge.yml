@@ -9,7 +9,7 @@ services:
     ports:
       - "8890:8890/udp" # SRT
       - "8889:8889"     # WebRTC signaling
-      - "8189:8189"     # WebRTC media
+      - "8189:8189/udp" # WebRTC media
     restart: always
 
   receiver-transcoder:
@@ -34,7 +34,7 @@ services:
       - INFLUXDB_ORG=desire6g
       - INFLUXDB_BUCKET=infrastructure-monitoring
     volumes:
-      - ./receiver-transcoder/app:/app    
+      - ./receiver-transcoder/app/video_receiver_transcoder.py:/app/video_receiver_transcoder.py
     depends_on:
       - mediamtx
     restart: always
