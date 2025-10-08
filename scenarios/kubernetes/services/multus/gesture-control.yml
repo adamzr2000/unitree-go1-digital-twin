@@ -5,7 +5,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: go1-gesture-control-deployment
+  name: go1-gesture-control
   annotations:
     k8s.v1.cni.cncf.io/networks: '[
       { "name": "ros-network", "ips": ["172.20.50.12/24"] }

@@ -16,7 +16,7 @@ This setup uses Kafka with RAFT and includes Kafka-UI for monitoring. It is base
 ```
 
 ```bash
-./start_monitoring.sh --local-ip 10.5.1.21 --topology-update --influx-export
+./start_monitoring.sh --local-ip 10.5.1.21 --influx-export --topology-update
 ```
 
 - Kafka UI: [http://10.5.1.21:8080](http://10.5.1.21:8080/)
