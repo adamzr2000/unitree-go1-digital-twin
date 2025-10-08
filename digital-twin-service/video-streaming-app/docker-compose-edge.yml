@@ -11,8 +11,6 @@ services:
       - "8889:8889"     # WebRTC signaling
       - "8189:8189"     # WebRTC media
     restart: always
-    depends_on:
-      - streamer
 
   receiver-transcoder:
     image: video-receiver-transcoder
