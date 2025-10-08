@@ -26,6 +26,7 @@ services:
       - SRT_IP=mediamtx
       - SRT_PORT=8890
       - STREAM_NAME=go1_camera
+      - USE_H264=false
       - ENABLE_MONITORING=true
       - EXPORT_TO_INFLUXDB=false
       - INFLUXDB_URL=http://influxdb:8086
