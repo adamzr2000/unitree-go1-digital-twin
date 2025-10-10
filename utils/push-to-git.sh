@@ -1,25 +1,32 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Check if commit message is provided
-if [ -z "$1" ]; then
-  echo "Usage: $0 <commit_message>"
-  exit 1
+[[ $# -ge 1 ]] || { echo "Usage: $0 <commit_message>"; exit 1; }
+msg="$1"
+
+# detect branch
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+# stage & commit only if there are staged changes
+git add -A
+if ! git diff --cached --quiet; then
+  git commit -m "$msg"
+else
+  echo "No changes to commit."
 fi
 
-# Commit message
-COMMIT_MESSAGE="$1"
+# ensure remote exists
+git remote show origin >/dev/null 2>&1 || { echo "No remote 'origin'."; exit 1; }
 
-# Add all changes
-git add --all
+# sync with remote and rebase to keep history clean
+git fetch origin
+# set upstream if missing
+if ! git rev-parse --verify --quiet "origin/$branch" >/dev/null; then
+  git push -u origin "$branch"
+else
+  git pull --rebase origin "$branch"
+  git push origin "$branch"
+fi
 
-# Commit with the provided message
-git commit -m "$COMMIT_MESSAGE"
-
-# Set the branch to main
-git branch -M main
-
-# Push to the origin
-git push -u origin main
-
-echo "Changes have been pushed to the repository."
+echo "Push succeeded to origin/$branch."
 
