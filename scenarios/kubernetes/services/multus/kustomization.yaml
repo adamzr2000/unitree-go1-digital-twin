@@ -7,5 +7,7 @@ resources:
   - video-receiver.yml
   - gesture-control.yml
   - vizanti.yml
+  - go1-base.yml
+  - lidar-drivers.yml
+  - go1-navigation.yml
   # - digital-replica.yml
-  # - go1-navigation.yml

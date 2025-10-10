@@ -1,3 +1,21 @@
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: test-net
+spec:
+  config: |
+    {
+      "cniVersion": "0.3.1",
+      "type": "ipvlan",
+      "master": "vxlan200",
+      "mode": "l2",
+      "ipam": {
+        "type": "static"
+      }
+    }
+
+---
+
 ##################
 ### alpine1 ###
 ##################
@@ -6,6 +24,10 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: alpine1
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      { "name": "test-net", "ips": ["172.20.50.10/24"] }
+    ]'  
   labels:
     app: alpine-service
     node: alpine1
@@ -20,22 +42,6 @@ spec:
 
 ---
 
-### Headless service declaration.
-### This is required to map to app "alpine1" so that other pods can DNS its IP address dynamically.
-apiVersion: v1
-kind: Service
-metadata:
-  name: alpine1
-  labels:
-    app: alpine-service
-    node: alpine1
-spec:
-  clusterIP: None
-  selector:
-    node: alpine1
-
----
-
 ##################
 ### alpine2 ###
 ##################
@@ -44,6 +50,10 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: alpine2
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      { "name": "test-net", "ips": ["172.20.50.11/24"] }
+    ]'  
   labels:
     app: alpine-service
     node: alpine2
@@ -56,20 +66,5 @@ spec:
 
   nodeSelector:
     nodetype: robot
----
-
-### Headless service declaration.
-### This is required to map to app "alpine2" so that other pods can DNS its IP address dynamically.
-apiVersion: v1
-kind: Service
-metadata:
-  name: alpine2
-  labels:
-    app: alpine-service
-    node: alpine2
-spec:
-  clusterIP: None
-  selector:
-    node: alpine2
 
 ---

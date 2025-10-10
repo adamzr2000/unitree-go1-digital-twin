@@ -96,10 +96,15 @@ def handle_message(msg, topic):
 
         elif topic == "applications":
             for pod, s in data.items():
-                batch.append(
-                    Point("applications")
+                p = Point("applications") \
                     .tag("pod", pod)
-                    .field("cpu_mcores",       s["cpu_mcores"])
+
+                node_val = s.get("node")
+                if node_val:
+                    p = p.tag("node", node_val)
+
+                batch.append(
+                   p.field("cpu_mcores",       s["cpu_mcores"])
                     .field("limit_cpu_mcores", s["limit_cpu_mcores"])
                     .field("cpu_limit_pct",    s.get("cpu_limit_pct", 0))
                     .field("mem_mb",           s["mem_mb"])

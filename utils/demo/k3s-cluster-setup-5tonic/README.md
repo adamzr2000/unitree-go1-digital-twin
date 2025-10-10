@@ -36,15 +36,26 @@ kubectl describe node robot | grep flannel.alpha.coreos.com/public-ip
 kubectl annotate node robot flannel.alpha.coreos.com/public-ip-overwrite=10.11.15.X
 ```
 
-## Alpine Deployment Test
+## Alpine Deployment Test (cni)
 ```bash
 kubectl apply -f alpine-test.yaml
 ```
-
-## Access Running Alpine Deployments
 ```bash
-kubectl exec -it deploy/alpine1-deployment -- sh
-kubectl exec -it deploy/alpine2-deployment -- sh
+kubectl exec alpine1 -- sh -c "ping alpine2"
+```
+```bash
+kubectl exec alpine2 -- sh -c "ping alpine1"
+```
+
+## Alpine Deployment Test (multus)
+```bash
+kubectl apply -f alpine-test-multus.yaml
+```
+```bash
+kubectl exec alpine1 -- sh -c "ping 172.20.50.11"
+```
+```bash
+kubectl exec alpine2 -- sh -c "ping 172.20.50.10"
 ```
 
 ## Capture VXLAN Traffic with TShark

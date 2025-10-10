@@ -48,13 +48,13 @@ core_api = client.CoreV1Api()
 
 # Ping Targets
 ping_targets = {
-    "google-dns": "8.8.8.8",
+    "5tonic-gw": "10.5.1.21",
     "robot": "127.0.0.1",
 }
 
 ping_results = {name: {"total": 0, "success": 0, "failure": 0, "latest_latency": None} for name in ping_targets}
 
-EXCLUDED_IFACE_PREFIXES = ["lo", "docker", "br-", "br", "cni", "eno1", "eno2", "enp7s0", "enp9s0f0", "veth", "wlp"]
+EXCLUDED_IFACE_PREFIXES = ["lo", "docker", "vibr", "br-", "br", "cni", "eno1", "eno2", "enp7s0", "enp9s0f0", "veth", "wlp"]
 POLL_INTERVAL = 15  # seconds, match metrics-server scrape interval
 
 
@@ -66,13 +66,13 @@ def get_k8s_nodes_metrics():
         usage_map = {item["metadata"]["name"]: item["usage"] for item in resp.get("items", [])}
     except ApiException as e:
         log.error(f"Failed to fetch node usage: {e}")
-        return {"time": now, "nodes": {}}
+        return {}
     # Capacity metrics
     try:
         nodes = core_api.list_node().items
     except ApiException as e:
         log.error(f"Failed to list nodes: {e}")
-        return {"time": now, "nodes": {}}
+        return {}
     alloc_map = {n.metadata.name: n.status.allocatable for n in nodes}
 
     nodes_data = {}
@@ -120,6 +120,7 @@ def get_k8s_nodes_metrics():
         }
     return nodes_data
 
+api_client = client.ApiClient()
 
 # Helper to fetch per-pod network from Kubelet Summary API
 def get_pod_network_metrics_on_node(node_name):
@@ -128,10 +129,8 @@ def get_pod_network_metrics_on_node(node_name):
     to fetch network stats for every pod on the given node.
     Returns a dict: { (namespace,name): {'rx_bytes':…, 'tx_bytes':…}, … }
     """
-    # Create a fresh ApiClient (avoids relying on a global api_client)
-    local_api_client = client.ApiClient()
     try:
-        summary_json, _, _ = local_api_client.call_api(
+        summary_json, _, _ = api_client.call_api(
             '/api/v1/nodes/{node}/proxy/stats/summary', 'GET',
             path_params={'node': node_name},
             header_params={'Accept': 'application/json'},
@@ -152,6 +151,14 @@ def get_pod_network_metrics_on_node(node_name):
         }
     return pod_net
 
+def get_all_pod_network_metrics(node_map):
+    """node_map: {(ns,name) -> node_name}"""
+    merged = {}
+    for node in sorted({n for n in node_map.values() if n}):
+        m = get_pod_network_metrics_on_node(node)
+        merged.update(m)
+    return merged
+
 def get_k8s_pods_metrics():
     try:
         pod_resp = metrics_api.list_cluster_custom_object(group="metrics.k8s.io", version="v1beta1", plural="pods")
@@ -167,7 +174,8 @@ def get_k8s_pods_metrics():
     spec_map = {(p.metadata.namespace, p.metadata.name): p.spec.containers for p in pods}
     node_map = {(p.metadata.namespace, p.metadata.name): p.spec.node_name for p in pods}
 
-    pod_net = get_pod_network_metrics_on_node(node_map.get(("default", items[0]["metadata"]["name"]), ""))
+    #pod_net = get_pod_network_metrics_on_node(node_map.get(("default", items[0]["metadata"]["name"]), ""))
+    pod_net = get_all_pod_network_metrics(node_map)
 
     def pct(used, limit): return round(used / limit * 100, 2) if limit else None
     pod_metrics = {}
@@ -193,6 +201,7 @@ def get_k8s_pods_metrics():
             if cpu_l: lim_cpu_m += int(cpu_l[:-1]) if cpu_l.endswith("m") else int(float(cpu_l) * 1000)
             mem_l = limits.get("memory")
             if mem_l and mem_l.endswith("Mi"): lim_mem_b += int(mem_l[:-2]) * 1024**2
+            
         net_vals = pod_net.get(key, {"rx_bytes": None, "tx_bytes": None})
         pod_metrics[name] = {
             "node": node,

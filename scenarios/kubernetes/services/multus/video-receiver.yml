@@ -40,15 +40,15 @@ spec:
     - name: BITRATE
       value: "4000"
     - name: EXPORT_TO_INFLUXDB
-      value: "false"
+      value: "true"
     - name: INFLUXDB_URL
-      value: "http://10.5.1.21:8088"
+      value: "http://10.5.1.21:8087"
     - name: INFLUXDB_TOKEN
       value: "desire6g2024;"
     - name: INFLUXDB_ORG
       value: "desire6g"
     - name: INFLUXDB_BUCKET
-      value: "infrastructure-monitoring"  
+      value: "monitoring"  
     ports:
     - containerPort: 5554
       protocol: UDP

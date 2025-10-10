@@ -12,7 +12,7 @@ This setup uses Kafka with RAFT and includes Kafka-UI for monitoring. It is base
 
 ### Start Monitoring with Edge Kafka instance
 ```bash
-./start_monitoring.sh --local-ip 10.5.1.21
+./start_monitoring.sh --local-ip 10.5.1.21 --influx-export
 ```
 
 ```bash
@@ -22,6 +22,13 @@ This setup uses Kafka with RAFT and includes Kafka-UI for monitoring. It is base
 - Kafka UI: [http://10.5.1.21:8080](http://10.5.1.21:8080/)
 - Grafana Dashboard: [http://10.5.1.21:3001](http://10.5.1.21:3000/)
 - InfluxDB UI: [http://10.5.1.21:8087](http://10.5.1.21:8086/)
+
+
+```bash
+--kubelet-preferred-address-types=ExternalIP,InternalIP,Hostname
+--kubelet-insecure-tls
+```
+> Note: This may be needed in the k3s master
 
 ### Stop Monitoring
 ```bash

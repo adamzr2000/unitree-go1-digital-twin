@@ -45,6 +45,8 @@ spec:
   nodeSelector:
     nodetype: robot
 
+---
+
 ### LoadBalancer service declaration.
 ### This is required to expose the ports that enable communication from outside the cluster to the internal computers of the robot.
 apiVersion: v1

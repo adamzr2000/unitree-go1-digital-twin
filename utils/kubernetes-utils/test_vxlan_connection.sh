@@ -11,9 +11,11 @@ NODES=(
   "172.20.50.10:ros-master"
   "172.20.50.7:go1-base"
   "172.20.50.8:lidar"
+  "172.20.50.9:video-streamer"
   "172.20.50.11:go1-navigation"
   "172.20.50.12:go1-gesture-control"
   "172.20.50.13:digital-twin"
+  "172.20.50.14:video-receiver"
 )
 
 # Optional: show local IP for context

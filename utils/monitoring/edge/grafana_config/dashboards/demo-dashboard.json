@@ -1,4 +1,4 @@
-{  
+{
   "annotations": {
     "list": [
       {
@@ -44,8 +44,144 @@
       },
       "id": 16,
       "panels": [],
-      "title": "Infrastructure",
+      "title": "Kubernetes Overview",
       "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "fixed"
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "string"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 5,
+        "x": 0,
+        "y": 1
+      },
+      "id": 47,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"monitoring\")\n  |> range(start: -1h)\n  |> filter(fn: (r) => r._measurement == \"applications\")\n  |> filter(fn: (r) => exists r.node and r.node != \"\")\n  |> keep(columns: [\"node\"])\n  |> group(columns: [])                 // single table\n  |> distinct(column: \"node\")\n  |> count()\n  |> rename(columns: {_value: \"node_count\"})\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Nodes",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "fixed"
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "string"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 7,
+        "x": 5,
+        "y": 1
+      },
+      "id": 43,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"monitoring\")\n  |> range(start: -1h)\n  |> filter(fn: (r) => r._measurement == \"applications\")\n  |> keep(columns: [\"pod\"])          // ensure we keep the tag\n  |> group(columns: [])              // single table\n  |> distinct(column: \"pod\")         // outputs a column named _value\n  |> count()                         // counts rows in _value\n  |> rename(columns: {_value: \"pod_count\"})\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Pods",
+      "type": "stat"
     },
     {
       "datasource": {
@@ -81,9 +217,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 7,
         "w": 6,
-        "x": 0,
+        "x": 12,
         "y": 1
       },
       "id": 1,
@@ -146,9 +282,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 7,
         "w": 6,
-        "x": 6,
+        "x": 18,
         "y": 1
       },
       "id": 2,
@@ -183,6 +319,162 @@
     },
     {
       "datasource": {
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto",
+              "wrapText": false
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 5,
+        "x": 0,
+        "y": 4
+      },
+      "id": 48,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": false,
+          "fields": "",
+          "reducer": [],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "query": "from(bucket: \"monitoring\")\n  |> range(start: -15m)\n  |> filter(fn: (r) => r._measurement == \"applications\")\n  |> filter(fn: (r) => exists r.node and r.node != \"\")\n  |> aggregateWindow(every: 1m, fn: last, createEmpty: false)\n  |> keep(columns: [\"pod\",\"node\"])\n  |> group(columns: [\"node\"])\n  |> distinct(column: \"pod\")\n  |> count()\n  |> rename(columns: {_value: \"Running pods\"})\n  |> duplicate(column: \"node\", as: \"Name\")\n  |> keep(columns: [\"Name\", \"Running pods\"])\n  |> group(columns: [])         // single table\n  |> sort(columns: [\"Name\"])\n",
+          "refId": "A"
+        }
+      ],
+      "title": "List of Nodes",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {
+              "Name": 0,
+              "Running pods": 1
+            },
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto",
+              "wrapText": false
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 7,
+        "x": 5,
+        "y": 4
+      },
+      "id": 44,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": false,
+          "fields": "",
+          "reducer": [],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "query": "from(bucket: \"monitoring\")\n  |> range(start: -1h)\n  |> filter(fn: (r) =>\n    r._measurement == \"applications\" and r._field == \"cpu_mcores\"\n  )\n  |> filter(fn: (r) => exists r.pod and exists r.node and r.node != \"\")\n  |> last()\n  |> keep(columns: [\"pod\", \"node\"])\n  |> group(columns: [])\n  |> sort(columns: [\"pod\", \"node\"])\n  |> rename(columns: {pod: \"Name\", node: \"Running node\"})\n",
+          "refId": "A"
+        }
+      ],
+      "title": "List of Pods",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {
+              "Name": 0,
+              "Running node": 1
+            },
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
         "type": "influxdb",
         "uid": "P951FEA4DE68E13C5"
       },
@@ -210,10 +502,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 3,
-        "x": 0,
-        "y": 7
+        "x": 12,
+        "y": 8
       },
       "id": 36,
       "options": {
@@ -255,7 +547,8 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "fixedColor": "blue",
+            "mode": "fixed"
           },
           "fieldMinMax": false,
           "mappings": [],
@@ -276,10 +569,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 3,
-        "x": 3,
-        "y": 7
+        "x": 15,
+        "y": 8
       },
       "id": 37,
       "options": {
@@ -343,10 +636,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 3,
-        "x": 6,
-        "y": 7
+        "x": 18,
+        "y": 8
       },
       "id": 38,
       "options": {
@@ -388,7 +681,8 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "fixedColor": "blue",
+            "mode": "fixed"
           },
           "fieldMinMax": false,
           "mappings": [],
@@ -410,10 +704,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 3,
-        "x": 9,
-        "y": 7
+        "x": 21,
+        "y": 8
       },
       "id": 39,
       "options": {
@@ -453,7 +747,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 10
+        "y": 12
       },
       "id": 34,
       "panels": [],
@@ -479,7 +773,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 40,
+            "fillOpacity": 0,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -522,201 +816,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 10,
         "w": 12,
         "x": 0,
-        "y": 11
+        "y": 13
       },
       "id": 42,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.2",
-      "targets": [
-        {
-          "query": "from(bucket: \"monitoring\")\r\n  |> range(start: -15m)\r\n  |> filter(fn: (r) => \r\n       r._measurement == \"applications\" and\r\n       r._field       == \"net_tx_bytes\" and\r\n       r.pod          =~ /${pod:regex}/\r\n     )\r\n  |> map(fn: (r) => ({ r with combined_label: r.pod }))\r\n  |> keep(columns: [\"_time\", \"_value\", \"combined_label\"])\r\n  |> group(columns: [\"combined_label\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> fill(column: \"_value\", usePrevious: true)\r\n  |> yield(name: \"pod_cpu_mcores\")\r\n",
-          "refId": "A"
-        }
-      ],
-      "title": "CPU Usage by Pod",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "P951FEA4DE68E13C5"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 40,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 3,
-            "pointSize": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "line"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 90
-              }
-            ]
-          },
-          "unit": "decmbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 11
-      },
-      "id": 41,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.2",
-      "targets": [
-        {
-          "query": "from(bucket: \"monitoring\")\r\n  |> range(start: -15m)\r\n  |> filter(fn: (r) => \r\n       r._measurement == \"applications\" and\r\n       r._field       == \"mem_mb\" and\r\n       r.pod          =~ /${pod:regex}/\r\n     )\r\n  |> map(fn: (r) => ({ r with combined_label: r.pod }))\r\n  |> keep(columns: [\"_time\", \"_value\", \"combined_label\"])\r\n  |> group(columns: [\"combined_label\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> fill(column: \"_value\", usePrevious: true)\r\n  |> yield(name: \"pod_mem_mb\")\r\n",
-          "refId": "A"
-        }
-      ],
-      "title": "RAM Usage by Pod",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "P951FEA4DE68E13C5"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 40,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 3,
-            "pointSize": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "dashed"
-            }
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "dark-red",
-                "value": 90
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 0,
-        "y": 20
-      },
-      "id": 35,
       "options": {
         "legend": {
           "calcs": [],
@@ -759,7 +864,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 40,
+            "fillOpacity": 0,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -801,10 +906,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 10,
         "w": 12,
         "x": 12,
-        "y": 20
+        "y": 13
       },
       "id": 40,
       "options": {
@@ -823,8 +928,18 @@
       "pluginVersion": "11.5.2",
       "targets": [
         {
-          "query": "import \"strings\"\r\n\r\nfrom(bucket: \"monitoring\")\r\n  |> range(start: -15m)\r\n  |> filter(fn: (r) =>\r\n       r._measurement == \"applications\" and\r\n       (r._field == \"net_rx_bytes\" or r._field == \"net_tx_bytes\") and\r\n       contains(value: r.pod, set: ${pod:json})\r\n     )\r\n  |> group(columns: [\"pod\", \"_field\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> fill(column: \"_value\", usePrevious: true)\r\n  |> derivative(unit: 1s, nonNegative: true)\r\n  |> map(fn: (r) => ({\r\n       _time:  r._time,\r\n       _value: r._value * 8.0,\r\n       _field: r.pod + \" \" + (if r._field == \"net_tx_bytes\" then \"TX\" else \"RX\")\r\n     }))\r\n  |> keep(columns: [\"_time\", \"_field\", \"_value\"])\r\n  |> yield(name: \"pod_network_throughput_bps\")\r\n",
+          "hide": false,
+          "query": "from(bucket: \"monitoring\")\n  |> range(start: -15m)\n  |> filter(fn: (r) =>\n       r._measurement == \"applications\" and\n       (r._field == \"net_rx_bytes\" or r._field == \"net_tx_bytes\") and\n       r.pod =~ /${pod:regex}/\n     )\n  // keep RX and TX as separate series per pod\n  |> group(columns: [\"pod\", \"_field\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> fill(column: \"_value\", usePrevious: true)\n  |> derivative(unit: 1s, nonNegative: true)     // bytes/s\n  |> map(fn: (r) => ({ r with _value: r._value * 8.0 }))  // bits/s\n  // sum RX+TX together for each pod at each timestamp\n  |> group(columns: [\"pod\", \"_time\"])\n  |> sum()\n  |> group(columns: [\"pod\"])\n  |> yield(name: \"pod_network_total_bps\")",
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "hide": true,
+          "query": "from(bucket: \"monitoring\")\n  |> range(start: -15m)\n  |> filter(fn: (r) =>\n       r._measurement == \"applications\" and\n       (r._field == \"net_rx_bytes\" or r._field == \"net_tx_bytes\") and\n       r.pod =~ /${pod:regex}/\n     )\n  |> group(columns: [\"pod\", \"_field\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> fill(column: \"_value\", usePrevious: true)\n  |> derivative(unit: 1s, nonNegative: true)\n  |> map(fn: (r) => ({\n       _time:  r._time,\n       _value: r._value * 8.0,\n       _field: r.pod + \" \" + (if r._field == \"net_tx_bytes\" then \"TX\" else \"RX\")\n     }))\n  |> keep(columns: [\"_time\", \"_field\", \"_value\"])\n  |> yield(name: \"pod_network_throughput_bps\")\n",
+          "refId": "B"
         }
       ],
       "title": "Net I/O Throughput by Pod",
@@ -836,7 +951,240 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 23
+      },
+      "id": 33,
+      "panels": [],
+      "title": "Video Streaming App",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Mbits"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "go1_camera"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 31,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "query": "from(bucket: \"monitoring\")\n  |> range(start: -15m)\n  |> filter(fn: (r) =>\n    r._measurement == \"video_metrics\" and\n    r._field == \"bandwidth_mbps\"\n  )\n  |> map(fn: (r) => ({ \n    r with stream_label: r.stream\n  }))\n  |> keep(columns: [\"_time\", \"_value\", \"stream_label\"])\n  |> group(columns: [\"stream_label\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> fill(column: \"_value\", usePrevious: true)\n  |> yield(name: \"video_bandwidth\")\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Video Receiver - Throughput (Mbps)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
+            "pointSize": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "fps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "go1_camera"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 24
+      },
+      "id": 32,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "query": "from(bucket: \"monitoring\")\n  |> range(start: -5m)\n  |> filter(fn: (r) =>\n    r._measurement == \"video_metrics\" and\n    r._field == \"fps\"\n  )\n  |> map(fn: (r) => ({\n    r with stream_label: r.stream\n  }))\n  |> keep(columns: [\"_time\", \"_value\", \"stream_label\"])\n  |> group(columns: [\"stream_label\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> fill(column: \"_value\", usePrevious: true)\n  |> yield(name: \"video_fps\")\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Video Receiver - Frames per Second (FPS)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 33
       },
       "id": 6,
       "panels": [],
@@ -862,7 +1210,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 40,
+            "fillOpacity": 0,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -913,10 +1261,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 13,
+        "h": 10,
         "w": 12,
         "x": 0,
-        "y": 30
+        "y": 34
       },
       "id": 3,
       "options": {
@@ -971,7 +1319,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 40,
+            "fillOpacity": 0,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -1025,7 +1373,7 @@
         "h": 13,
         "w": 12,
         "x": 12,
-        "y": 30
+        "y": 34
       },
       "id": 30,
       "options": {
@@ -1052,7 +1400,7 @@
           "refId": "A"
         }
       ],
-      "title": "I/O Throughput by Interface",
+      "title": "Net I/O Throughput by Interface",
       "type": "timeseries"
     },
     {
@@ -1081,10 +1429,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
+        "h": 3,
         "w": 12,
         "x": 0,
-        "y": 43
+        "y": 44
       },
       "id": 5,
       "options": {
@@ -1099,7 +1447,7 @@
         "minVizHeight": 16,
         "minVizWidth": 8,
         "namePlacement": "auto",
-        "orientation": "vertical",
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -1124,326 +1472,6 @@
       ],
       "title": "Ping Packet Loss (%)",
       "type": "bargauge"
-    },
-    {
-      "datasource": {
-        "uid": "P951FEA4DE68E13C5"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "red",
-            "mode": "fixed"
-          },
-          "custom": {
-            "align": "center",
-            "cellOptions": {
-              "type": "auto",
-              "wrapText": false
-            },
-            "filterable": false,
-            "inspect": false
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 12,
-        "x": 12,
-        "y": 43
-      },
-      "id": 9,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "enablePagination": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "11.5.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "P951FEA4DE68E13C5"
-          },
-          "hide": false,
-          "query": "from(bucket: \"monitoring\")\n  |> range(start: -15m)\n  |> filter(fn: (r) => r._measurement == \"ping\")\n  |> filter(fn: (r) =>\n    r._field == \"total_pings\" or\n    r._field == \"successful_pings\" or\n    r._field == \"failed_pings\"\n  )\n  |> last()\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => {\n      total   = float(v: r.total_pings)\n      success = float(v: r.successful_pings)\n      failed  = float(v: r.failed_pings)\n\n      return {\n        IP_Address: r.ip,\n        Total:       int(v: total),\n        Success:     int(v: success),\n        Failed:      int(v: failed)\n      }\n  })\n  |> keep(columns: [\"IP_Address\", \"Total\", \"Success\", \"Failed\"])\n  |> yield(name: \"Ping Summary\")\n",
-          "refId": "A"
-        }
-      ],
-      "title": "Ping Summary",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "includeByName": {},
-            "indexByName": {
-              "Failed": 2,
-              "IP_Address": 0,
-              "Success": 1,
-              "Total": 3
-            },
-            "renameByName": {
-              "IP_Address": "IP"
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 48
-      },
-      "id": 33,
-      "panels": [
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "P951FEA4DE68E13C5"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "barWidthFactor": 0.6,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 2,
-                "pointSize": 1,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "Mbits"
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "go1_camera"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "blue",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 12,
-            "x": 0,
-            "y": 66
-          },
-          "id": 31,
-          "options": {
-            "legend": {
-              "calcs": [
-                "lastNotNull",
-                "mean"
-              ],
-              "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "hideZeros": false,
-              "mode": "multi",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "11.5.2",
-          "targets": [
-            {
-              "query": "from(bucket: \"infrastructure-monitoring\")\n  |> range(start: -15m)\n  |> filter(fn: (r) =>\n    r._measurement == \"video_metrics\" and\n    r._field == \"bandwidth_mbps\"\n  )\n  |> map(fn: (r) => ({ \n    r with stream_label: r.stream\n  }))\n  |> keep(columns: [\"_time\", \"_value\", \"stream_label\"])\n  |> group(columns: [\"stream_label\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> fill(column: \"_value\", usePrevious: true)\n  |> yield(name: \"video_bandwidth\")\n",
-              "refId": "A"
-            }
-          ],
-          "title": "Throughput Rx (Mbps)",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "P951FEA4DE68E13C5"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "barWidthFactor": 0.6,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineStyle": {
-                  "fill": "solid"
-                },
-                "lineWidth": 2,
-                "pointSize": 1,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "fieldMinMax": false,
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  }
-                ]
-              },
-              "unit": "fps"
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "go1_camera"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "blue",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 12,
-            "x": 12,
-            "y": 66
-          },
-          "id": 32,
-          "options": {
-            "legend": {
-              "calcs": [
-                "lastNotNull",
-                "mean"
-              ],
-              "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "hideZeros": false,
-              "mode": "multi",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "11.5.2",
-          "targets": [
-            {
-              "query": "from(bucket: \"infrastructure-monitoring\")\n  |> range(start: -5m)\n  |> filter(fn: (r) =>\n    r._measurement == \"video_metrics\" and\n    r._field == \"fps\"\n  )\n  |> map(fn: (r) => ({\n    r with stream_label: r.stream\n  }))\n  |> keep(columns: [\"_time\", \"_value\", \"stream_label\"])\n  |> group(columns: [\"stream_label\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> fill(column: \"_value\", usePrevious: true)\n  |> yield(name: \"video_fps\")\n",
-              "refId": "A"
-            }
-          ],
-          "title": "Frames per Second (FPS)",
-          "type": "timeseries"
-        }
-      ],
-      "title": "Video Streaming App",
-      "type": "row"
     }
   ],
   "preload": false,
