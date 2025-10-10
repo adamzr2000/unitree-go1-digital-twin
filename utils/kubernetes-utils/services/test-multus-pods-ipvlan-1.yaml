@@ -17,27 +17,27 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: pod-1
+  name: alpine1
   annotations:
     k8s.v1.cni.cncf.io/networks: '[
       { "name": "test-net", "ips": ["172.20.50.10/24"] }
     ]'
 spec:
   containers:
-    - name: busybox
-      image: busybox
-      command: ["sh", "-c", "trap : TERM INT; sleep infinity & wait"]
+    - name: alpine
+      image: alpine
+      command: ["sh", "-c", "while true; do sleep 3600; done"]
 ---
 apiVersion: v1
 kind: Pod
 metadata:
-  name: pod-2
+  name: alpine2
   annotations:
     k8s.v1.cni.cncf.io/networks: '[
       { "name": "test-net", "ips": ["172.20.50.11/24"] }
     ]'
 spec:
   containers:
-    - name: busybox
-      image: busybox
-      command: ["sh", "-c", "trap : TERM INT; sleep infinity & wait"]
+    - name: alpine
+      image: alpine
+      command: ["sh", "-c", "while true; do sleep 3600; done"]

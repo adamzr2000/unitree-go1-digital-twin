@@ -1,0 +1,39 @@
+############################
+### go1-monitoring-robot ###
+############################
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: monitoring-robot
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      { "name": "ros-network", "ips": ["172.20.50.18/24"] }
+    ]'
+  labels:
+    app: digital-twin-service
+    node: monitoring-robot
+spec:
+  containers:
+  - name: monitoring-robot
+    image: go1-monitoring
+    imagePullPolicy: IfNotPresent
+    env:
+    - name: ROS_MASTER_URI
+      value: "http://172.20.50.10:11311"
+    - name: ROS_IP
+      value: "172.20.50.18"
+    - name: TOPICS
+      value: "/go1_controller/cmd_vel"
+    - name: INFLUXDB_URL
+      value: "http://10.5.1.21:8087"
+    - name: INFLUXDB_TOKEN
+      value: "desire6g2024;"
+    - name: INFLUXDB_ORG
+      value: "desire6g"
+    - name: INFLUXDB_BUCKET
+      value: "monitoring"
+  nodeSelector:
+    nodetype: robot
+
+---

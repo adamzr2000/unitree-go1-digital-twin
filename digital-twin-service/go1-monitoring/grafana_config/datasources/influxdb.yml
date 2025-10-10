@@ -6,9 +6,9 @@ datasources:
   type: influxdb
   access: proxy
   orgId: 1
-  url: http://influxdb:8086
+  url: http://mon-influxdb:8086
   jsonData:
-    defaultBucket: "infrastructure-monitoring"
+    defaultBucket: "monitoring"
     organization: "desire6g"
     version: "Flux"
   secureJsonData:

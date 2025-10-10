@@ -29,21 +29,15 @@ spec:
         - name: ROS_HOSTNAME
           value: "monitoring-edge"
         - name: TOPICS
-          value: "/scan /joint_states /odometry/filtered"
+          value: "/scan,/joint_states,/odometry/filtered"
         - name: INFLUXDB_URL
-          value: "http://10.5.1.21:8088"
+          value: "http://10.5.1.21:8087"
         - name: INFLUXDB_TOKEN
           value: "desire6g2024;"
         - name: INFLUXDB_ORG
           value: "desire6g"
         - name: INFLUXDB_BUCKET
-          value: "ros-metrics"
-        - name: WINDOW_SIZE
-          value: "50"
-        - name: MANUAL_DELAY
-          value: "false"
-        securityContext:
-            privileged: true
+          value: "monitoring"
       nodeSelector:
         nodetype: edge
 

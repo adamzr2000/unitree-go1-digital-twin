@@ -37,13 +37,7 @@ spec:
         - name: INFLUXDB_ORG
           value: "desire6g"
         - name: INFLUXDB_BUCKET
-          value: "ros-metrics"
-        - name: WINDOW_SIZE
-          value: "50"
-        - name: MANUAL_DELAY
-          value: "true"
-        securityContext:
-            privileged: true
+          value: "monitoring"
       nodeSelector:
         nodetype: robot
 
