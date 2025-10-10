@@ -1,6 +1,8 @@
 {
   "kafka": {
     "kafkaIP": "10.5.1.21",
-    "kafkaPort": 9191
+    "kafkaPort": 9191,
+    "use_multus_interface": true,
+    "multus_interface_name": "net1"
   }
 }

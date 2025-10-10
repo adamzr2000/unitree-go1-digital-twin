@@ -7,6 +7,7 @@ import psutil
 
 from kubernetes import client, config
 from kubernetes.client.rest import ApiException
+from kubernetes.stream import stream
 
 from ping3 import ping
 from kafkaConnections import kafkaConnections
@@ -22,6 +23,15 @@ log = logging.getLogger(__name__)
 parser = argparse.ArgumentParser(description="Kafka System Metrics Producer")
 parser.add_argument('--file', dest='file', default="configP1.json", help="Configuration file")
 args = parser.parse_args()
+
+try:
+    with open(args.file, "r") as f:
+        _cfg = json.load(f)
+except Exception:
+    _cfg = {}
+
+USE_MULTUS_INTERFACE = bool(_cfg.get("use_multus_interface", False))
+MULTUS_IFACE_NAME   = _cfg.get("multus_interface_name", "net1")
 
 # Kafka Initialization
 try:
@@ -55,8 +65,7 @@ ping_targets = {
 ping_results = {name: {"total": 0, "success": 0, "failure": 0, "latest_latency": None} for name in ping_targets}
 
 EXCLUDED_IFACE_PREFIXES = ["lo", "docker", "vibr", "br-", "br", "cni", "eno1", "eno2", "enp7s0", "enp9s0f0", "veth", "wlp"]
-POLL_INTERVAL = 15  # seconds, match metrics-server scrape interval
-
+POLL_INTERVAL = 10  # seconds, match metrics-server scrape interval
 
 def get_k8s_nodes_metrics():
     """Fetch usage, capacity, and compute utilization percentage per node in the Kubernetes cluster."""
@@ -122,6 +131,37 @@ def get_k8s_nodes_metrics():
 
 api_client = client.ApiClient()
 
+# ── Helpers for Multus iface (no sidecars; API exec) ───────────────────────
+def _parse_proc_net_dev(text: str):
+    per = {}
+    for line in text.strip().splitlines()[2:]:
+        parts = [p for p in line.replace(":", " ").split() if p]
+        if len(parts) < 11:
+            continue
+        iface, rx, tx = parts[0], int(parts[1]), int(parts[9])
+        per[iface] = {"rx_bytes": rx, "tx_bytes": tx}
+    return per
+
+def _get_iface_bytes_via_api(namespace: str, pod: str, iface: str, container: str | None = None, timeout_s: int = 4):
+    try:
+        out = stream(
+            core_api.connect_get_namespaced_pod_exec,
+            name=pod,
+            namespace=namespace,
+            command=["cat", "/proc/net/dev"],
+            container=container,
+            stderr=True, stdin=False, stdout=True, tty=False,
+            _request_timeout=timeout_s,
+        )
+        per = _parse_proc_net_dev(out)
+        return per.get(iface)
+    except ApiException as e:
+        log.debug(f"Exec API error on {namespace}/{pod}:{iface}: {e}")
+        return None
+    except Exception as e:
+        log.debug(f"Exec error on {namespace}/{pod}:{iface}: {e}")
+        return None
+    
 # Helper to fetch per-pod network from Kubelet Summary API
 def get_pod_network_metrics_on_node(node_name):
     """
@@ -145,10 +185,19 @@ def get_pod_network_metrics_on_node(node_name):
         ns   = pod['podRef']['namespace']
         name = pod['podRef']['name']
         net  = pod.get('network', {})
-        pod_net[(ns, name)] = {
-            'rx_bytes': net.get('rxBytes', 0),
-            'tx_bytes': net.get('txBytes', 0)
-        }
+
+        # Default from Summary API (typically eth0-only)
+        rx = net.get('rxBytes', 0)
+        tx = net.get('txBytes', 0)
+
+        # If enabled, try to read Multus iface (e.g., net1) via API exec and override
+        if USE_MULTUS_INTERFACE:
+            multus = _get_iface_bytes_via_api(ns, name, MULTUS_IFACE_NAME)
+            if multus:
+                rx, tx = multus['rx_bytes'], multus['tx_bytes']
+
+        pod_net[(ns, name)] = {'rx_bytes': rx, 'tx_bytes': tx}
+
     return pod_net
 
 def get_all_pod_network_metrics(node_map):

@@ -6,4 +6,4 @@ docker run -it --rm \
     -v "./config:/config" \
     -v "./app:/app/" \
     monitoring-agent:latest \
-    kubernetes_api_test.py
+    kubernetes_api_test.py --namespace default --pod alpine1 --iface net1 --interval 5
