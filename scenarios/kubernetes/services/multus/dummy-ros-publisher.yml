@@ -32,7 +32,7 @@ spec:
           value: "1.0"
         - name: ROS_MESSAGE
           value: "Hello from publisher!"
-  nodeSelector:
-    nodetype: edge
+  #nodeSelector:
+    #nodetype: edge
 
 ---

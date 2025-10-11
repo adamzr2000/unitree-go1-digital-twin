@@ -1,21 +1,21 @@
 #####################
-### ros-subscriber ###
+### ros-publisher ###
 #####################
 
 apiVersion: v1
 kind: Pod
 metadata:
-  name: ros-subscriber
+  name: ros-publisher
   annotations:
     k8s.v1.cni.cncf.io/networks: '[
-      { "name": "ros-network", "ips": ["172.20.50.91/24"] }
+      { "name": "ros-network", "ips": ["172.20.50.90/24"] }
     ]'
   labels:
     app: digital-twin-service
-    node: ros-subscriber
+    node: ros-publisher
 spec:
   containers:
-    - name: ros-subscriber
+    - name: ros-publisher
       tty: true
       image: dummy-ros-app
       imagePullPolicy: IfNotPresent
@@ -23,10 +23,16 @@ spec:
         - name: ROS_MASTER_URI
           value: "http://172.20.50.10:11311"
         - name: ROS_IP
-          value: "172.20.50.91"
+          value: "172.20.50.90"
         - name: ROS_ROLE
-          value: "subscriber"
+          value: "publisher"
         - name: ROS_TOPIC
           value: "chatter"
+        - name: ROS_RATE
+          value: "1.0"
+        - name: ROS_MESSAGE
+          value: "Hello from publisher!"
+  nodeSelector:
+    nodetype: edge
 
 ---
