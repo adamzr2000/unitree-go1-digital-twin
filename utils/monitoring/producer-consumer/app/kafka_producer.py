@@ -39,13 +39,24 @@ except Exception as e:
     log.error(f"Error reading {args.file}: {e}. Using defaults.")
     _cfg = {}
 
-USE_MULTUS_INTERFACE = bool(_cfg.get("use_multus_interface", False))
-MULTUS_IFACE_NAME    = _cfg.get("multus_interface_name", "net1")
+def _truthy(v):
+    if isinstance(v, bool): return v
+    if isinstance(v, str):  return v.strip().lower() in {"1","true","yes","on"}
+    return bool(v)
+
+kafka_cfg = _cfg.get("kafka", {}) if isinstance(_cfg, dict) else {}
+USE_MULTUS_INTERFACE = _truthy(
+    _cfg.get("use_multus_interface", kafka_cfg.get("use_multus_interface", False))
+)
+MULTUS_IFACE_NAME = (
+    _cfg.get("multus_interface_name", kafka_cfg.get("multus_interface_name", "net1"))
+)
 
 if USE_MULTUS_INTERFACE:
     log.info(f"Multus mode enabled: will read interface '{MULTUS_IFACE_NAME}' from /proc/net/dev.")
 else:
     log.info("Multus mode disabled: using kubelet Summary API network bytes (typically eth0).")
+
 
 # Kafka Initialization
 try:
@@ -175,7 +186,7 @@ def _get_iface_bytes_via_api(namespace: str, pod: str, iface: str, container: st
     except Exception as e:
         log.debug(f"Exec error on {namespace}/{pod}:{iface}: {e}")
         return None
-    
+
 # Helper to fetch per-pod network from Kubelet Summary API
 def get_pod_network_metrics_on_node(node_name):
     """
@@ -206,40 +217,13 @@ def get_pod_network_metrics_on_node(node_name):
 
         # If enabled, try to read Multus iface (e.g., net1) via API exec and override
         if USE_MULTUS_INTERFACE:
-            # Log the call parameters before fetching iface bytes
-            log.debug(
-                "Multus override requested — reading iface via exec",
-                extra={
-                    "ns": ns, "pod": name,
-                    "iface": MULTUS_IFACE_NAME,
-                    "summary_api_rx": rx, "summary_api_tx": tx
-                }
-            )
             multus = _get_iface_bytes_via_api(ns, name, MULTUS_IFACE_NAME)
-
-            # Log the result of the iface read
-            if multus is not None:
-                log.info(
-                    "Multus iface read OK",
-                    extra={
-                        "ns": ns, "pod": name, "iface": MULTUS_IFACE_NAME,
-                        "iface_rx": multus.get("rx_bytes"), "iface_tx": multus.get("tx_bytes")
-                    }
-                )
+            if multus:
                 rx, tx = multus['rx_bytes'], multus['tx_bytes']
-            else:
-                log.warning(
-                    "Multus iface not found or exec failed — keeping Summary API values",
-                    extra={
-                        "ns": ns, "pod": name, "iface": MULTUS_IFACE_NAME,
-                        "summary_api_rx": rx, "summary_api_tx": tx
-                    }
-                )
 
         pod_net[(ns, name)] = {'rx_bytes': rx, 'tx_bytes': tx}
-        
-    log.debug(f"Built pod_net for node {node_name} with {len(pod_net)} entries")
     return pod_net
+
 
 def get_all_pod_network_metrics(node_map):
     """node_map: {(ns,name) -> node_name}"""
@@ -291,7 +275,7 @@ def get_k8s_pods_metrics():
             if cpu_l: lim_cpu_m += int(cpu_l[:-1]) if cpu_l.endswith("m") else int(float(cpu_l) * 1000)
             mem_l = limits.get("memory")
             if mem_l and mem_l.endswith("Mi"): lim_mem_b += int(mem_l[:-2]) * 1024**2
-            
+
         net_vals = pod_net.get(key, {"rx_bytes": None, "tx_bytes": None})
         pod_metrics[name] = {
             "node": node,

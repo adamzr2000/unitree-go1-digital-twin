@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mas-agent-1
+  labels:
+    app: mas
+    node: mas-agent-1
+spec:
+  containers:
+  - name: mas-agent-1
+    image: "mas-agent:latest"
+    imagePullPolicy: "IfNotPresent"
+    ports:
+    - containerPort: 8000
+      hostPort: 8005
+    env:
+    - name: KAFKA_IP
+      value: "10.5.1.21"
+    - name: KAFKA_PORT
+      value: "9191"
+    - name: KAFKA_TOPIC
+      value: "applications"
+    - name: KAFKA_ID
+      value: "30"
+    - name: CPU_PERCENTAGE_THRESHOLD
+      value: "90"
+    - name: TARGET_SERVICE_ID
+      value: "dt-service-id"
+    - name: MLFO_ENDPOINT
+      value: "http://10.5.15.55:8004"
+    - name: ID
+      value: "agent-1"
+  nodeSelector:
+    nodetype: edge
+
+---

@@ -54,6 +54,9 @@ spec:
   - name: cpu-stress
     image: cpu-stress
     imagePullPolicy: IfNotPresent
+    resources:
+      limits:
+        cpu: "4000m"
     ports:
     - containerPort: 5000
 
