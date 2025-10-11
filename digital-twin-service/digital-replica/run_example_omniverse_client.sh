@@ -29,8 +29,6 @@ get_choice
 # Construct ROS MASTER URI
 ros_master_uri="http://${ros_master_ip}:11311"
 
-host_dir="./my-environments"
-
 docker run --name go1-digital-twin --entrypoint bash -it --gpus all -e "ACCEPT_EULA=Y" --rm --network=host \
     -e "PRIVACY_CONSENT=Y" \
     -v ~/docker/isaac-sim/cache/kit:/isaac-sim/kit/cache:rw \
@@ -42,6 +40,6 @@ docker run --name go1-digital-twin --entrypoint bash -it --gpus all -e "ACCEPT_E
     -v ~/docker/isaac-sim/data:/root/.local/share/ov/data:rw \
     -v ~/docker/isaac-sim/documents:/root/Documents:rw \
     -e ROS_MASTER_URI="$ros_master_uri" \
-    -v ${host_dir}:/isaac-sim/my-environments \
+    -v ./go1-environments:/isaac-sim/go1-environments \
     isaac-sim:2023.1.0-ubuntu22.04 \
     ./runheadless.native.sh -v

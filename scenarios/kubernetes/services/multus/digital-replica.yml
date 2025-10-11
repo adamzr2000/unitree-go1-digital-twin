@@ -5,17 +5,17 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: digital-twin-app
+  name: go1-digital-twin
   annotations:
     k8s.v1.cni.cncf.io/networks: '[
       { "name": "ros-network", "ips": ["172.20.50.13/24"] }
     ]'
   labels:
     app: digital-twin-service
-    node: digital-twin-app
+    node: go1-digital-twin
 spec:
   containers:
-  - name: digital-twin-app
+  - name: go1-digital-twin
     image: isaac-sim:2023.1.0-ubuntu22.04
     imagePullPolicy: IfNotPresent
     env:
@@ -44,8 +44,8 @@ spec:
       mountPath: /root/.local/share/ov/data
     - name: documents
       mountPath: /root/Documents
-    - name: my-environments
-      mountPath: /isaac-sim/my-environments
+    - name: go1-environments
+      mountPath: /isaac-sim/go1-environments
     ports:
     - containerPort: 47995
     - containerPort: 47996
@@ -107,9 +107,9 @@ spec:
   - name: documents
     hostPath:
       path: /home/desire6g/docker/isaac-sim/documents
-  - name: my-environments
+  - name: go1-environments
     hostPath:
-      path: /home/desire6g/unitree-go1-digital-twin/digital-twin-service/digital-replica/my-environments
+      path: /home/desire6g/unitree-go1-digital-twin/digital-twin-service/digital-replica/go1-environments
   nodeSelector:
     nodetype: edge
 
@@ -123,7 +123,7 @@ metadata:
   name: digital-twin-app-frontend
   labels:
     app: digital-twin-service
-    node: digital-twin-app
+    node: go1-digital-twin
 spec:
   type: LoadBalancer
   ports:
@@ -377,6 +377,6 @@ spec:
     targetPort: 8311
 
   selector:
-    node: digital-twin-app
+    node: go1-digital-twin
 
 ---
