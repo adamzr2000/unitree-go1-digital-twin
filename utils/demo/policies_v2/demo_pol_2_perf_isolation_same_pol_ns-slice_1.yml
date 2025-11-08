@@ -1,7 +1,0 @@
-policy:
-  id: 0
-  ns-id: 1
-  assigned-user-ids: [8472, 20000]
-  min-bw: 1000
-  max-bw: 100000
-  elasticity: 2

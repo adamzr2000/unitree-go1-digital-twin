@@ -1,2 +1,0 @@
-rtt_latency_ms,rtt_latency_stddev_ms,packet_loss_percent,jitter_ms,jitter_stddev_ms,downlink_bandwidth_mbps,downlink_bandwidth_stddev_mbps,uplink_bandwidth_mbps,uplink_bandwidth_stddev_mbps
-0.289,0.026,0.0,0.482543,0.0,946.1794301022046,7.274278264026399,941.5042730212654,0.11769327880239396

@@ -25,8 +25,14 @@ This setup uses Kafka with RAFT and includes Kafka-UI for monitoring. It is base
 
 
 ```bash
---kubelet-preferred-address-types=ExternalIP,InternalIP,Hostname
---kubelet-insecure-tls
+kubectl -n kube-system patch deploy metrics-server --type='json' -p='[
+  {"op":"replace","path":"/spec/template/spec/containers/0/args/2","value":"--kubelet-preferred-address-types=ExternalIP,InternalIP,Hostname"},
+  {"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--kubelet-insecure-tls"}
+]'
+
+
+# Verify
+kubectl -n kube-system get deploy metrics-server -o json | jq -r '.spec.template.spec.containers[0].args[]'
 ```
 > Note: This may be needed in the k3s master
 

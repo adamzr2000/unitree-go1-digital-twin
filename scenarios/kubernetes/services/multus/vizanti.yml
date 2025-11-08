@@ -49,7 +49,7 @@ spec:
   ports:
   - name: port-5000
     protocol: TCP
-    port: 5000
+    port: 5050
     targetPort: 5000
   - name: port-5001
     protocol: TCP

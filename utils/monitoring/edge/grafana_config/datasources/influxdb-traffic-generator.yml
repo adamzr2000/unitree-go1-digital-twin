@@ -1,0 +1,11 @@
+# grafana/config/provisioning/datasources/influxdb-traffic-generator.yml
+apiVersion: 1
+
+datasources:
+- name: InfluxDB-traffic-generator
+  type: influxdb
+  access: proxy
+  url: http://10.5.1.21:8086
+  isDefault: false
+  jsonData:
+    dbName: desire6g_demo

@@ -81,10 +81,38 @@ except Exception as e:
 metrics_api = client.CustomObjectsApi()
 core_api = client.CoreV1Api()
 
+# ── Quick sanity log: confirm API works + print counts ──────────────────────
+def k8s_sanity_log():
+    try:
+        # Nodes
+        nodes = core_api.list_node(timeout_seconds=5).items
+        node_count = len(nodes)
+
+        # Pods (paged to avoid huge responses)
+        pod_count = 0
+        _continue = None
+        while True:
+            resp = core_api.list_pod_for_all_namespaces(
+                limit=500, _continue=_continue, timeout_seconds=10
+            )
+            pod_count += len(resp.items)
+            # 'continue' is a reserved word; python client exposes it as '_continue'
+            _continue = getattr(resp.metadata, "_continue", None) or getattr(resp.metadata, "continue", None)
+            if not _continue:
+                break
+
+        log.info(f"Kubernetes API OK — nodes={node_count}, pods={pod_count}")
+    except ApiException as e:
+        log.error(f"Kubernetes API sanity check failed (ApiException): {e}")
+    except Exception as e:
+        log.error(f"Kubernetes API sanity check failed: {e}")
+
+k8s_sanity_log()
+
+
 # Ping Targets
 ping_targets = {
-    "5tonic-gw": "10.5.1.21",
-    "robot": "127.0.0.1",
+    "robot": "10.3.202.66",
 }
 
 ping_results = {name: {"total": 0, "success": 0, "failure": 0, "latest_latency": None} for name in ping_targets}

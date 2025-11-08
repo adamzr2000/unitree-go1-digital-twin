@@ -1,0 +1,132 @@
+lnsd:
+  ns-instance-id: "11223344-e2a8-4338-bc8c-be685548bad2" 
+  ns:
+    name: "Digital Twin Demo"
+    id: "418420e3-e2a8-4338-bc8c-be685548bad2"
+    vendor: "D6G"
+    descriptor-version: "1.0"
+    site-id: "SITEID1"
+    network-functions:
+      - nf-instance-id: "firewall-i01"
+        nf-id: "firewall"
+        nf-name: "ACL Firewall"
+        nf-version: "v1.0"
+        nf-mgmt-network: "shared-mgmt-net"
+        nf-vcpu: 1
+        nf-memory: 1
+        nf-storage: 1
+    application-functions:
+      - af-instance-id: "dt-ros-network"
+        af-id: "ros-network"
+        af-name: "ROS Network (Multus)"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net"
+        af-vcpu: 1
+        af-memory: 1
+        af-storage: 1
+      - af-instance-id: "dt-ros-master"
+        af-id: "ros-master"
+        af-name: "ROS Master"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net"
+        af-vcpu: 1
+        af-memory: 1
+        af-storage: 1
+      - af-instance-id: "dt-mediamtx"
+        af-id: "mediamtx"
+        af-name: "Mediamtx (Media server)"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net"
+        af-vcpu: 1
+        af-memory: 1
+        af-storage: 1
+      - af-instance-id: "dt-video-receiver"
+        af-id: "video-receiver"
+        af-name: "Video Receiver"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net"
+        af-vcpu: 1
+        af-memory: 1
+        af-storage: 1
+      - af-instance-id: "dt-go1-base"
+        af-id: "go1-base"
+        af-name: "GO1 ROS Base"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net" 
+        af-vcpu: 1
+        af-memory: 1
+        af-storage: 1
+      - af-instance-id: "dt-lidar-drivers"
+        af-id: "lidar-drivers"
+        af-name: "Lidar drivers"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net" 
+        af-vcpu: 1
+        af-memory: 1
+        af-storage: 1
+      - af-instance-id: "dt-go1-navigation"
+        af-id: "go1-navigation-cpu-stress"
+        af-name: "Go1 Navigation"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net"  
+        af-vcpu: 8
+        af-memory: 4
+        af-storage: 10
+      - af-instance-id: "dt-video-streamer"
+        af-id: "video-streamer"
+        af-name: "Video Streamer"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net"
+        af-vcpu: 1
+        af-memory: 1
+        af-storage: 1
+      - af-instance-id: "dt-vizanti"
+        af-id: "vizanti"
+        af-name: "Vizanti (Auto-Nav UI)"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net" 
+        af-vcpu: 1
+        af-memory: 1
+        af-storage: 1
+      - af-instance-id: "dt-digital-replica"
+        af-id: "digital-replica"
+        af-name: "Digital Twin"
+        af-version: "1.0"
+        af-mgmt-network: "shared-mgmt-net"
+        af-vcpu: 2
+        af-memory: 8
+        af-storage: 10
+    mas-service: # TO BE UPDATED
+      instance-id: "dt-mas-service-001"
+      id: "mas-service-001"
+      name: "MAS Service"
+      version: "v1.0"
+    forwarding_graphs: # TO BE UPDATED
+      - member-graph-index: 1
+        graph-name: "uplink"
+        links:
+          - id: "input-1"
+            connection-points:
+            - member-connection-point-index: 1
+              member-if-id-ref: "sc1-sc2:input"
+            - member-connection-point-index: 2
+              member-if-id-ref: "flowcl-i01:port-input"
+          - id: "input-2"
+            connection-points:
+            - member-connection-point-index: 1
+              member-if-id-ref: "sc1-sc3:input"
+            - member-connection-point-index: 2
+              member-if-id-ref: "flowcl-i01:port-input"
+          - id: "towebserver"
+            connection-points:
+            - member-connection-point-index: 1
+              member-if-id-ref: "flowcl-i01:port-2"
+            - member-connection-point-index: 2
+              member-if-id-ref: "lws-i01:eth0"
+          - id: "toFW"
+            connection-points:
+            - member-connection-point-index: 1
+              member-if-id-ref: "flowcl:port-3"
+            - member-connection-point-index: 2
+              member-if-id-ref: "firewall-i01:port-1"
+        e2e_delay_budget: "5ms"

@@ -24,10 +24,10 @@ curl -X POST http://localhost:6666/vxlan \
   -H 'Content-Type: application/json' \
   -d '{
     "vni": 200,
-    "iface": "br10",
+    "iface": "enp9s0f1",
     "port": 4747,
     "vxlan_ip": "172.20.50.1/24",
-    "remote_ips": ["10.3.202.68"]
+    "remote_ips": ["10.3.202.66"]
   }' | jq
 ```
 - Robot
@@ -39,7 +39,7 @@ curl -X POST http://localhost:6666/vxlan \
     "iface": "ue0",
     "port": 4747,
     "vxlan_ip": "172.20.50.2/24",
-    "remote_ips": ["10.5.1.21"]
+    "remote_ips": ["10.11.7.4"]
   }' | jq
 ```
 - Remote cluster

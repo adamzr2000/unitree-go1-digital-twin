@@ -2,6 +2,6 @@ policy:
   id: 0
   ns-id: 1
   assigned-user-ids: [20000]
-  min-bw: 300
-  max-bw: 300
+  min-bw: 10000
+  max-bw: 10000
   elasticity: 1

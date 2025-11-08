@@ -82,8 +82,8 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: "desire6g2024;"
     volumes:
       - ./grafana_config/datasources:/etc/grafana/provisioning/datasources 
-      - ./grafana_config/dashboards:/etc/grafana/provisioning/dashboards
-        #- ./grafana_data:/var/lib/grafana
+      #- ./grafana_config/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana_data:/var/lib/grafana
     networks:
       - monitoring-net
 

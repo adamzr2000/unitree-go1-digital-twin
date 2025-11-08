@@ -5,9 +5,9 @@ resources:
   - ros-master.yml
   - mediamtx.yml
   - video-receiver.yml
-  - gesture-control.yml
-  - vizanti.yml
   - go1-base.yml
   - lidar-drivers.yml
   - go1-navigation.yml
-  # - digital-replica.yml
+  - video-streamer.yml
+  - vizanti.yml
+  - digital-replica.yml

@@ -1,1 +1,6 @@
 .env
+# Ignore any Grafana data volumes in the repo
+**/grafana_data/**
+# but keep placeholders/docs inside those dirs
+!**/grafana_data/.gitkeep
+!**/grafana_data/README.md

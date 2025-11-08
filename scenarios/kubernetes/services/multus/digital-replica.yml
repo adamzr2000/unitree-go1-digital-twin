@@ -16,7 +16,7 @@ metadata:
 spec:
   containers:
   - name: go1-digital-twin
-    image: isaac-sim:2023.1.0-ubuntu22.04
+    image: docker.io/adamzr2000/isaac-sim:2023.1.0-ubuntu22.04
     imagePullPolicy: IfNotPresent
     env:
     - name: ROS_MASTER_URI
